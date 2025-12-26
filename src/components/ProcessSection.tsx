@@ -1,0 +1,186 @@
+import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { processSteps, processLabels } from "@/data/processSteps";
+import ProcessStepVisual from "./ProcessStepVisual";
+
+const ProcessSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const lastStepChangeTime = useRef(0);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // Debounced scroll detection - single source of truth
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const now = Date.now();
+    // Debounce: minimum 100ms between step changes
+    if (now - lastStepChangeTime.current < 100) return;
+
+    const stepIndex = Math.min(
+      Math.floor(latest * processSteps.length),
+      processSteps.length - 1
+    );
+
+    if (stepIndex !== activeStep) {
+      lastStepChangeTime.current = now;
+      setActiveStep(stepIndex);
+    }
+  });
+
+  const currentStep = processSteps[activeStep];
+
+  // Animation variants for content transitions
+  const contentVariants = {
+    initial: { opacity: 0, y: 30, filter: "blur(8px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    exit: { opacity: 0, y: -30, filter: "blur(8px)" },
+  };
+
+  return (
+    <section
+      ref={containerRef}
+      className="relative"
+      style={{
+        height: `${processSteps.length * 100}vh`,
+        backgroundColor: '#FAF9F6'
+      }}
+      dir="rtl"
+    >
+      {/* Sticky Container */}
+      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
+        {/* Subtle grid background */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `linear-gradient(to right, #1a1a1a 1px, transparent 1px), linear-gradient(to bottom, #1a1a1a 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
+
+            {/* Left Side - Step Content */}
+            <div className="order-2 lg:order-1">
+              {/* Step indicators - uses activeStep for immediate feedback */}
+              <div className="flex gap-2 mb-8">
+                {processSteps.map((step, index) => (
+                  <motion.div
+                    key={step.number}
+                    className="relative"
+                    animate={{ scale: activeStep === index ? 1 : 0.92 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
+                        activeStep === index
+                          ? "bg-primary border-primary"
+                          : activeStep > index
+                          ? "bg-primary/20 border-primary/40"
+                          : "bg-[#1a1a1a]/5 border-[#1a1a1a]/10"
+                      }`}
+                    >
+                      <step.icon
+                        className={`w-5 h-5 transition-colors duration-200 ${
+                          activeStep >= index ? "text-white" : "text-[#1a1a1a]/40"
+                        }`}
+                      />
+                    </div>
+                    {index < processSteps.length - 1 && (
+                      <div
+                        className={`absolute top-1/2 -translate-y-1/2 right-full w-2 h-0.5 transition-colors duration-200 ${
+                          activeStep > index ? "bg-primary" : "bg-[#1a1a1a]/10"
+                        }`}
+                      />
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Main Content - AnimatePresence handles transitions */}
+              <div className="relative min-h-[300px]">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeStep}
+                    variants={contentVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{
+                      duration: 0.35,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
+                  >
+                    <span className="inline-block text-[#1a1a1a] text-xs md:text-sm font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-4">
+                      {processLabels.stepPrefix} {currentStep.number} {processLabels.stepSuffix}
+                    </span>
+
+                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-3">
+                      <span className={`bg-gradient-to-l ${currentStep.color.gradient} bg-clip-text text-transparent`}>
+                        {currentStep.title}
+                      </span>
+                    </h2>
+
+                    <h3 className="text-[#2d2d2d] text-lg md:text-xl font-semibold mb-5">
+                      {currentStep.subtitle}
+                    </h3>
+
+                    {/* Summary */}
+                    <p className="text-[#1a1a1a] text-base md:text-lg font-semibold mb-4">
+                      {currentStep.description.summary}
+                    </p>
+                    {/* Bullet Points */}
+                    <ul className="space-y-2 text-[#3d3d3d] text-base md:text-lg leading-[1.7] max-w-lg">
+                      {currentStep.description.items.map((item, i) => (
+                        <li key={i} className="flex gap-3">
+                          <span className="text-primary font-bold mt-1">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Progress bar */}
+              <div className="mt-8">
+                <div className="h-1.5 bg-[#1a1a1a]/10 rounded-full overflow-hidden relative">
+                  <motion.div
+                    className="h-full rounded-full absolute inset-y-0 right-0"
+                    style={{
+                      background: `linear-gradient(to left, ${currentStep.color.primary}, ${currentStep.color.secondary})`,
+                    }}
+                    animate={{
+                      width: `${((activeStep + 1) / processSteps.length) * 100}%`,
+                    }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                  />
+                </div>
+                <div className="flex justify-between mt-3 text-xs text-[#404040] font-medium">
+                  <span>{processLabels.startLabel}</span>
+                  <span>{processLabels.endLabel}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Visual */}
+            <div className="order-1 lg:order-2 flex justify-center">
+              <div className="relative w-72 h-72 md:w-96 md:h-96">
+                <ProcessStepVisual
+                  activeStep={activeStep}
+                  stepNumber={currentStep.number}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export default ProcessSection;

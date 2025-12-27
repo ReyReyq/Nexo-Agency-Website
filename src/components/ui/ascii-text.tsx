@@ -1,7 +1,18 @@
 // Component ported and enhanced from https://codepen.io/JuanFuentes/pen/eYEeoyE
 
 import { useRef, useEffect } from 'react';
-import * as THREE from 'three';
+import {
+  WebGLRenderer,
+  PerspectiveCamera,
+  Scene,
+  Camera,
+  CanvasTexture,
+  NearestFilter,
+  PlaneGeometry,
+  ShaderMaterial,
+  Mesh
+} from 'three';
+import { useVisibilityPause } from '@/hooks/useVisibilityPause';
 
 const vertexShader = `
 varying vec2 vUv;
@@ -59,7 +70,7 @@ interface AsciiFilterOptions {
 }
 
 class AsciiFilter {
-  renderer: THREE.WebGLRenderer;
+  renderer: WebGLRenderer;
   domElement: HTMLDivElement;
   pre: HTMLPreElement;
   canvas: HTMLCanvasElement;
@@ -75,8 +86,16 @@ class AsciiFilter {
   mouse: { x: number; y: number } = { x: 0, y: 0 };
   cols: number = 0;
   rows: number = 0;
+  // Performance: cache ASCII output
+  cachedAscii: string = '';
+  lastRenderTime: number = 0;
+  // Performance: limit max resolution for ASCII conversion
+  static readonly MAX_COLS = 80;
+  static readonly MAX_ROWS = 40;
+  // Performance: throttle render frequency
+  static readonly MIN_RENDER_INTERVAL = 33; // ~30fps max for ASCII
 
-  constructor(renderer: THREE.WebGLRenderer, { fontSize, fontFamily, charset, invert }: AsciiFilterOptions = {}) {
+  constructor(renderer: WebGLRenderer, { fontSize, fontFamily, charset, invert }: AsciiFilterOptions = {}) {
     this.renderer = renderer;
     this.domElement = document.createElement('div');
     this.domElement.style.position = 'absolute';
@@ -100,11 +119,10 @@ class AsciiFilter {
 
     if (this.context) {
       this.context.imageSmoothingEnabled = false;
-      this.context.imageSmoothingEnabled = false;
     }
 
     this.onMouseMove = this.onMouseMove.bind(this);
-    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mousemove', this.onMouseMove, { passive: true });
   }
 
   setSize(width: number, height: number) {
@@ -122,8 +140,13 @@ class AsciiFilter {
       this.context.font = `${this.fontSize}px ${this.fontFamily}`;
       const charWidth = this.context.measureText('A').width;
 
-      this.cols = Math.floor(this.width / (this.fontSize * (charWidth / this.fontSize)));
-      this.rows = Math.floor(this.height / this.fontSize);
+      // Calculate cols/rows with performance cap
+      let cols = Math.floor(this.width / (this.fontSize * (charWidth / this.fontSize)));
+      let rows = Math.floor(this.height / this.fontSize);
+
+      // Performance: cap resolution to reduce pixel evaluations
+      this.cols = Math.min(cols, AsciiFilter.MAX_COLS);
+      this.rows = Math.min(rows, AsciiFilter.MAX_ROWS);
 
       this.canvas.width = this.cols;
       this.canvas.height = this.rows;
@@ -139,10 +162,13 @@ class AsciiFilter {
       this.pre.style.zIndex = '9';
       this.pre.style.backgroundAttachment = 'fixed';
       this.pre.style.mixBlendMode = 'difference';
+
+      // Clear cache when size changes
+      this.cachedAscii = '';
     }
   }
 
-  render(scene: THREE.Scene, camera: THREE.Camera) {
+  render(scene: Scene, camera: Camera) {
     this.renderer.render(scene, camera);
 
     const w = this.canvas.width;
@@ -290,18 +316,25 @@ class CanvAscii {
   width: number;
   height: number;
   enableWaves: boolean;
-  camera: THREE.PerspectiveCamera;
-  scene: THREE.Scene;
+  camera: PerspectiveCamera;
+  scene: Scene;
   mouse: { x: number; y: number };
   textCanvas!: CanvasTxt;
-  texture!: THREE.CanvasTexture;
-  geometry!: THREE.PlaneGeometry;
-  material!: THREE.ShaderMaterial;
-  mesh!: THREE.Mesh;
-  renderer!: THREE.WebGLRenderer;
+  texture!: CanvasTexture;
+  geometry!: PlaneGeometry;
+  material!: ShaderMaterial;
+  mesh!: Mesh;
+  renderer!: WebGLRenderer;
   filter!: AsciiFilter;
   center!: { x: number; y: number };
   animationFrameId: number = 0;
+  // Performance: visibility-based pausing
+  isPaused: boolean = false;
+  // Performance: cache text canvas when unchanged
+  lastTextRendered: string = '';
+  // Performance: cache container bounds to avoid getBoundingClientRect on every mousemove
+  containerBounds: { left: number; top: number } = { left: 0, top: 0 };
+  boundUpdateHandler: (() => void) | null = null;
 
   constructor(
     { text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves }: CanvAsciiOptions,
@@ -319,10 +352,10 @@ class CanvAscii {
     this.height = height;
     this.enableWaves = enableWaves;
 
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 1000);
+    this.camera = new PerspectiveCamera(45, this.width / this.height, 1, 1000);
     this.camera.position.z = 14;
 
-    this.scene = new THREE.Scene();
+    this.scene = new Scene();
     this.mouse = { x: 0, y: 0 };
 
     this.onMouseMove = this.onMouseMove.bind(this);
@@ -340,16 +373,16 @@ class CanvAscii {
     this.textCanvas.resize();
     this.textCanvas.render();
 
-    this.texture = new THREE.CanvasTexture(this.textCanvas.texture);
-    this.texture.minFilter = THREE.NearestFilter;
+    this.texture = new CanvasTexture(this.textCanvas.texture);
+    this.texture.minFilter = NearestFilter;
 
     const textAspect = this.textCanvas.width / this.textCanvas.height;
     const baseH = this.planeBaseHeight;
     const planeW = baseH * textAspect;
     const planeH = baseH;
 
-    this.geometry = new THREE.PlaneGeometry(planeW, planeH, 36, 36);
-    this.material = new THREE.ShaderMaterial({
+    this.geometry = new PlaneGeometry(planeW, planeH, 36, 36);
+    this.material = new ShaderMaterial({
       vertexShader,
       fragmentShader,
       transparent: true,
@@ -361,12 +394,12 @@ class CanvAscii {
       }
     });
 
-    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.mesh = new Mesh(this.geometry, this.material);
     this.scene.add(this.mesh);
   }
 
   setRenderer() {
-    this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    this.renderer = new WebGLRenderer({ antialias: false, alpha: true });
     this.renderer.setPixelRatio(1);
     this.renderer.setClearColor(0x000000, 0);
 
@@ -379,8 +412,20 @@ class CanvAscii {
     this.container.appendChild(this.filter.domElement);
     this.setSize(this.width, this.height);
 
-    this.container.addEventListener('mousemove', this.onMouseMove);
-    this.container.addEventListener('touchmove', this.onMouseMove);
+    // Performance: cache container bounds and update on scroll/resize
+    this.updateContainerBounds();
+    this.boundUpdateHandler = () => this.updateContainerBounds();
+    window.addEventListener('scroll', this.boundUpdateHandler, { passive: true });
+    window.addEventListener('resize', this.boundUpdateHandler, { passive: true });
+
+    this.container.addEventListener('mousemove', this.onMouseMove, { passive: true });
+    this.container.addEventListener('touchmove', this.onMouseMove, { passive: true });
+  }
+
+  // Performance: update cached bounds
+  updateContainerBounds() {
+    const bounds = this.container.getBoundingClientRect();
+    this.containerBounds = { left: bounds.left, top: bounds.top };
   }
 
   setSize(w: number, h: number) {
@@ -401,28 +446,45 @@ class CanvAscii {
 
   onMouseMove(evt: MouseEvent | TouchEvent) {
     const e = (evt as TouchEvent).touches ? (evt as TouchEvent).touches[0] : (evt as MouseEvent);
-    const bounds = this.container.getBoundingClientRect();
-    const x = e.clientX - bounds.left;
-    const y = e.clientY - bounds.top;
+    // Performance: use cached bounds instead of calling getBoundingClientRect every time
+    const x = e.clientX - this.containerBounds.left;
+    const y = e.clientY - this.containerBounds.top;
     this.mouse = { x, y };
   }
 
   animate() {
     const animateFrame = () => {
       this.animationFrameId = requestAnimationFrame(animateFrame);
-      this.render();
+      // Performance: skip render when paused (off-screen)
+      if (!this.isPaused) {
+        this.render();
+      }
     };
     animateFrame();
+  }
+
+  // Performance: pause when off-screen
+  pause() {
+    this.isPaused = true;
+  }
+
+  // Performance: resume when visible
+  resume() {
+    this.isPaused = false;
   }
 
   render() {
     const time = new Date().getTime() * 0.001;
 
-    this.textCanvas.render();
-    this.texture.needsUpdate = true;
+    // Performance: only re-render text canvas if text changed
+    if (this.lastTextRendered !== this.textString) {
+      this.textCanvas.render();
+      this.texture.needsUpdate = true;
+      this.lastTextRendered = this.textString;
+    }
 
     // Use continuous time for smooth wave animation
-    (this.mesh.material as THREE.ShaderMaterial).uniforms.uTime.value = time;
+    (this.mesh.material as ShaderMaterial).uniforms.uTime.value = time;
 
     this.updateRotation(time);
     this.filter.render(this.scene, this.camera);
@@ -448,7 +510,7 @@ class CanvAscii {
 
   clear() {
     this.scene.traverse(object => {
-      const obj = object as unknown as THREE.Mesh;
+      const obj = object as unknown as Mesh;
       if (!obj.isMesh) return;
       [obj.material].flat().forEach(material => {
         material.dispose();
@@ -470,6 +532,11 @@ class CanvAscii {
     this.container.removeChild(this.filter.domElement);
     this.container.removeEventListener('mousemove', this.onMouseMove);
     this.container.removeEventListener('touchmove', this.onMouseMove);
+    // Performance: clean up bound update listeners
+    if (this.boundUpdateHandler) {
+      window.removeEventListener('scroll', this.boundUpdateHandler);
+      window.removeEventListener('resize', this.boundUpdateHandler);
+    }
     this.clear();
     this.renderer.dispose();
   }
@@ -494,6 +561,18 @@ export default function ASCIIText({
 }: ASCIITextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const asciiRef = useRef<CanvAscii | null>(null);
+  const isVisible = useVisibilityPause(containerRef);
+
+  // Performance: pause/resume based on visibility
+  useEffect(() => {
+    if (asciiRef.current) {
+      if (isVisible) {
+        asciiRef.current.resume();
+      } else {
+        asciiRef.current.pause();
+      }
+    }
+  }, [isVisible]);
 
   useEffect(() => {
     if (!containerRef.current) return;

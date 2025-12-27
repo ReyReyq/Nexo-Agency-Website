@@ -10,6 +10,7 @@ const stats = [
 
 const AnimatedNumber = ({ value, suffix }: { value: number; suffix: string }) => {
   const ref = useRef(null);
+  const rafIdRef = useRef<number | null>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -17,23 +18,30 @@ const AnimatedNumber = ({ value, suffix }: { value: number; suffix: string }) =>
     if (isInView) {
       let startTime: number;
       const duration = 2000;
-      
+
       const animate = (currentTime: number) => {
         if (!startTime) startTime = currentTime;
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
+
         // Easing function for smooth animation
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
         setDisplayValue(Math.round(easeOutQuart * value));
-        
+
         if (progress < 1) {
-          requestAnimationFrame(animate);
+          rafIdRef.current = requestAnimationFrame(animate);
         }
       };
-      
-      requestAnimationFrame(animate);
+
+      rafIdRef.current = requestAnimationFrame(animate);
     }
+
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+    };
   }, [isInView, value]);
 
   return (
@@ -46,6 +54,7 @@ const AnimatedNumber = ({ value, suffix }: { value: number; suffix: string }) =>
 const StatsCounter = () => {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+  const isAnimationInView = useInView(sectionRef, { once: false, margin: "100px" });
 
   return (
     <section
@@ -57,18 +66,18 @@ const StatsCounter = () => {
       
       {/* Animated Gradient Orbs */}
       <motion.div
-        animate={{
+        animate={isAnimationInView ? {
           x: [0, 50, 0],
           y: [0, 30, 0],
-        }}
+        } : {}}
         transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
         className="absolute top-20 right-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
       />
       <motion.div
-        animate={{
+        animate={isAnimationInView ? {
           x: [0, -30, 0],
           y: [0, 50, 0],
-        }}
+        } : {}}
         transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         className="absolute bottom-20 left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
       />

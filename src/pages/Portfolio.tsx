@@ -7,13 +7,14 @@ import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import Contact from "@/components/Contact";
 
+// Project images: 800px for card display, WebP format
 const projects = [
   {
     id: "techflow",
     title: "TechFlow",
     category: "אתר + מיתוג",
     description: "מיתוג מלא ופלטפורמה דיגיטלית לסטארט-אפ טכנולוגי",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fm=webp&fit=crop",
     results: ["340% עלייה בהמרות", "2M משתמשים חדשים", "גיוס סבב A"],
     tags: ["מיתוג", "פיתוח", "אסטרטגיה"],
   },
@@ -22,7 +23,7 @@ const projects = [
     title: "CloudNine",
     category: "חנות אונליין",
     description: "חנות E-commerce מותאמת אישית עם חוויית משתמש יוצאת דופן",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80&fm=webp&fit=crop",
     results: ["500% עלייה במכירות", "NPS של 92", "זמן טעינה 0.8s"],
     tags: ["E-commerce", "UX/UI", "פיתוח"],
   },
@@ -31,7 +32,7 @@ const projects = [
     title: "GrowthLabs",
     category: "AI + אוטומציה",
     description: "מערכת AI מתקדמת לניתוח נתונים והמלצות אוטומטיות",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
     results: ["20 שעות חיסכון שבועי", "98% דיוק", "ROI של 800%"],
     tags: ["AI", "אוטומציה", "אנליטיקס"],
   },
@@ -40,7 +41,7 @@ const projects = [
     title: "StartupHub",
     category: "מיתוג מלא",
     description: "זהות מותגית חדשה למרכז יזמות מוביל",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80&fm=webp&fit=crop",
     results: ["200% עלייה בפניות", "15 שותפויות חדשות", "פרס עיצוב"],
     tags: ["מיתוג", "עיצוב", "אסטרטגיה"],
   },
@@ -49,7 +50,7 @@ const projects = [
     title: "FinSecure",
     category: "אפליקציית פינטק",
     description: "אפליקציה מאובטחת לניהול השקעות ותיקים פיננסיים",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&fm=webp&fit=crop",
     results: ["1M הורדות", "4.9 דירוג", "SOC2 מוסמך"],
     tags: ["אפליקציה", "פינטק", "אבטחה"],
   },
@@ -58,7 +59,7 @@ const projects = [
     title: "EcoLife",
     category: "קמפיין דיגיטלי",
     description: "קמפיין שיווקי רב-ערוצי למותג קיימות",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80&fm=webp&fit=crop",
     results: ["10M חשיפות", "250K עוקבים חדשים", "פרס קריאייטיב"],
     tags: ["שיווק", "קמפיין", "סושיאל"],
   },
@@ -154,6 +155,10 @@ const Portfolio = () => {
                     <motion.img
                       src={project.image}
                       alt={project.title}
+                      loading="lazy"
+                      decoding="async"
+                      width={800}
+                      height={500}
                       animate={{ scale: hoveredProject === project.id ? 1.05 : 1 }}
                       transition={{ duration: 0.5 }}
                       className="w-full h-full object-cover"

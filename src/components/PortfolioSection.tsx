@@ -1,11 +1,15 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, memo, lazy, Suspense } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import HoverVideoPlayer from "react-hover-video-player";
+
+// Lazy load HoverVideoPlayer - it's a feature-rich video component
+const HoverVideoPlayer = lazy(() => import("react-hover-video-player"));
 
 // Project data - uniform grid
+// Optimized thumbnails: 600px for card display, WebP format
+// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
 const projects = [
   {
     id: 1,
@@ -14,7 +18,7 @@ const projects = [
     client: "Fashion Hub",
     category: "E-Commerce",
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-typing-on-laptop-close-up-4892-large.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fm=webp&fit=crop",
     link: "/case-studies/fashion-hub",
   },
   {
@@ -24,7 +28,7 @@ const projects = [
     client: "TechConnect",
     category: "Web App",
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-woman-working-on-a-laptop-4793-large.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80&fm=webp&fit=crop",
     link: "/case-studies/techconnect",
   },
   {
@@ -34,18 +38,45 @@ const projects = [
     client: "FinFlow",
     category: "Mobile App",
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-woman-working-on-laptop-at-night-4796-large.mp4",
-    thumbnailUrl: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80",
+    thumbnailUrl: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80&fm=webp&fit=crop",
     link: "/case-studies/finflow",
   },
 ];
 
-// Minimal Project Card
+// Minimal Project Card - memoized for performance
 interface ProjectCardProps {
   project: typeof projects[0];
   index: number;
 }
 
-const ProjectCard = ({ project, index }: ProjectCardProps) => {
+// Memoized overlay components to prevent recreation on each render
+const PausedOverlay = memo(({ thumbnailUrl, title }: { thumbnailUrl: string; title: string }) => (
+  <div className="relative w-full h-full">
+    <img
+      src={thumbnailUrl}
+      alt={title}
+      loading="lazy"
+      decoding="async"
+      width={600}
+      height={375}
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+    />
+    {/* Subtle vignette */}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+  </div>
+));
+
+PausedOverlay.displayName = 'PausedOverlay';
+
+const LoadingOverlay = memo(() => (
+  <div className="absolute inset-0 flex items-center justify-center bg-[#f0efec]">
+    <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a]/10 border-t-primary animate-spin" />
+  </div>
+));
+
+LoadingOverlay.displayName = 'LoadingOverlay';
+
+const ProjectCard = memo(({ project, index }: ProjectCardProps) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-80px" });
 
@@ -71,32 +102,20 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
 
         {/* Video Container */}
         <div className="relative overflow-hidden rounded-2xl aspect-[16/10] bg-[#f0efec]">
-          <HoverVideoPlayer
-            videoSrc={project.videoUrl}
-            pausedOverlay={
-              <div className="relative w-full h-full">
-                <img
-                  src={project.thumbnailUrl}
-                  alt={project.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                {/* Subtle vignette */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-              </div>
-            }
-            loadingOverlay={
-              <div className="absolute inset-0 flex items-center justify-center bg-[#f0efec]">
-                <div className="w-8 h-8 rounded-full border-2 border-[#1a1a1a]/10 border-t-primary animate-spin" />
-              </div>
-            }
-            muted
-            loop
-            preload="metadata"
-            restartOnPaused
-            overlayTransitionDuration={500}
-            style={{ width: "100%", height: "100%" }}
-            sizingMode="container"
-          />
+          <Suspense fallback={<PausedOverlay thumbnailUrl={project.thumbnailUrl} title={project.title} />}>
+            <HoverVideoPlayer
+              videoSrc={project.videoUrl}
+              pausedOverlay={<PausedOverlay thumbnailUrl={project.thumbnailUrl} title={project.title} />}
+              loadingOverlay={<LoadingOverlay />}
+              muted
+              loop
+              preload="metadata"
+              restartOnPaused
+              overlayTransitionDuration={500}
+              style={{ width: "100%", height: "100%" }}
+              sizingMode="container"
+            />
+          </Suspense>
 
           {/* Category Badge */}
           <div className="absolute top-4 left-4 z-10">
@@ -141,7 +160,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       </a>
     </motion.article>
   );
-};
+});
+
+ProjectCard.displayName = 'ProjectCard';
 
 const PortfolioSection = () => {
   const headerRef = useRef(null);

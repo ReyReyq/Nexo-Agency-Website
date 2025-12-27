@@ -1,7 +1,61 @@
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, memo } from "react";
 import { processSteps, processLabels } from "@/data/processSteps";
 import ProcessStepVisual from "./ProcessStepVisual";
+
+// Animation variants for content transitions - defined outside component to prevent recreation
+const contentVariants = {
+  initial: { opacity: 0, y: 30, filter: "blur(8px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+  exit: { opacity: 0, y: -30, filter: "blur(8px)" },
+};
+
+// Memoized Step Indicator component
+interface StepIndicatorProps {
+  step: typeof processSteps[0];
+  index: number;
+  activeStep: number;
+  isLast: boolean;
+}
+
+const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorProps) => {
+  const isActive = activeStep === index;
+  const isPast = activeStep > index;
+  const isActiveOrPast = activeStep >= index;
+
+  return (
+    <motion.div
+      className="relative"
+      animate={{ scale: isActive ? 1 : 0.92 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div
+        className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
+          isActive
+            ? "bg-primary border-primary"
+            : isPast
+            ? "bg-primary/20 border-primary/40"
+            : "bg-[#1a1a1a]/5 border-[#1a1a1a]/10"
+        }`}
+      >
+        <step.icon
+          className={`w-5 h-5 transition-colors duration-200 ${
+            isActiveOrPast ? "text-white" : "text-[#1a1a1a]/40"
+          }`}
+        />
+      </div>
+      {!isLast && (
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 right-full w-2 h-0.5 transition-colors duration-200 ${
+            isPast ? "bg-primary" : "bg-[#1a1a1a]/10"
+          }`}
+        />
+      )}
+    </motion.div>
+  );
+});
+
+StepIndicator.displayName = 'StepIndicator';
 
 const ProcessSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -11,6 +65,7 @@ const ProcessSection = () => {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
+    layoutEffect: false, // Prevent layout thrashing
   });
 
   // Debounced scroll detection - single source of truth
@@ -31,13 +86,6 @@ const ProcessSection = () => {
   });
 
   const currentStep = processSteps[activeStep];
-
-  // Animation variants for content transitions
-  const contentVariants = {
-    initial: { opacity: 0, y: 30, filter: "blur(8px)" },
-    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-    exit: { opacity: 0, y: -30, filter: "blur(8px)" },
-  };
 
   return (
     <section
@@ -65,38 +113,16 @@ const ProcessSection = () => {
 
             {/* Left Side - Step Content */}
             <div className="order-2 lg:order-1">
-              {/* Step indicators - uses activeStep for immediate feedback */}
+              {/* Step indicators - uses memoized StepIndicator component */}
               <div className="flex gap-2 mb-8">
                 {processSteps.map((step, index) => (
-                  <motion.div
+                  <StepIndicator
                     key={step.number}
-                    className="relative"
-                    animate={{ scale: activeStep === index ? 1 : 0.92 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
-                        activeStep === index
-                          ? "bg-primary border-primary"
-                          : activeStep > index
-                          ? "bg-primary/20 border-primary/40"
-                          : "bg-[#1a1a1a]/5 border-[#1a1a1a]/10"
-                      }`}
-                    >
-                      <step.icon
-                        className={`w-5 h-5 transition-colors duration-200 ${
-                          activeStep >= index ? "text-white" : "text-[#1a1a1a]/40"
-                        }`}
-                      />
-                    </div>
-                    {index < processSteps.length - 1 && (
-                      <div
-                        className={`absolute top-1/2 -translate-y-1/2 right-full w-2 h-0.5 transition-colors duration-200 ${
-                          activeStep > index ? "bg-primary" : "bg-[#1a1a1a]/10"
-                        }`}
-                      />
-                    )}
-                  </motion.div>
+                    step={step}
+                    index={index}
+                    activeStep={activeStep}
+                    isLast={index === processSteps.length - 1}
+                  />
                 ))}
               </div>
 

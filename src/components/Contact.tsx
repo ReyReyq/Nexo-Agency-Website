@@ -1,5 +1,5 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Send, Instagram, Facebook, Linkedin, Phone, Mail, MapPin, ArrowUpRight, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,16 +16,28 @@ const socialLinks = [
 
 const Contact = () => {
   const ref = useRef(null);
+  const animationRef = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isAnimationInView = useInView(animationRef, { once: false, margin: "100px" });
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const submitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     message: "",
   });
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (submitTimeoutRef.current) {
+        clearTimeout(submitTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,20 +46,24 @@ const Contact = () => {
       title: "ההודעה נשלחה בהצלחה! 🎉",
       description: "נחזור אליך תוך 24 שעות.",
     });
-    setTimeout(() => {
+    // Clear any existing timeout
+    if (submitTimeoutRef.current) {
+      clearTimeout(submitTimeoutRef.current);
+    }
+    submitTimeoutRef.current = setTimeout(() => {
       setIsSubmitted(false);
       setFormData({ name: "", phone: "", message: "" });
     }, 3000);
   };
 
   return (
-    <footer id="contact" className="bg-hero-bg py-24 md:py-32 relative overflow-hidden">
+    <footer id="contact" ref={animationRef} className="bg-hero-bg py-24 md:py-32 relative overflow-hidden">
       {/* Animated Background */}
       <motion.div
-        animate={{
+        animate={isAnimationInView ? {
           opacity: [0.05, 0.1, 0.05],
           scale: [1, 1.2, 1],
-        }}
+        } : {}}
         transition={{ duration: 15, repeat: Infinity }}
         className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-primary rounded-full blur-[200px]"
       />

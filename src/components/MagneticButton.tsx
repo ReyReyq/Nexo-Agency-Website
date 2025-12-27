@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, ReactNode } from "react";
+import React, { useRef, ReactNode, useCallback } from "react";
 
 interface MagneticButtonProps {
   children: ReactNode;
@@ -7,34 +7,32 @@ interface MagneticButtonProps {
   onClick?: () => void;
 }
 
-const MagneticButton = ({ children, className = "", onClick }: MagneticButtonProps) => {
+// Moved outside component to prevent recreation on every render
+const springConfig = { damping: 15, stiffness: 150 };
+
+const MagneticButton = React.memo(({ children, className = "", onClick }: MagneticButtonProps) => {
   const ref = useRef<HTMLButtonElement>(null);
-  
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-
-  const springConfig = { damping: 15, stiffness: 150 };
   const xSpring = useSpring(x, springConfig);
   const ySpring = useSpring(y, springConfig);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (!ref.current) return;
-    
+
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
-    const deltaX = (e.clientX - centerX) * 0.3;
-    const deltaY = (e.clientY - centerY) * 0.3;
-    
-    x.set(deltaX);
-    y.set(deltaY);
-  };
 
-  const handleMouseLeave = () => {
+    x.set((e.clientX - centerX) * 0.3);
+    y.set((e.clientY - centerY) * 0.3);
+  }, [x, y]);
+
+  const handleMouseLeave = useCallback(() => {
     x.set(0);
     y.set(0);
-  };
+  }, [x, y]);
 
   return (
     <motion.button
@@ -65,6 +63,8 @@ const MagneticButton = ({ children, className = "", onClick }: MagneticButtonPro
       <span className="relative z-10">{children}</span>
     </motion.button>
   );
-};
+});
+
+MagneticButton.displayName = "MagneticButton";
 
 export default MagneticButton;

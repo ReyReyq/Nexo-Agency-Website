@@ -1,9 +1,13 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, createContext, useContext } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Sparkles, MeshWobbleMaterial } from "@react-three/drei";
-import * as THREE from "three";
+import { MathUtils, Mesh } from "three";
+import { useVisibilityPause } from "@/hooks/useVisibilityPause";
+
+// Context to pass visibility state to 3D components
+const VisibilityContext = createContext(true);
 
 interface ProcessVisualizationProps {
   activeStep: number;
@@ -24,37 +28,41 @@ const STEP_COLORS = [
 
 // Animated morphing shape
 const MorphingShape = ({ activeStep }: { activeStep: number }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentColors, setCurrentColors] = useState(STEP_COLORS[0]);
+  const isVisible = useContext(VisibilityContext);
 
   // Smooth color transition
   useEffect(() => {
     setCurrentColors(STEP_COLORS[activeStep] || STEP_COLORS[0]);
   }, [activeStep]);
 
-  // Mouse parallax effect
+  // Mouse parallax effect - only track when visible for performance
   useEffect(() => {
+    if (!isVisible) return;
+
     const handleMouseMove = (event: MouseEvent) => {
       const x = (event.clientX / window.innerWidth) * 2 - 1;
       const y = -(event.clientY / window.innerHeight) * 2 + 1;
       setMousePosition({ x: x * 0.3, y: y * 0.3 });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [isVisible]);
 
   // Animate rotation based on mouse and step
   useFrame((state) => {
+    if (!isVisible) return; // Skip updates when off-screen
     if (meshRef.current) {
       // Gentle auto-rotation
-      meshRef.current.rotation.x = THREE.MathUtils.lerp(
+      meshRef.current.rotation.x = MathUtils.lerp(
         meshRef.current.rotation.x,
         mousePosition.y + Math.sin(state.clock.elapsedTime * 0.3) * 0.1,
         0.05
       );
-      meshRef.current.rotation.y = THREE.MathUtils.lerp(
+      meshRef.current.rotation.y = MathUtils.lerp(
         meshRef.current.rotation.y,
         mousePosition.x + state.clock.elapsedTime * 0.15,
         0.05
@@ -90,10 +98,12 @@ const AnimatedRings = ({ activeStep }: { activeStep: number }) => {
   const ring1Ref = useRef<THREE.Mesh>(null);
   const ring2Ref = useRef<THREE.Mesh>(null);
   const ring3Ref = useRef<THREE.Mesh>(null);
+  const isVisible = useContext(VisibilityContext);
 
   const currentColors = STEP_COLORS[activeStep] || STEP_COLORS[0];
 
   useFrame((state) => {
+    if (!isVisible) return; // Skip updates when off-screen
     const t = state.clock.elapsedTime;
 
     if (ring1Ref.current) {
@@ -170,9 +180,9 @@ const FloatingParticles = ({ activeStep }: { activeStep: number }) => {
 };
 
 // Scene content
-const SceneContent = ({ activeStep }: { activeStep: number }) => {
+const SceneContent = ({ activeStep, isVisible }: { activeStep: number; isVisible: boolean }) => {
   return (
-    <>
+    <VisibilityContext.Provider value={isVisible}>
       {/* Lighting setup */}
       <ambientLight intensity={0.3} />
       <pointLight position={[10, 10, 10]} intensity={1} color="#ffffff" />
@@ -189,16 +199,18 @@ const SceneContent = ({ activeStep }: { activeStep: number }) => {
       <MorphingShape activeStep={activeStep} />
       <AnimatedRings activeStep={activeStep} />
       <FloatingParticles activeStep={activeStep} />
-    </>
+    </VisibilityContext.Provider>
   );
 };
 
 // Main component
 const ProcessVisualization = ({ activeStep, steps }: ProcessVisualizationProps) => {
   const currentStep = steps[activeStep];
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisible = useVisibilityPause(containerRef);
 
   return (
-    <div className="w-full h-full relative">
+    <div ref={containerRef} className="w-full h-full relative">
       <Canvas
         camera={{ position: [0, 0, 6], fov: 50 }}
         dpr={[1, 2]}
@@ -207,8 +219,9 @@ const ProcessVisualization = ({ activeStep, steps }: ProcessVisualizationProps) 
           alpha: true,
           powerPreference: "high-performance",
         }}
+        frameloop={isVisible ? "always" : "demand"}
       >
-        <SceneContent activeStep={activeStep} />
+        <SceneContent activeStep={activeStep} isVisible={isVisible} />
       </Canvas>
 
       {/* Step number overlay badge */}

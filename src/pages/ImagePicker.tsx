@@ -113,6 +113,9 @@ function ImageCard({ url, desc, isSelected, onSelect }: {
           alt={desc}
           className="w-full h-full object-cover"
           loading="lazy"
+          decoding="async"
+          width={640}
+          height={360}
         />
       </div>
 
@@ -264,7 +267,15 @@ export default function ImagePicker() {
                   onClick={() => toggleImage(url)}
                   title="Click to remove"
                 >
-                  <img src={url} alt="" className="w-full h-full object-cover" />
+                  <img
+                    src={url}
+                    alt="Selected thumbnail"
+                    loading="lazy"
+                    decoding="async"
+                    width={80}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ))}
             </div>

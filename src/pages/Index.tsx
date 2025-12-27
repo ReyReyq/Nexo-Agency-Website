@@ -1,15 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import GlassNavbar from "@/components/GlassNavbar";
 import Hero from "@/components/Hero";
 import ServicesSection from "@/components/ServicesSection";
 import AboutSection from "@/components/AboutSection";
-import AboutDarkSection from "@/components/AboutDarkSection";
-import ProcessSection from "@/components/ProcessSection";
-import FAQSection from "@/components/FAQSection";
-import PortfolioSection from "@/components/PortfolioSection";
-import BlogPreviewSection from "@/components/BlogPreviewSection";
-import Contact from "@/components/Contact";
 import Preloader from "@/components/Preloader";
+
+// Lazy load sections below the fold for better initial bundle size
+// These sections are not immediately visible, so we can defer their loading
+const AboutDarkSection = lazy(() => import("@/components/AboutDarkSection"));
+const ProcessSection = lazy(() => import("@/components/ProcessSection"));
+const FAQSection = lazy(() => import("@/components/FAQSection"));
+const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
+const BlogPreviewSection = lazy(() => import("@/components/BlogPreviewSection"));
+const Contact = lazy(() => import("@/components/Contact"));
+
+// Minimal loading placeholder for lazy-loaded sections
+const SectionLoader = () => (
+  <div className="min-h-[50vh] flex items-center justify-center bg-background">
+    <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
+  </div>
+);
 
 const Index = () => {
   // Check if preloader should show
@@ -68,13 +78,26 @@ const Index = () => {
             </div>
 
             {/* Content scrolls over the sticky AboutSection */}
+            {/* Lazy-loaded sections wrapped in Suspense for code splitting */}
             <div className="relative z-10 bg-background">
-              <AboutDarkSection />
-              <ProcessSection />
-              <PortfolioSection />
-              <FAQSection />
-              <BlogPreviewSection />
-              <Contact />
+              <Suspense fallback={<SectionLoader />}>
+                <AboutDarkSection />
+              </Suspense>
+              <Suspense fallback={<SectionLoader />}>
+                <ProcessSection />
+              </Suspense>
+              <Suspense fallback={<SectionLoader />}>
+                <PortfolioSection />
+              </Suspense>
+              <Suspense fallback={<SectionLoader />}>
+                <FAQSection />
+              </Suspense>
+              <Suspense fallback={<SectionLoader />}>
+                <BlogPreviewSection />
+              </Suspense>
+              <Suspense fallback={<SectionLoader />}>
+                <Contact />
+              </Suspense>
             </div>
           </div>
         </main>

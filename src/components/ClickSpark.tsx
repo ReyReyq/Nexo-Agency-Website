@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react';
+import { useVisibilityPause } from '@/hooks/useVisibilityPause';
 
 interface ClickSparkProps {
   sparkColor?: string;
@@ -29,8 +30,12 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   children
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const sparksRef = useRef<Spark[]>([]);
   const startTimeRef = useRef<number | null>(null);
+
+  // Performance: visibility-based pausing
+  const isVisible = useVisibilityPause(containerRef);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -90,6 +95,13 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     let animationId: number;
 
     const draw = (timestamp: number) => {
+      // Performance: skip drawing when off-screen, but still schedule next frame
+      // to resume when visible again
+      if (!isVisible) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+
       if (!startTimeRef.current) {
         startTimeRef.current = timestamp;
       }
@@ -130,7 +142,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
+  }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale, isVisible]);
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     const canvas = canvasRef.current;
@@ -151,7 +163,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   };
 
   return (
-    <div className="relative w-full" style={{ minHeight: 'inherit' }} onClick={handleClick}>
+    <div ref={containerRef} className="relative w-full" style={{ minHeight: 'inherit' }} onClick={handleClick}>
       <canvas
         ref={canvasRef}
         className="absolute top-0 left-0 w-full h-full pointer-events-none"

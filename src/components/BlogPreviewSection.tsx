@@ -1,12 +1,16 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo, memo, lazy, Suspense } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowLeft, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
-import GridMotion from "./ui/GridMotion";
 
-// Blog data
+// Lazy load GridMotion - uses GSAP which adds to bundle size
+const GridMotion = lazy(() => import("./ui/GridMotion"));
+
+// Blog data - defined outside component to prevent recreation
+// Optimized images: 400px width for small cards, WebP format
+// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
 const blogPosts = [
   {
     id: 1,
@@ -14,7 +18,7 @@ const blogPosts = [
     excerpt: "מהאנימציות המיקרו ועד הצבעים הניאון החדשים - כל מה שצריך לדעת",
     category: "עיצוב",
     readTime: 5,
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=80&fm=webp&fit=crop",
     slug: "/blog/design-trends-2025",
   },
   {
@@ -23,7 +27,7 @@ const blogPosts = [
     excerpt: "הכלים החדשים שמאיצים את העבודה של מפתחים בכל הרמות",
     category: "פיתוח",
     readTime: 3,
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80&fm=webp&fit=crop",
     slug: "/blog/ai-development",
   },
   {
@@ -32,13 +36,15 @@ const blogPosts = [
     excerpt: "אסטרטגיות שעובדות להגדלת החשיפה והמכירות שלך",
     category: "שיווק",
     readTime: 4,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80&fm=webp&fit=crop",
     slug: "/blog/digital-marketing-guide",
   },
-];
+] as const;
 
-// Compact Article Card - constrained to aspect-[4/3] to match grid placeholders
-const ArticleCard = ({ post }: { post: typeof blogPosts[0] }) => (
+type BlogPost = typeof blogPosts[number];
+
+// Compact Article Card - memoized to prevent re-renders
+const ArticleCard = memo(({ post }: { post: BlogPost }) => (
   <Link
     to={post.slug}
     className="group block w-full aspect-[4/3] bg-white rounded-xl overflow-hidden border border-[#e5e5e5] hover:border-primary/40 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10"
@@ -50,6 +56,10 @@ const ArticleCard = ({ post }: { post: typeof blogPosts[0] }) => (
         <img
           src={post.image}
           alt={post.title}
+          loading="lazy"
+          decoding="async"
+          width={400}
+          height={300}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -78,10 +88,18 @@ const ArticleCard = ({ post }: { post: typeof blogPosts[0] }) => (
       </div>
     </div>
   </Link>
-);
+));
 
-// Simple placeholder for non-article grid cells
-const GridPlaceholder = ({ variant }: { variant: 'gradient' | 'dots' | 'empty' }) => {
+ArticleCard.displayName = 'ArticleCard';
+
+// Pre-generate dot colors to avoid random generation on each render
+const DOT_COLORS = Array.from({ length: 9 }, (_, i) => ({
+  color: i % 3 === 0 ? 'hsl(328, 100%, 54%)' : '#e5e5e5',
+  opacity: 0.5 + (i * 0.05),
+}));
+
+// Simple placeholder for non-article grid cells - memoized
+const GridPlaceholder = memo(({ variant }: { variant: 'gradient' | 'dots' | 'empty' }) => {
   switch (variant) {
     case 'gradient':
       return (
@@ -90,13 +108,13 @@ const GridPlaceholder = ({ variant }: { variant: 'gradient' | 'dots' | 'empty' }
     case 'dots':
       return (
         <div className="w-full aspect-[4/3] rounded-xl bg-white/80 border border-[#e5e5e5]/50 p-4 grid grid-cols-3 gap-2 place-items-center">
-          {[...Array(9)].map((_, i) => (
+          {DOT_COLORS.map((dot, i) => (
             <div
               key={i}
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: Math.random() > 0.6 ? 'hsl(328, 100%, 54%)' : '#e5e5e5',
-                opacity: 0.5 + Math.random() * 0.5,
+                backgroundColor: dot.color,
+                opacity: dot.opacity,
               }}
             />
           ))}
@@ -108,14 +126,16 @@ const GridPlaceholder = ({ variant }: { variant: 'gradient' | 'dots' | 'empty' }
         <div className="w-full aspect-[4/3] rounded-xl bg-white/40 border border-[#e5e5e5]/30" />
       );
   }
-};
+});
+
+GridPlaceholder.displayName = 'GridPlaceholder';
 
 const BlogPreviewSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // Grid items - article cards and simple placeholders (no nested cards)
-  const gridItems = [
+  // Grid items - memoized to prevent recreation on each render
+  const gridItems = useMemo(() => [
     <GridPlaceholder key="p1" variant="gradient" />,
     <GridPlaceholder key="p2" variant="empty" />,
     <ArticleCard key="a1" post={blogPosts[0]} />,
@@ -147,7 +167,7 @@ const BlogPreviewSection = () => {
     <GridPlaceholder key="p23" variant="dots" />,
     <GridPlaceholder key="p24" variant="empty" />,
     <GridPlaceholder key="p25" variant="gradient" />,
-  ];
+  ], []); // Empty deps - grid items never change
 
   return (
     <section
@@ -173,12 +193,18 @@ const BlogPreviewSection = () => {
         </motion.div>
       </div>
 
-      {/* GridMotion - Contained section */}
+      {/* GridMotion - Contained section (lazy loaded to reduce initial bundle) */}
       <div className="relative h-[550px] md:h-[650px]">
-        <GridMotion
-          items={gridItems}
-          gradientColor="rgba(250, 249, 246, 0.95)"
-        />
+        <Suspense fallback={
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-[#e5e5e5] border-t-primary rounded-full animate-spin" />
+          </div>
+        }>
+          <GridMotion
+            items={gridItems}
+            gradientColor="rgba(250, 249, 246, 0.95)"
+          />
+        </Suspense>
 
         {/* Fade edges for smooth blending */}
         <div className="absolute inset-0 pointer-events-none">

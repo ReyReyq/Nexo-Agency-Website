@@ -1,10 +1,20 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { IconCloud } from "./ui/icon-cloud";
-import ASCIIText from "./ui/ascii-text";
-import FallingText from "./ui/FallingText";
-import { LaunchNotifications } from "./ui/LaunchNotifications";
-import TrueFocus from "./ui/TrueFocus";
+import { lazy, Suspense } from "react";
 import { MessageCircle, Target, Palette, Code2, Rocket, LucideIcon } from "lucide-react";
+
+// Lazy load heavy components for better initial bundle size
+const IconCloud = lazy(() => import("./ui/icon-cloud").then(m => ({ default: m.IconCloud })));
+const ASCIIText = lazy(() => import("./ui/ascii-text"));
+const FallingText = lazy(() => import("./ui/FallingText"));
+const LaunchNotifications = lazy(() => import("./ui/LaunchNotifications").then(m => ({ default: m.LaunchNotifications })));
+const TrueFocus = lazy(() => import("./ui/TrueFocus"));
+
+// Loading fallback for lazy components
+const ComponentLoader = () => (
+  <div className="w-full h-full flex items-center justify-center">
+    <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+);
 
 // Questions for Step 1 (בירור צרכים - Requirements Analysis)
 // Use | delimiter to keep questions as complete units - short, punchy questions
@@ -72,15 +82,17 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10 w-72 h-72 md:w-[380px] md:h-[380px] -translate-x-20 md:-translate-x-32"
           >
-            <FallingText
-              text={requirementsQuestions}
-              highlightWords={["מטרה", "קהל", "תקציב", "הצלחה", "מייחד"]}
-              trigger="scroll"
-              gravity={0.6}
-              fontSize="1.25rem"
-              fontWeight="600"
-              fontFamily="Heebo, sans-serif"
-            />
+            <Suspense fallback={<ComponentLoader />}>
+              <FallingText
+                text={requirementsQuestions}
+                highlightWords={["מטרה", "קהל", "תקציב", "הצלחה", "מייחד"]}
+                trigger="scroll"
+                gravity={0.6}
+                fontSize="1.25rem"
+                fontWeight="600"
+                fontFamily="Heebo, sans-serif"
+              />
+            </Suspense>
           </motion.div>
         ) : activeStep === 1 ? (
           // Step 2: TrueFocus with strategy keywords
@@ -92,16 +104,18 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10 w-80 h-64 md:w-[420px] md:h-[300px] flex items-center justify-center"
           >
-            <TrueFocus
-              sentence="דאטה | תובנות | אסטרטגיה"
-              separator="|"
-              manualMode={false}
-              blurAmount={5}
-              borderColor="#8B5CF6"
-              glowColor="rgba(139, 92, 246, 0.6)"
-              animationDuration={0.5}
-              pauseBetweenAnimations={1.5}
-            />
+            <Suspense fallback={<ComponentLoader />}>
+              <TrueFocus
+                sentence="דאטה | תובנות | אסטרטגיה"
+                separator="|"
+                manualMode={false}
+                blurAmount={5}
+                borderColor="#8B5CF6"
+                glowColor="rgba(139, 92, 246, 0.6)"
+                animationDuration={0.5}
+                pauseBetweenAnimations={1.5}
+              />
+            </Suspense>
           </motion.div>
         ) : activeStep === 2 ? (
           // Step 3: ASCII Text with "Design"
@@ -113,14 +127,16 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10 w-80 h-80 md:w-[420px] md:h-[420px]"
           >
-            <ASCIIText
-              text="Design"
-              asciiFontSize={5}
-              textFontSize={80}
-              textColor="#8B5CF6"
-              planeBaseHeight={4}
-              enableWaves={true}
-            />
+            <Suspense fallback={<ComponentLoader />}>
+              <ASCIIText
+                text="Design"
+                asciiFontSize={5}
+                textFontSize={80}
+                textColor="#8B5CF6"
+                planeBaseHeight={4}
+                enableWaves={true}
+              />
+            </Suspense>
           </motion.div>
         ) : activeStep === 3 ? (
           // Step 4: Icon Cloud with dev tools
@@ -132,7 +148,9 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10"
           >
-            <IconCloud images={devToolImages} />
+            <Suspense fallback={<ComponentLoader />}>
+              <IconCloud images={devToolImages} />
+            </Suspense>
           </motion.div>
         ) : activeStep === 4 ? (
           // Step 5: Launch - Animated notification feed
@@ -144,7 +162,9 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10 w-80 md:w-[340px]"
           >
-            <LaunchNotifications />
+            <Suspense fallback={<ComponentLoader />}>
+              <LaunchNotifications />
+            </Suspense>
           </motion.div>
         ) : (
           // Other steps: Animated icon

@@ -1,8 +1,18 @@
 /* eslint-disable react/no-unknown-property */
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useMemo, useEffect, useRef, createContext, useContext } from 'react';
 import { Canvas, useThree, CanvasProps, ThreeEvent } from '@react-three/fiber';
 import { shaderMaterial, useTrailTexture } from '@react-three/drei';
-import * as THREE from 'three';
+import {
+  Vector2,
+  Color,
+  Texture,
+  NearestFilter,
+  ClampToEdgeWrapping
+} from 'three';
+import { useVisibilityPause } from '@/hooks/useVisibilityPause';
+
+// Context to pass visibility state to Scene component
+const VisibilityContext = createContext(true);
 
 interface GooeyFilterProps {
   id?: string;
@@ -50,10 +60,10 @@ const GooeyFilter: React.FC<GooeyFilterProps> = ({ id = 'goo-filter', strength =
 
 const DotMaterial = shaderMaterial(
   {
-    resolution: new THREE.Vector2(),
+    resolution: new Vector2(),
     mouseTrail: null,
     gridSize: 100,
-    pixelColor: new THREE.Color('#ffffff')
+    pixelColor: new Color('#ffffff')
   },
   /* glsl vertex shader */ `
     varying vec2 vUv;
@@ -95,40 +105,49 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
   const size = useThree(s => s.size);
   const viewport = useThree(s => s.viewport);
   const lastMousePos = useRef<{ x: number; y: number } | null>(null);
+  const isVisible = useContext(VisibilityContext);
 
   const dotMaterial = useMemo(() => new DotMaterial(), []);
 
   // Update ALL uniforms directly - primitive props don't work for shader uniforms
-  dotMaterial.uniforms.pixelColor.value = new THREE.Color(pixelColor);
+  dotMaterial.uniforms.pixelColor.value = new Color(pixelColor);
   dotMaterial.uniforms.gridSize.value = gridSize;
   dotMaterial.uniforms.resolution.value.set(size.width * viewport.dpr, size.height * viewport.dpr);
 
+  // Performance: reduce trail texture size from 512 to 256
   const [trail, onMove] = useTrailTexture({
-    size: 512,
+    size: 256,
     radius: trailSize,
     maxAge: maxAge,
     interpolate: interpolate || 0.1,
     ease: easingFunction || ((x: number) => x)
-  }) as [THREE.Texture | null, (e: ThreeEvent<PointerEvent>) => void];
+  }) as [Texture | null, (e: ThreeEvent<PointerEvent>) => void];
 
   // Update trail texture and its settings
   if (trail) {
-    trail.minFilter = THREE.NearestFilter;
-    trail.magFilter = THREE.NearestFilter;
-    trail.wrapS = THREE.ClampToEdgeWrapping;
-    trail.wrapT = THREE.ClampToEdgeWrapping;
+    trail.minFilter = NearestFilter;
+    trail.magFilter = NearestFilter;
+    trail.wrapS = ClampToEdgeWrapping;
+    trail.wrapT = ClampToEdgeWrapping;
     dotMaterial.uniforms.mouseTrail.value = trail;
   }
 
   const scale = Math.max(viewport.width, viewport.height) / 2;
 
   // Handle external mouse position updates (for when canvas has pointer-events: none)
+  // Performance: only process when visible
   useEffect(() => {
-    if (!externalMouseRef) return;
+    if (!externalMouseRef || !isVisible) return;
 
     let animationFrameId: number;
 
     const updateFromExternalMouse = () => {
+      // Performance: skip updates when not visible
+      if (!isVisible) {
+        animationFrameId = requestAnimationFrame(updateFromExternalMouse);
+        return;
+      }
+
       if (externalMouseRef.current) {
         const { x, y } = externalMouseRef.current;
 
@@ -139,7 +158,7 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
           // Create a synthetic event-like object that useTrailTexture expects
           // The onMove function from useTrailTexture expects UV coordinates (0-1 range)
           const syntheticEvent = {
-            uv: new THREE.Vector2(x, y)
+            uv: new Vector2(x, y)
           } as ThreeEvent<PointerEvent>;
 
           onMove(syntheticEvent);
@@ -154,7 +173,7 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [externalMouseRef, onMove]);
+  }, [externalMouseRef, onMove, isVisible]);
 
   return (
     <mesh scale={[scale, scale, 1]} onPointerMove={externalMouseRef ? undefined : onMove}>
@@ -184,14 +203,46 @@ export default function PixelTrail({
   // Ref to store normalized mouse position (0-1 UV coordinates)
   const mousePositionRef = useRef<{ x: number; y: number } | null>(null);
   const pixelTrailRef = useRef<HTMLDivElement>(null);
+  // Cache container rect to avoid getBoundingClientRect on every mousemove
+  const containerRectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
+
+  // Performance: visibility-based pausing
+  const isVisible = useVisibilityPause(pixelTrailRef);
 
   // Track mouse position relative to container (or this component if no containerRef)
+  // Performance: only track when visible, cache rect to avoid layout thrashing
   useEffect(() => {
+    if (!isVisible) return;
+
     const targetElement = containerRef?.current || pixelTrailRef.current?.parentElement;
     if (!targetElement) return;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    // Update cached rect
+    const updateRect = () => {
       const rect = targetElement.getBoundingClientRect();
+      containerRectRef.current = {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height
+      };
+    };
+
+    // Initial measurement
+    updateRect();
+
+    // Set up ResizeObserver for rect updates
+    const resizeObserver = new ResizeObserver(updateRect);
+    resizeObserver.observe(targetElement);
+
+    // Update on scroll (position may change)
+    window.addEventListener('scroll', updateRect, { passive: true });
+    window.addEventListener('resize', updateRect, { passive: true });
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Use cached rect instead of calling getBoundingClientRect every time
+      const rect = containerRectRef.current;
+      if (!rect) return;
 
       // Calculate UV coordinates (0-1 range, with Y inverted for WebGL)
       const x = (e.clientX - rect.left) / rect.width;
@@ -204,12 +255,15 @@ export default function PixelTrail({
       };
     };
 
-    targetElement.addEventListener('mousemove', handleMouseMove);
+    targetElement.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('scroll', updateRect);
+      window.removeEventListener('resize', updateRect);
       targetElement.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [containerRef]);
+  }, [containerRef, isVisible]);
 
   // Determine if we should use external mouse tracking
   const useExternalTracking = containerRef !== undefined;
@@ -228,6 +282,8 @@ export default function PixelTrail({
       <Canvas
         {...canvasProps}
         gl={glProps}
+        // Performance: pause rendering when off-screen
+        frameloop={isVisible ? 'always' : 'demand'}
         style={{
           position: 'absolute',
           top: 0,
@@ -237,15 +293,17 @@ export default function PixelTrail({
           pointerEvents: useExternalTracking ? 'none' : 'auto'
         }}
       >
-        <Scene
-          gridSize={gridSize}
-          trailSize={trailSize}
-          maxAge={maxAge}
-          interpolate={interpolate}
-          easingFunction={easingFunction}
-          pixelColor={color}
-          externalMouseRef={useExternalTracking ? mousePositionRef : undefined}
-        />
+        <VisibilityContext.Provider value={isVisible}>
+          <Scene
+            gridSize={gridSize}
+            trailSize={trailSize}
+            maxAge={maxAge}
+            interpolate={interpolate}
+            easingFunction={easingFunction}
+            pixelColor={color}
+            externalMouseRef={useExternalTracking ? mousePositionRef : undefined}
+          />
+        </VisibilityContext.Provider>
       </Canvas>
     </div>
   );

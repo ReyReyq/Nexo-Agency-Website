@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { AnimatedList } from "./animated-list"
-import { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import {
   MessageCircle,
   ShoppingCart,
@@ -520,7 +520,7 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled
 }
 
-const Notification = ({ name, description, icon, color, time }: NotificationItem) => {
+const Notification = React.memo(({ name, description, icon, color, time }: NotificationItem) => {
   return (
     <figure
       className={cn(
@@ -552,7 +552,7 @@ const Notification = ({ name, description, icon, color, time }: NotificationItem
       </div>
     </figure>
   )
-}
+})
 
 interface LaunchNotificationsProps {
   className?: string
@@ -562,22 +562,33 @@ export function LaunchNotifications({ className }: LaunchNotificationsProps) {
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [key, setKey] = useState(0)
 
-  // Shuffle notifications on mount and when restarting the loop
+  // Memoize shuffled notifications - only re-shuffle when key changes
+  const shuffledNotifications = useMemo(
+    () => shuffleArray(allNotifications),
+    [key] // Re-shuffle only when key changes
+  );
+
+  // Update notifications state when shuffled array changes
   useEffect(() => {
-    setNotifications(shuffleArray(allNotifications))
-  }, [key])
+    setNotifications(shuffledNotifications);
+  }, [shuffledNotifications]);
+
+  // Memoize total duration calculation
+  const totalDuration = useMemo(
+    () => notifications.length * 1800,
+    [notifications.length]
+  );
 
   // Restart the loop after all notifications have been shown
   useEffect(() => {
     if (notifications.length === 0) return
 
-    const totalDuration = notifications.length * 1800 // 1800ms delay per notification
     const timeout = setTimeout(() => {
       setKey(prev => prev + 1) // This triggers a re-shuffle and restart
     }, totalDuration + 1000) // Add 1 second buffer
 
     return () => clearTimeout(timeout)
-  }, [notifications, key])
+  }, [notifications.length, totalDuration, key])
 
   if (notifications.length === 0) return null
 

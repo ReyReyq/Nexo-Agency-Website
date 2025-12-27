@@ -17,6 +17,7 @@ const WhyUs = () => {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
+    layoutEffect: false, // Prevent layout thrashing
   });
 
   const sceneY = useTransform(scrollYProgress, [0, 1], [100, -100]);
@@ -123,6 +124,7 @@ const WhyUs = () => {
       </div>
 
       {/* Full Width Section - Vision */}
+      {/* Background image optimized: WebP format for full-width hero */}
       <div className="relative min-h-screen">
         <motion.div
           initial={{ opacity: 0 }}
@@ -130,7 +132,7 @@ const WhyUs = () => {
           viewport={{ once: true }}
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80&fm=webp&fit=crop')`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-hero-bg/70 to-hero-bg/40" />

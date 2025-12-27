@@ -1,7 +1,7 @@
 "use client"
 
 import { ComponentPropsWithoutRef, useEffect, useRef } from "react"
-import { useInView, useMotionValue, useSpring } from "motion/react"
+import { useInView, useMotionValue, useSpring } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
@@ -39,22 +39,24 @@ export function NumberTicker({
     }
   }, [motionValue, isInView, delay, value, direction, startValue])
 
-  useEffect(
-    () =>
-      springValue.on("change", (latest) => {
-        if (ref.current) {
-          const formattedNumber = Intl.NumberFormat("en-US", {
-            minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces,
-          }).format(Number(latest.toFixed(decimalPlaces)))
+  useEffect(() => {
+    const unsubscribe = springValue.on("change", (latest) => {
+      if (ref.current) {
+        const formattedNumber = Intl.NumberFormat("en-US", {
+          minimumFractionDigits: decimalPlaces,
+          maximumFractionDigits: decimalPlaces,
+        }).format(Number(latest.toFixed(decimalPlaces)))
 
-          // Pad with zero if needed (e.g., 1 becomes 01)
-          const paddedNumber = formattedNumber.padStart(2, "0")
-          ref.current.textContent = paddedNumber
-        }
-      }),
-    [springValue, decimalPlaces]
-  )
+        // Pad with zero if needed (e.g., 1 becomes 01)
+        const paddedNumber = formattedNumber.padStart(2, "0")
+        ref.current.textContent = paddedNumber
+      }
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [springValue, decimalPlaces])
 
   return (
     <span

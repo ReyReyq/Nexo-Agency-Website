@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, ReactNode, HTMLAttributes } from 'react';
+import React, { useState, useEffect, useRef, useCallback, ReactNode, HTMLAttributes } from 'react';
+import { useThrottleCallback } from '../hooks/useThrottleCallback';
 
 interface MagnetProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -25,6 +26,40 @@ const Magnet: React.FC<MagnetProps> = ({
   const [isActive, setIsActive] = useState<boolean>(false);
   const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const magnetRef = useRef<HTMLDivElement>(null);
+  // Cache bounds to avoid calling getBoundingClientRect on every mousemove
+  const boundsRef = useRef<DOMRect | null>(null);
+
+  // Update cached bounds on resize
+  const updateBounds = useCallback(() => {
+    if (magnetRef.current) {
+      boundsRef.current = magnetRef.current.getBoundingClientRect();
+    }
+  }, []);
+
+  // Handle mouse movement with cached bounds
+  const handleMouseMoveCallback = useCallback((e: MouseEvent) => {
+    if (!magnetRef.current || !boundsRef.current) return;
+
+    const { left, top, width, height } = boundsRef.current;
+    const centerX = left + width / 2;
+    const centerY = top + height / 2;
+
+    const distX = Math.abs(centerX - e.clientX);
+    const distY = Math.abs(centerY - e.clientY);
+
+    if (distX < width / 2 + padding && distY < height / 2 + padding) {
+      setIsActive(true);
+      const offsetX = (e.clientX - centerX) / magnetStrength;
+      const offsetY = (e.clientY - centerY) / magnetStrength;
+      setPosition({ x: offsetX, y: offsetY });
+    } else {
+      setIsActive(false);
+      setPosition({ x: 0, y: 0 });
+    }
+  }, [padding, magnetStrength]);
+
+  // Throttle mousemove to ~60fps
+  const throttledMouseMove = useThrottleCallback(handleMouseMoveCallback, 16);
 
   useEffect(() => {
     if (disabled) {
@@ -32,32 +67,20 @@ const Magnet: React.FC<MagnetProps> = ({
       return;
     }
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!magnetRef.current) return;
+    // Initial bounds calculation
+    updateBounds();
 
-      const { left, top, width, height } = magnetRef.current.getBoundingClientRect();
-      const centerX = left + width / 2;
-      const centerY = top + height / 2;
+    // Update bounds on resize and scroll (scroll can change element position)
+    window.addEventListener('resize', updateBounds, { passive: true });
+    window.addEventListener('scroll', updateBounds, { passive: true });
+    window.addEventListener('mousemove', throttledMouseMove, { passive: true });
 
-      const distX = Math.abs(centerX - e.clientX);
-      const distY = Math.abs(centerY - e.clientY);
-
-      if (distX < width / 2 + padding && distY < height / 2 + padding) {
-        setIsActive(true);
-        const offsetX = (e.clientX - centerX) / magnetStrength;
-        const offsetY = (e.clientY - centerY) / magnetStrength;
-        setPosition({ x: offsetX, y: offsetY });
-      } else {
-        setIsActive(false);
-        setPosition({ x: 0, y: 0 });
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', updateBounds);
+      window.removeEventListener('scroll', updateBounds);
+      window.removeEventListener('mousemove', throttledMouseMove);
     };
-  }, [padding, disabled, magnetStrength]);
+  }, [disabled, updateBounds, throttledMouseMove]);
 
   const transitionStyle = isActive ? activeTransition : inactiveTransition;
 

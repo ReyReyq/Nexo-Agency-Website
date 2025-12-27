@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
+/* Fonts are loaded in index.html for better performance - do not add @import here */
 
 @tailwind base;
 @tailwind components;
@@ -92,13 +92,12 @@
     --sidebar-border: 0 0% 20%;
     --sidebar-ring: 328 100% 54%;
   }
+
   .theme {
     --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
     --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -122,20 +121,23 @@
     @apply bg-glass/80 backdrop-blur-xl border border-border/50;
   }
 
-  .glass-dark {
-    @apply bg-hero-bg/80 backdrop-blur-xl border border-hero-fg/10;
-  }
-
   .text-gradient {
     @apply bg-gradient-to-l from-primary to-accent bg-clip-text text-transparent;
   }
 
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-xl;
+    /* Performance: Use specific properties instead of transition-all */
+    @apply duration-300 hover:-translate-y-2 hover:shadow-xl;
+    transition-property: transform, box-shadow;
+    will-change: transform;
   }
 
   .link-underline {
-    @apply relative after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
+    /* Performance: Use specific properties instead of transition-all */
+    @apply relative after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-primary after:duration-300 hover:after:w-full;
+    &::after {
+      transition-property: width;
+    }
   }
 }
 
@@ -181,6 +183,9 @@
     background-clip: text;
     color: transparent;
     animation: gradient-shift 4s ease infinite;
+    /* Performance: GPU acceleration for background animation */
+    will-change: background-position;
+    transform: translateZ(0);
   }
 
   @keyframes gradient-shift {
@@ -210,6 +215,9 @@
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    /* Performance: Force GPU compositing layer for backdrop-filter */
+    transform: translateZ(0);
+    isolation: isolate;
   }
 
   .glass-dark {
@@ -220,6 +228,9 @@
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    /* Performance: Force GPU compositing layer for backdrop-filter */
+    transform: translateZ(0);
+    isolation: isolate;
   }
 
   /* Glow Effects */
@@ -274,6 +285,9 @@
       0 0 20px hsl(var(--primary) / 0.3),
       0 0 30px hsl(var(--primary) / 0.2);
     animation: pulse-glow 2s ease-in-out infinite;
+    /* Performance: GPU acceleration for animated box-shadow */
+    will-change: box-shadow;
+    transform: translateZ(0);
   }
 
   @keyframes pulse-glow {
@@ -289,15 +303,6 @@
         0 0 30px hsl(var(--primary) / 0.4),
         0 0 45px hsl(var(--primary) / 0.3);
     }
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }
 
@@ -320,5 +325,53 @@
   100% {
     transform: translateZ(0) rotate(360deg);
     }
+  }
+}
+
+/* Accessibility: Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable specific animated elements */
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce,
+  .animate-float,
+  .animate-marquee,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+
+  /* Keep opacity changes for visibility but remove motion */
+  .transition-all,
+  .transition-transform,
+  .transition-opacity {
+    transition-property: opacity !important;
+    transition-duration: 0.2s !important;
+  }
+}
+
+/* Reduce effects on mobile for performance */
+@media (max-width: 768px) {
+  .glass,
+  .glass-dark,
+  .glass-premium {
+    backdrop-filter: blur(4px);
+  }
+
+  .glow-primary,
+  .glow-step-1,
+  .glow-step-2,
+  .glow-step-3,
+  .glow-step-4,
+  .glow-step-5 {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.2) !important;
   }
 }

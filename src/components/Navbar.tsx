@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -69,14 +69,15 @@ const Navbar = () => {
   const [isPastHero, setIsPastHero] = useState(false);
   const location = useLocation();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-      setIsPastHero(window.scrollY > window.innerHeight - 100);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  const handleScroll = useCallback(() => {
+    setIsScrolled(window.scrollY > 50);
+    setIsPastHero(window.scrollY > window.innerHeight - 100);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -174,6 +175,9 @@ const Navbar = () => {
               <img
                 src="/logo.svg"
                 alt="Nexo"
+                width={120}
+                height={40}
+                decoding="async"
                 className={`h-8 md:h-10 w-auto transition-all duration-300 ${
                   isPastHero ? "" : "brightness-0 invert"
                 }`}

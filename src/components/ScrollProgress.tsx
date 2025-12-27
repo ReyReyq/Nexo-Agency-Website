@@ -1,7 +1,9 @@
 import { motion, useScroll, useSpring } from "framer-motion";
 
 const ScrollProgress = () => {
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress } = useScroll({
+    layoutEffect: false, // Prevent layout thrashing
+  });
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,

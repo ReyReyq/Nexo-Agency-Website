@@ -1,8 +1,16 @@
-import { createContext, useContext, useEffect, useRef, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, ReactNode, useCallback } from 'react';
 import Lenis from 'lenis';
 
 // Lenis context
 const LenisContext = createContext<Lenis | null>(null);
+
+// Global event for preloader completion
+export const PRELOADER_COMPLETE_EVENT = 'nexo:preloader-complete';
+
+// Helper to dispatch preloader complete event
+export const dispatchPreloaderComplete = () => {
+  window.dispatchEvent(new CustomEvent(PRELOADER_COMPLETE_EVENT));
+};
 
 // Hook to access Lenis instance
 export const useLenis = () => {
@@ -55,6 +63,50 @@ interface LenisProviderProps {
 
 export const LenisProvider = ({ children, options = {} }: LenisProviderProps) => {
   const lenisRef = useRef<Lenis | null>(null);
+  const rafIdRef = useRef<number | null>(null);
+  const isRunningRef = useRef<boolean>(false);
+  const [isPreloaderComplete, setIsPreloaderComplete] = useState(() => {
+    // Check if preloader has already completed (session storage check)
+    if (typeof window !== 'undefined') {
+      const hasSeenPreloader = sessionStorage.getItem("nexo-preloader-shown");
+      return !!hasSeenPreloader;
+    }
+    return false;
+  });
+  const [isTabVisible, setIsTabVisible] = useState(() => {
+    if (typeof document !== 'undefined') {
+      return document.visibilityState === 'visible';
+    }
+    return true;
+  });
+
+  // Start RAF loop
+  const startRafLoop = useCallback(() => {
+    if (isRunningRef.current || !lenisRef.current) return;
+
+    isRunningRef.current = true;
+
+    function raf(time: number) {
+      if (!isRunningRef.current || !lenisRef.current) return;
+
+      lenisRef.current.raf(time);
+      rafIdRef.current = requestAnimationFrame(raf);
+    }
+
+    rafIdRef.current = requestAnimationFrame(raf);
+  }, []);
+
+  // Stop RAF loop
+  const stopRafLoop = useCallback(() => {
+    if (!isRunningRef.current) return;
+
+    isRunningRef.current = false;
+
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     // Check for reduced motion preference
@@ -79,20 +131,39 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
 
     lenisRef.current = lenis;
 
-    // Animation frame loop
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
+    // Handle visibility change - pause RAF when tab is hidden
+    const handleVisibilityChange = () => {
+      setIsTabVisible(document.visibilityState === 'visible');
+    };
 
-    requestAnimationFrame(raf);
+    // Handle preloader completion event
+    const handlePreloaderComplete = () => {
+      setIsPreloaderComplete(true);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener(PRELOADER_COMPLETE_EVENT, handlePreloaderComplete);
 
     // Cleanup
     return () => {
+      stopRafLoop();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener(PRELOADER_COMPLETE_EVENT, handlePreloaderComplete);
       lenis.destroy();
       lenisRef.current = null;
     };
-  }, [options]);
+  }, [options, stopRafLoop]);
+
+  // Control RAF loop based on visibility and preloader state
+  useEffect(() => {
+    const shouldRun = isTabVisible && isPreloaderComplete && lenisRef.current !== null;
+
+    if (shouldRun) {
+      startRafLoop();
+    } else {
+      stopRafLoop();
+    }
+  }, [isTabVisible, isPreloaderComplete, startRafLoop, stopRafLoop]);
 
   return (
     <LenisContext.Provider value={lenisRef.current}>

@@ -1,8 +1,10 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, lazy, Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import RippleButton from "./RippleButton";
-import PixelTrail from "./ui/PixelTrail";
+
+// Lazy load PixelTrail - heavy Three.js/WebGL component
+const PixelTrail = lazy(() => import("./ui/PixelTrail"));
 
 const AboutDarkSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -11,6 +13,7 @@ const AboutDarkSection = () => {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
+    layoutEffect: false, // Prevent layout thrashing
   });
 
   // Background image zooms as user scrolls
@@ -22,28 +25,37 @@ const AboutDarkSection = () => {
       className="relative min-h-[80vh] md:min-h-screen w-full overflow-hidden bg-hero-bg"
     >
       {/* Background Image with parallax zoom - z-0 */}
+      {/* Optimized with WebP format for full-width hero background */}
       <motion.div
         style={{ scale: imageScale }}
         className="absolute inset-0 bg-cover bg-center z-0"
       >
+        {/* TODO: Consider converting external Unsplash URL to local optimized image */}
         <img
-          src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80"
+          src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80&fm=webp&fit=crop"
           alt="Team collaboration"
+          loading="lazy"
+          decoding="async"
+          width={1920}
+          height={1280}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-hero-bg/70 to-hero-bg/40" />
       </motion.div>
 
       {/* PixelTrail Layer - z-10, receives all mouse events */}
+      {/* Lazy loaded to reduce initial bundle size - Three.js is heavy */}
       <div className="absolute inset-0 z-10">
-        <PixelTrail
-          gridSize={50}
-          trailSize={0.12}
-          maxAge={400}
-          interpolate={8}
-          color="#FF1493"
-          gooeyFilter={{ id: "about-dark-goo-filter", strength: 3 }}
-        />
+        <Suspense fallback={null}>
+          <PixelTrail
+            gridSize={50}
+            trailSize={0.12}
+            maxAge={400}
+            interpolate={8}
+            color="#FF1493"
+            gooeyFilter={{ id: "about-dark-goo-filter", strength: 3 }}
+          />
+        </Suspense>
       </div>
 
       {/* Content - z-20, pointer-events-none except for interactive elements */}

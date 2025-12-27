@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { renderToString } from "react-dom/server"
+import { useVisibilityPause } from "@/hooks/useVisibilityPause"
 
 interface Icon {
   x: number
@@ -21,6 +22,7 @@ function easeOutCubic(t: number): number {
 
 export function IconCloud({ icons, images }: IconCloudProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [iconPositions, setIconPositions] = useState<Icon[]>([])
   const [rotation, setRotation] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
@@ -39,6 +41,38 @@ export function IconCloud({ icons, images }: IconCloudProps) {
   const rotationRef = useRef(rotation)
   const iconCanvasesRef = useRef<HTMLCanvasElement[]>([])
   const imagesLoadedRef = useRef<boolean[]>([])
+  const isMountedRef = useRef<boolean>(true)
+  // Cache canvas rect to avoid getBoundingClientRect calls on every event
+  const canvasRectRef = useRef<DOMRect | null>(null)
+  // Performance: visibility-based pausing
+  const isVisible = useVisibilityPause(containerRef)
+
+  // Track mounted state for cleanup
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
+  // Update cached canvas rect on mount and resize
+  useEffect(() => {
+    const updateRect = () => {
+      if (canvasRef.current) {
+        canvasRectRef.current = canvasRef.current.getBoundingClientRect()
+      }
+    }
+
+    updateRect()
+
+    window.addEventListener('resize', updateRect, { passive: true })
+    window.addEventListener('scroll', updateRect, { passive: true })
+
+    return () => {
+      window.removeEventListener('resize', updateRect)
+      window.removeEventListener('scroll', updateRect)
+    }
+  }, [])
 
   // Create icon canvases once when icons/images change
   useEffect(() => {
@@ -60,6 +94,9 @@ export function IconCloud({ icons, images }: IconCloudProps) {
           img.crossOrigin = "anonymous"
           img.src = items[index] as string
           img.onload = () => {
+            // Check if component is still mounted before updating
+            if (!isMountedRef.current) return
+
             offCtx.clearRect(0, 0, offscreen.width, offscreen.height)
 
             // Create circular clipping path
@@ -80,6 +117,9 @@ export function IconCloud({ icons, images }: IconCloudProps) {
           const img = new Image()
           img.src = "data:image/svg+xml;base64," + btoa(svgString)
           img.onload = () => {
+            // Check if component is still mounted before updating
+            if (!isMountedRef.current) return
+
             offCtx.clearRect(0, 0, offscreen.width, offscreen.height)
             offCtx.drawImage(img, 0, 0)
             imagesLoadedRef.current[index] = true
@@ -122,9 +162,9 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     setIconPositions(newIcons)
   }, [icons, images])
 
-  // Handle mouse events
+  // Handle mouse events - use cached rect to avoid layout thrashing
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect()
+    const rect = canvasRectRef.current
     if (!rect || !canvasRef.current) return
 
     const x = e.clientX - rect.left
@@ -184,7 +224,8 @@ export function IconCloud({ icons, images }: IconCloudProps) {
   }
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const rect = canvasRef.current?.getBoundingClientRect()
+    // Use cached rect to avoid layout thrashing
+    const rect = canvasRectRef.current
     if (rect) {
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
@@ -208,13 +249,22 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     setIsDragging(false)
   }
 
-  // Animation and rendering
+  // Animation and rendering - with visibility-based pausing
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext("2d")
     if (!canvas || !ctx) return
 
     const animate = () => {
+      // Performance: skip animation when off-screen
+      if (!isVisible) {
+        // Still schedule next frame to check visibility
+        if (isMountedRef.current) {
+          animationFrameRef.current = requestAnimationFrame(animate)
+        }
+        return
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       const centerX = canvas.width / 2
@@ -290,30 +340,39 @@ export function IconCloud({ icons, images }: IconCloudProps) {
 
         ctx.restore()
       })
-      animationFrameRef.current = requestAnimationFrame(animate)
-    }
 
-    animate()
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
+      // Only schedule next frame if component is still mounted
+      if (isMountedRef.current) {
+        animationFrameRef.current = requestAnimationFrame(animate)
       }
     }
-  }, [icons, images, iconPositions, isDragging, mousePos, targetRotation])
+
+    // Start the animation loop
+    animationFrameRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      // Cancel any pending animation frame on cleanup
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+        animationFrameRef.current = 0
+      }
+    }
+  }, [icons, images, iconPositions, isDragging, mousePos, targetRotation, isVisible])
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={400}
-      height={400}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      className="rounded-lg"
-      aria-label="Interactive 3D Icon Cloud"
-      role="img"
-    />
+    <div ref={containerRef} className="inline-block">
+      <canvas
+        ref={canvasRef}
+        width={400}
+        height={400}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        className="rounded-lg"
+        aria-label="Interactive 3D Icon Cloud"
+        role="img"
+      />
+    </div>
   )
 }

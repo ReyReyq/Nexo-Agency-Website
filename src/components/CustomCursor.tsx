@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useThrottleCallback } from "../hooks/useThrottleCallback";
 
 const CustomCursor = () => {
   const [isPointer, setIsPointer] = useState(false);
@@ -12,34 +13,110 @@ const CustomCursor = () => {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
+  // Cache hero section reference and bounds
+  const heroSectionRef = useRef<Element | null>(null);
+  const heroBoundsRef = useRef<DOMRect | null>(null);
+
   const springConfig = { damping: 25, stiffness: 400 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
-  // Check if preloader is still in DOM
+  // Update cached hero bounds
+  const updateHeroBounds = useCallback(() => {
+    if (!heroSectionRef.current) {
+      heroSectionRef.current = document.querySelector('section#home');
+    }
+    if (heroSectionRef.current) {
+      heroBoundsRef.current = heroSectionRef.current.getBoundingClientRect();
+    }
+  }, []);
+
+  // Check if preloader is still in DOM - optimized observer
   useEffect(() => {
-    const checkPreloader = () => {
-      const preloader = document.querySelector('[data-preloader]');
-      setIsPreloaderActive(!!preloader);
-    };
+    const preloader = document.querySelector('[data-preloader]');
+    if (!preloader) {
+      setIsPreloaderActive(false);
+      return;
+    }
 
-    // Check immediately and set up observer
-    checkPreloader();
+    setIsPreloaderActive(true);
 
-    const observer = new MutationObserver(checkPreloader);
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Only observe direct children of body for preloader removal (not subtree)
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const removed of mutation.removedNodes) {
+          if (removed instanceof Element && removed.hasAttribute('data-preloader')) {
+            setIsPreloaderActive(false);
+            observer.disconnect();
+            return;
+          }
+        }
+      }
+    });
+
+    // Observe only direct children of body, not entire subtree
+    observer.observe(document.body, { childList: true, subtree: false });
 
     return () => observer.disconnect();
   }, []);
 
-  // Check if cursor is within the hero section
-  const checkIfInHero = (clientY: number): boolean => {
-    const heroSection = document.querySelector('section#home');
-    if (!heroSection) return false;
-
-    const rect = heroSection.getBoundingClientRect();
+  // Check if cursor is within the hero section using cached bounds
+  const checkIfInHero = useCallback((clientY: number): boolean => {
+    if (!heroBoundsRef.current) return false;
+    const rect = heroBoundsRef.current;
     return clientY >= rect.top && clientY <= rect.bottom;
-  };
+  }, []);
+
+  // Throttled mouse move handler
+  const moveCursorCallback = useCallback((e: MouseEvent) => {
+    cursorX.set(e.clientX);
+    cursorY.set(e.clientY);
+    setIsInHero(checkIfInHero(e.clientY));
+  }, [cursorX, cursorY, checkIfInHero]);
+
+  const throttledMoveCursor = useThrottleCallback(moveCursorCallback, 16);
+
+  // Combined mouseover handler - checks both position and element type
+  const handleMouseOver = useCallback((e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    const inHero = checkIfInHero(e.clientY);
+
+    // Check if hovering over clickable element
+    const isClickable =
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'A' ||
+      !!target.closest('button') ||
+      !!target.closest('a') ||
+      target.classList.contains('cursor-pointer') ||
+      target.dataset.clickable === 'true' ||
+      !!target.closest('[data-clickable="true"]');
+
+    // Check if hovering over image or button specifically
+    const isImageOrButton =
+      target.tagName === 'BUTTON' ||
+      target.tagName === 'IMG' ||
+      !!target.closest('button') ||
+      !!target.closest('img');
+
+    if (inHero) {
+      // In hero: show pointer effect on clickables
+      setIsPointer(isClickable);
+      setIsHoveringInteractive(true); // Always show in hero
+    } else {
+      // Outside hero: only show on images and buttons
+      setIsPointer(isImageOrButton);
+      setIsHoveringInteractive(isImageOrButton);
+    }
+  }, [checkIfInHero]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHidden(true);
+    setIsHoveringInteractive(false);
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHidden(false);
+  }, []);
 
   useEffect(() => {
     // Check if mobile
@@ -47,67 +124,37 @@ const CustomCursor = () => {
       setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
     };
     checkMobile();
-    window.addEventListener('resize', checkMobile);
 
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      setIsInHero(checkIfInHero(e.clientY));
+    // Initial hero bounds calculation
+    updateHeroBounds();
+
+    // Throttled resize handler for both mobile check and hero bounds update
+    let resizeTimeout: NodeJS.Timeout | null = null;
+    const handleResize = () => {
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        checkMobile();
+        updateHeroBounds();
+      }, 100);
     };
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const inHero = checkIfInHero(e.clientY);
-
-      // Check if hovering over clickable element
-      const isClickable =
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'A' ||
-        !!target.closest('button') ||
-        !!target.closest('a') ||
-        target.classList.contains('cursor-pointer') ||
-        window.getComputedStyle(target).cursor === 'pointer';
-
-      // Check if hovering over image or button specifically
-      const isImageOrButton =
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'IMG' ||
-        !!target.closest('button') ||
-        !!target.closest('img');
-
-      if (inHero) {
-        // In hero: show pointer effect on clickables
-        setIsPointer(isClickable);
-        setIsHoveringInteractive(true); // Always show in hero
-      } else {
-        // Outside hero: only show on images and buttons
-        setIsPointer(isImageOrButton);
-        setIsHoveringInteractive(isImageOrButton);
-      }
-    };
-
-    const handleMouseLeave = () => {
-      setIsHidden(true);
-      setIsHoveringInteractive(false);
-    };
-
-    const handleMouseEnter = () => {
-      setIsHidden(false);
-    };
-
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mouseover', handleMouseOver);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('scroll', updateHeroBounds, { passive: true });
+    window.addEventListener('mousemove', throttledMoveCursor, { passive: true });
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
+    document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+    document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
 
     return () => {
-      window.removeEventListener('mousemove', moveCursor);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', updateHeroBounds);
+      window.removeEventListener('mousemove', throttledMoveCursor);
       window.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
-      window.removeEventListener('resize', checkMobile);
     };
-  }, [cursorX, cursorY]);
+  }, [throttledMoveCursor, handleMouseOver, handleMouseLeave, handleMouseEnter, updateHeroBounds]);
 
   if (isMobile) return null;
 

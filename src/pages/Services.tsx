@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import ScrollProgress from "@/components/ScrollProgress";
 import Contact from "@/components/Contact";
 
+// Service cards with optimized images: 800px for card display, WebP format
 const services = [
   {
     id: "digital",
@@ -24,7 +25,7 @@ const services = [
     gradient: "from-violet-600 via-purple-600 to-indigo-600",
     bgColor: "rgba(139, 92, 246, 0.15)",
     accentColor: "#8b5cf6",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fm=webp&fit=crop",
   },
   {
     id: "branding",
@@ -43,7 +44,7 @@ const services = [
     gradient: "from-pink-500 via-rose-500 to-red-500",
     bgColor: "rgba(236, 72, 153, 0.15)",
     accentColor: "#ec4899",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80&fm=webp&fit=crop",
   },
   {
     id: "ai",
@@ -62,7 +63,7 @@ const services = [
     gradient: "from-cyan-500 via-blue-500 to-indigo-500",
     bgColor: "rgba(6, 182, 212, 0.15)",
     accentColor: "#06b6d4",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
   },
   {
     id: "marketing",
@@ -81,7 +82,7 @@ const services = [
     gradient: "from-orange-500 via-amber-500 to-yellow-500",
     bgColor: "rgba(249, 115, 22, 0.15)",
     accentColor: "#f97316",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80&fm=webp&fit=crop",
   },
   {
     id: "strategy",
@@ -100,7 +101,7 @@ const services = [
     gradient: "from-emerald-500 via-green-500 to-teal-500",
     bgColor: "rgba(16, 185, 129, 0.15)",
     accentColor: "#10b981",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&fm=webp&fit=crop",
   },
   {
     id: "development",
@@ -119,7 +120,7 @@ const services = [
     gradient: "from-slate-600 via-zinc-600 to-gray-600",
     bgColor: "rgba(113, 113, 122, 0.15)",
     accentColor: "#71717a",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80&fm=webp&fit=crop",
   },
 ];
 
@@ -187,6 +188,10 @@ const ServiceCard = ({ service, index }: { service: typeof services[0]; index: n
           <motion.img
             src={service.image}
             alt={service.title}
+            loading="lazy"
+            decoding="async"
+            width={800}
+            height={500}
             className="w-full h-full object-cover"
             animate={{ scale: isHovered ? 1.08 : 1 }}
             transition={{ duration: 0.6 }}

@@ -3,8 +3,12 @@
 import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { Float, Sphere, Environment, shaderMaterial, MeshWobbleMaterial } from '@react-three/drei';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { useEffect, useRef, createContext, useContext } from 'react';
+import { Color, Group } from 'three';
+import { useVisibilityPause } from '@/hooks/useVisibilityPause';
+
+// Context to pass visibility state to 3D components
+const VisibilityContext = createContext(true);
 
 // Simplex 3D Noise GLSL - for organic but controlled deformation
 const simplex3d = `
@@ -61,8 +65,8 @@ float snoise(vec3 v) {
 const FirmBlobMaterial = shaderMaterial(
   {
     uTime: 0,
-    uColor1: new THREE.Color('#FFB6C1'),
-    uColor2: new THREE.Color('#FFC4D6'),
+    uColor1: new Color('#FFB6C1'),
+    uColor2: new Color('#FFC4D6'),
     uDistortAmount: 0.08,  // VERY LOW for firm feel
     uNoiseFreq: 1.8,       // HIGH for tight, controlled patterns
   },
@@ -146,8 +150,11 @@ function FirmBlob({
   floatSpeed = 1.2,
 }: any) {
   const materialRef = useRef<any>(null);
+  const isVisible = useContext(VisibilityContext);
 
   useFrame(({ clock }) => {
+    // Performance: skip updates when off-screen
+    if (!isVisible) return;
     if (materialRef.current) {
       materialRef.current.uTime = clock.getElapsedTime() * speed;
     }
@@ -161,11 +168,12 @@ function FirmBlob({
       floatingRange={[-0.05, 0.05]}
     >
       <mesh position={position} scale={scale}>
-        <icosahedronGeometry args={[1, 128]} />
+        {/* Performance: reduced geometry complexity from 128 to 32 */}
+        <icosahedronGeometry args={[1, 32]} />
         <firmBlobMaterial
           ref={materialRef}
-          uColor1={new THREE.Color(color1)}
-          uColor2={new THREE.Color(color2)}
+          uColor1={new Color(color1)}
+          uColor2={new Color(color2)}
           uDistortAmount={distortAmount}
           uNoiseFreq={noiseFreq}
         />
@@ -174,7 +182,7 @@ function FirmBlob({
   );
 }
 
-// Wobbly blob using drei's MeshWobbleMaterial - HIGH RESOLUTION
+// Wobbly blob using drei's MeshWobbleMaterial
 function WobblyBlob({
   position,
   scale,
@@ -191,7 +199,8 @@ function WobblyBlob({
       floatingRange={[-0.06, 0.06]}
     >
       <mesh position={position} scale={scale}>
-        <sphereGeometry args={[1, 128, 128]} />
+        {/* Performance: reduced geometry complexity from 128,128 to 32,32 */}
+        <sphereGeometry args={[1, 32, 32]} />
         <MeshWobbleMaterial
           color={color}
           factor={factor}
@@ -204,7 +213,7 @@ function WobblyBlob({
   );
 }
 
-// High-res solid sphere with premium finish
+// Solid sphere with premium finish
 function SolidSphere({
   position,
   scale,
@@ -219,7 +228,8 @@ function SolidSphere({
       floatIntensity={0.12}
       floatingRange={[-0.04, 0.04]}
     >
-      <Sphere args={[1, 128, 128]} position={position} scale={scale}>
+      {/* Performance: reduced geometry complexity from 128,128 to 32,32 */}
+      <Sphere args={[1, 32, 32]} position={position} scale={scale}>
         <meshStandardMaterial
           color={color}
           roughness={0.35}
@@ -234,7 +244,7 @@ function SolidSphere({
 
 // 3D Scene - Smaller shapes arranged in a CIRCLE around the hero
 function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
 
   useEffect(() => {
     const unsubscribeX = mouseX.on('change', (latest: number) => {
@@ -437,6 +447,9 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
 }
 
 export default function HeroFloating() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisible = useVisibilityPause(containerRef);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -454,6 +467,7 @@ export default function HeroFloating() {
 
   return (
     <div
+      ref={containerRef}
       className="relative h-screen w-full bg-[#FAFAFA] overflow-hidden"
       onMouseMove={handleMouseMove}
     >
@@ -554,8 +568,12 @@ export default function HeroFloating() {
           dpr={[1.5, 2.5]}
           gl={{ antialias: true, alpha: true }}
           style={{ background: 'transparent' }}
+          // Performance: pause rendering when off-screen
+          frameloop={isVisible ? "always" : "demand"}
         >
-          <FloatingShapes mouseX={mouseXSpring} mouseY={mouseYSpring} />
+          <VisibilityContext.Provider value={isVisible}>
+            <FloatingShapes mouseX={mouseXSpring} mouseY={mouseYSpring} />
+          </VisibilityContext.Provider>
         </Canvas>
       </div>
 

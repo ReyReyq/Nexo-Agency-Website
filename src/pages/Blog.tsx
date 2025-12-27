@@ -7,12 +7,14 @@ import CustomCursor from "@/components/CustomCursor";
 import ScrollProgress from "@/components/ScrollProgress";
 import Contact from "@/components/Contact";
 
+// Article images: 600px for cards, 800px for featured, WebP format
+// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
 const articles = [
   {
     id: "ai-business-2024",
     title: "איך AI משנה את פני העסקים ב-2024",
     excerpt: "בינה מלאכותית כבר לא עניין של עתיד רחוק. היא כאן, עכשיו, ומשנה את הכללים. מדריך מקיף לעסקים שרוצים להישאר רלוונטיים.",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
     category: "AI & טכנולוגיה",
     readTime: "8 דקות קריאה",
     date: "15 ינואר 2024",
@@ -22,7 +24,7 @@ const articles = [
     id: "branding-mistakes",
     title: "5 טעויות מיתוג שהורסות לעסקים",
     excerpt: "אחרי מאות פרויקטי מיתוג, זיהינו את הטעויות הנפוצות ביותר שעסקים עושים. הנה איך להימנע מהן.",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&q=80&fm=webp&fit=crop",
     category: "מיתוג",
     readTime: "5 דקות קריאה",
     date: "10 ינואר 2024",
@@ -32,7 +34,7 @@ const articles = [
     id: "website-conversion",
     title: "האתר שלך לא ממיר? הנה למה",
     excerpt: "המרות זה לא קסם - זו מדע. ניתוח מעמיק של הגורמים שמונעים מהאתר שלך להמיר מבקרים ללקוחות.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fm=webp&fit=crop",
     category: "המרות",
     readTime: "6 דקות קריאה",
     date: "5 ינואר 2024",
@@ -42,7 +44,7 @@ const articles = [
     id: "digital-trends-2024",
     title: "טרנדים דיגיטליים שאסור לפספס ב-2024",
     excerpt: "מה יהיה חם בשנה הקרובה? סקירה מקיפה של הטרנדים שישנו את התעשייה.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80&fm=webp&fit=crop",
     category: "טרנדים",
     readTime: "7 דקות קריאה",
     date: "1 ינואר 2024",
@@ -52,7 +54,7 @@ const articles = [
     id: "ux-psychology",
     title: "הפסיכולוגיה מאחורי UX מנצח",
     excerpt: "איך להשתמש בעקרונות פסיכולוגיים כדי ליצור חוויות משתמש שמניעות לפעולה.",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80&fm=webp&fit=crop",
     category: "UX/UI",
     readTime: "9 דקות קריאה",
     date: "25 דצמבר 2023",
@@ -62,7 +64,7 @@ const articles = [
     id: "ecommerce-growth",
     title: "הנוסחה להגדלת מכירות באיקומרס",
     excerpt: "מה עושה חנות אונליין מצליחה? טיפים מעשיים שהוכחו בשטח.",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80&fm=webp&fit=crop",
     category: "E-commerce",
     readTime: "6 דקות קריאה",
     date: "20 דצמבר 2023",
@@ -130,6 +132,10 @@ const Blog = () => {
                     <img
                       src={featuredArticle.image}
                       alt={featuredArticle.title}
+                      loading="lazy"
+                      decoding="async"
+                      width={800}
+                      height={500}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
@@ -199,6 +205,10 @@ const Blog = () => {
                     <img
                       src={article.image}
                       alt={article.title}
+                      loading="lazy"
+                      decoding="async"
+                      width={600}
+                      height={375}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>

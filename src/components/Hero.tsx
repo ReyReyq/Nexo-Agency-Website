@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { useThrottleCallback } from "@/hooks/useThrottleCallback";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { HERO_TRANSITION_IMAGE } from "./Preloader";
@@ -7,10 +8,11 @@ import { Spotlight } from "./ui/spotlight";
 import { BackgroundBeams } from "./ui/background-beams";
 
 // First image MUST match Preloader's HERO_TRANSITION_IMAGE for seamless transition
+// Using WebP format for better compression, q=80 for good quality/size balance
 const heroImages = [
-  HERO_TRANSITION_IMAGE, // Same as preloader middle image
-  "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80",
-  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80",
+  HERO_TRANSITION_IMAGE, // Same as preloader middle image (already optimized)
+  "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80&fm=webp&fit=crop",
+  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80&fm=webp&fit=crop",
 ];
 
 // Distance threshold in pixels before changing image
@@ -71,56 +73,61 @@ const Hero = () => {
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
+    layoutEffect: false, // Prevent layout thrashing - use passive scroll measurement
   });
 
   const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, 150]);
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
+  // Mouse movement handler for image changes
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    // Check if mouse is within hero section
+    if (!sectionRef.current) return;
+
+    const rect = sectionRef.current.getBoundingClientRect();
+    const isInHero = e.clientY >= rect.top && e.clientY <= rect.bottom;
+
+    if (!isInHero) return;
+
+    const currentPos = { x: e.clientX, y: e.clientY };
+
+    // Initialize position on first move
+    if (!isInitializedRef.current) {
+      mousePositionRef.current = currentPos;
+      isInitializedRef.current = true;
+      return;
+    }
+
+    const prevPos = mousePositionRef.current;
+
+    // Calculate Euclidean distance between current and previous position
+    const distance = Math.hypot(
+      currentPos.x - prevPos.x,
+      currentPos.y - prevPos.y
+    );
+
+    // Accumulate distance
+    accumulatedDistanceRef.current += distance;
+
+    // Check if threshold reached
+    if (accumulatedDistanceRef.current >= MOUSE_DISTANCE_THRESHOLD) {
+      setCurrentImage((prev) => (prev + 1) % heroImages.length);
+      accumulatedDistanceRef.current = 0;
+    }
+
+    // Update reference position
+    mousePositionRef.current = currentPos;
+  }, []);
+
+  // Throttle the mouse move handler to ~60fps
+  const throttledMouseMove = useThrottleCallback(handleMouseMove, 16);
+
   // Mouse movement tracking for image changes
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      // Check if mouse is within hero section
-      if (!sectionRef.current) return;
-
-      const rect = sectionRef.current.getBoundingClientRect();
-      const isInHero = e.clientY >= rect.top && e.clientY <= rect.bottom;
-
-      if (!isInHero) return;
-
-      const currentPos = { x: e.clientX, y: e.clientY };
-
-      // Initialize position on first move
-      if (!isInitializedRef.current) {
-        mousePositionRef.current = currentPos;
-        isInitializedRef.current = true;
-        return;
-      }
-
-      const prevPos = mousePositionRef.current;
-
-      // Calculate Euclidean distance between current and previous position
-      const distance = Math.hypot(
-        currentPos.x - prevPos.x,
-        currentPos.y - prevPos.y
-      );
-
-      // Accumulate distance
-      accumulatedDistanceRef.current += distance;
-
-      // Check if threshold reached
-      if (accumulatedDistanceRef.current >= MOUSE_DISTANCE_THRESHOLD) {
-        setCurrentImage((prev) => (prev + 1) % heroImages.length);
-        accumulatedDistanceRef.current = 0;
-      }
-
-      // Update reference position
-      mousePositionRef.current = currentPos;
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+    window.addEventListener("mousemove", throttledMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", throttledMouseMove);
+  }, [throttledMouseMove]);
 
   const scrollToContact = () => {
     const element = document.querySelector("#contact");
@@ -169,9 +176,15 @@ const Hero = () => {
             className="absolute inset-0"
             style={{ scale: imageScale }}
           >
+            {/* Hero images: Above the fold - no lazy loading needed, but add dimensions for layout stability */}
+            {/* TODO: Consider converting external Unsplash URLs to local optimized images for better performance */}
             <img
               src={heroImages[currentImage]}
               alt="Creative work"
+              width={1920}
+              height={1080}
+              decoding="async"
+              fetchPriority="high"
               className="w-full h-full object-cover"
             />
           </motion.div>

@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import Matter from 'matter-js';
+import { useVisibilityPause } from '@/hooks/useVisibilityPause';
 
 interface FallingTextProps {
   text?: string;
@@ -29,8 +30,24 @@ const FallingText: React.FC<FallingTextProps> = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
+  const runnerRef = useRef<Matter.Runner | null>(null);
+  const engineRef = useRef<Matter.Engine | null>(null);
 
   const [effectStarted, setEffectStarted] = useState(false);
+
+  // Performance: visibility-based pausing
+  const isVisible = useVisibilityPause(containerRef);
+
+  // Performance: pause/resume physics engine based on visibility
+  useEffect(() => {
+    if (runnerRef.current && engineRef.current) {
+      if (isVisible) {
+        runnerRef.current.enabled = true;
+      } else {
+        runnerRef.current.enabled = false;
+      }
+    }
+  }, [isVisible]);
 
   // Initialize text spans using innerHTML
   // Split by '|' for phrases, or by space for words
@@ -165,23 +182,28 @@ const FallingText: React.FC<FallingTextProps> = ({
     World.add(engine.world, [floor, leftWall, rightWall, ceiling, mouseConstraint, ...wordBodies.map(wb => wb.body)]);
 
     const runner = Runner.create();
+    runnerRef.current = runner;
+    engineRef.current = engine;
     Runner.run(runner, engine);
     Render.run(render);
 
-    // Update loop - natural physics rotation
+    // Update loop - sync DOM positions with physics bodies
+    let rafId: number;
     const updateLoop = () => {
+      rafId = requestAnimationFrame(updateLoop);
+
+      // Always update DOM positions (even when physics is paused, to show final state)
       wordBodies.forEach(({ body, elem }) => {
         const { x, y } = body.position;
         elem.style.left = `${x}px`;
         elem.style.top = `${y}px`;
         elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
       });
-      Engine.update(engine);
-      requestAnimationFrame(updateLoop);
     };
-    updateLoop();
+    rafId = requestAnimationFrame(updateLoop);
 
     return () => {
+      cancelAnimationFrame(rafId);
       Render.stop(render);
       Runner.stop(runner);
       if (render.canvas && canvasContainerRef.current) {

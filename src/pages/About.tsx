@@ -15,29 +15,31 @@ const milestones = [
   { year: "2024", title: "500+ פרויקטים", desc: "ממשיכים להוביל את השוק" },
 ];
 
+// Team member images: 400px for portrait cards, WebP format
+// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
 const team = [
-  { 
-    name: "דניאל כהן", 
-    role: "מנכ״ל ומייסד", 
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+  {
+    name: "דניאל כהן",
+    role: "מנכ״ל ומייסד",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fm=webp&fit=crop",
     bio: "20+ שנות ניסיון בתעשייה"
   },
-  { 
-    name: "מיכל לוי", 
-    role: "סמנכ״לית קריאייטיב", 
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80",
+  {
+    name: "מיכל לוי",
+    role: "סמנכ״לית קריאייטיב",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&fm=webp&fit=crop",
     bio: "מובילה את החזון העיצובי"
   },
-  { 
-    name: "יונתן שפירא", 
-    role: "מנהל טכנולוגיות", 
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+  {
+    name: "יונתן שפירא",
+    role: "מנהל טכנולוגיות",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80&fm=webp&fit=crop",
     bio: "מוביל חדשנות טכנולוגית"
   },
-  { 
-    name: "נועה אברהם", 
-    role: "מנהלת אסטרטגיה", 
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80",
+  {
+    name: "נועה אברהם",
+    role: "מנהלת אסטרטגיה",
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80&fm=webp&fit=crop",
     bio: "מתרגמת חזון לתוצאות"
   },
 ];
@@ -226,6 +228,10 @@ const About = () => {
                   <img
                     src={member.image}
                     alt={member.name}
+                    loading="lazy"
+                    decoding="async"
+                    width={400}
+                    height={533}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>

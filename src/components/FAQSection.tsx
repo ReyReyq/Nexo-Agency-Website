@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import useMeasure from "react-use-measure";
@@ -133,13 +133,13 @@ const FAQSection = () => {
   );
 };
 
-// Tabs Component
+// Tabs Component - memoized to prevent re-renders
 interface TabsProps {
   selected: string;
   setSelected: (tab: string) => void;
 }
 
-const Tabs = ({ selected, setSelected }: TabsProps) => {
+const Tabs = memo(({ selected, setSelected }: TabsProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -181,14 +181,16 @@ const Tabs = ({ selected, setSelected }: TabsProps) => {
       ))}
     </motion.div>
   );
-};
+});
 
-// Questions Container Component
+Tabs.displayName = 'Tabs';
+
+// Questions Container Component - memoized
 interface QuestionsProps {
   selected: string;
 }
 
-const Questions = ({ selected }: QuestionsProps) => {
+const Questions = memo(({ selected }: QuestionsProps) => {
   return (
     <div className="mx-auto max-w-3xl">
       <AnimatePresence mode="wait">
@@ -219,18 +221,45 @@ const Questions = ({ selected }: QuestionsProps) => {
       </AnimatePresence>
     </div>
   );
+});
+
+Questions.displayName = 'Questions';
+
+// Animation variants for Question component - defined outside to prevent recreation
+const questionTitleVariants = {
+  open: {
+    color: "rgba(26, 26, 26, 0)",
+  },
+  closed: {
+    color: "rgba(26, 26, 26, 1)",
+  },
 };
 
-// Individual Question Component - BasicFAQ style from hover.dev
+const questionChevronVariants = {
+  open: {
+    rotate: "180deg",
+    color: "hsl(328 100% 54%)",
+  },
+  closed: {
+    rotate: "0deg",
+    color: "#1a1a1a",
+  },
+};
+
+// Individual Question Component - memoized with stable variants
 interface QuestionProps {
   title: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
 }
 
-const Question = ({ title, children, defaultOpen = false }: QuestionProps) => {
+const Question = memo(({ title, children, defaultOpen = false }: QuestionProps) => {
   const [ref, { height }] = useMeasure();
   const [open, setOpen] = useState(defaultOpen);
+
+  const handleToggle = useCallback(() => {
+    setOpen((prev) => !prev);
+  }, []);
 
   return (
     <motion.div
@@ -238,35 +267,17 @@ const Question = ({ title, children, defaultOpen = false }: QuestionProps) => {
       className="border-b border-[#e5e5e5]"
     >
       <button
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={handleToggle}
         className="flex w-full items-center justify-between gap-4 py-6"
         dir="rtl"
       >
         <motion.span
-          variants={{
-            open: {
-              color: "rgba(26, 26, 26, 0)",
-            },
-            closed: {
-              color: "rgba(26, 26, 26, 1)",
-            },
-          }}
+          variants={questionTitleVariants}
           className="bg-gradient-to-l from-primary to-[#8330c2] bg-clip-text text-right text-lg md:text-xl font-medium"
         >
           {title}
         </motion.span>
-        <motion.span
-          variants={{
-            open: {
-              rotate: "180deg",
-              color: "hsl(328 100% 54%)",
-            },
-            closed: {
-              rotate: "0deg",
-              color: "#1a1a1a",
-            },
-          }}
-        >
+        <motion.span variants={questionChevronVariants}>
           <ChevronDown className="text-2xl w-6 h-6" />
         </motion.span>
       </button>
@@ -284,6 +295,8 @@ const Question = ({ title, children, defaultOpen = false }: QuestionProps) => {
       </motion.div>
     </motion.div>
   );
-};
+});
+
+Question.displayName = 'Question';
 
 export default FAQSection;

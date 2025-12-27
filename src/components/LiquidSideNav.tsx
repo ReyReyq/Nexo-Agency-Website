@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useCallback, memo } from "react";
 
 interface LiquidSideNavProps {
   isOpen: boolean;
@@ -19,6 +19,11 @@ const navLinks = [
 
 const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
   const location = useLocation();
+
+  // Memoized close handler
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, [setIsOpen]);
 
   // Close menu on route change
   useEffect(() => {
@@ -63,7 +68,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
             className="absolute top-6 left-6 md:top-8 md:left-8 text-2xl md:text-3xl bg-white text-[#1a1a1a] hover:text-primary border border-transparent hover:border-primary transition-colors p-3 md:p-4 rounded-full z-10"
             whileHover={{ rotate: "90deg", scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
-            onClick={() => setIsOpen(false)}
+            onClick={handleClose}
           >
             <X className="w-5 h-5 md:w-6 md:h-6" />
           </motion.button>
@@ -75,10 +80,13 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Link to="/" onClick={() => setIsOpen(false)}>
+            <Link to="/" onClick={handleClose}>
               <img
                 src="/logo.svg"
                 alt="Nexo"
+                width={120}
+                height={40}
+                decoding="async"
                 className="h-8 md:h-10 w-auto"
               />
             </Link>
@@ -99,7 +107,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
                 text={link.label}
                 href={link.href}
                 isActive={location.pathname === link.href}
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
               />
             ))}
           </motion.div>
@@ -120,6 +128,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
   );
 };
 
+// Memoized NavLink component
 interface NavLinkProps {
   text: string;
   href: string;
@@ -127,7 +136,7 @@ interface NavLinkProps {
   onClick: () => void;
 }
 
-const NavLink = ({ text, href, isActive, onClick }: NavLinkProps) => {
+const NavLink = memo(({ text, href, isActive, onClick }: NavLinkProps) => {
   return (
     <motion.div variants={navLinkVariants}>
       <Link
@@ -155,7 +164,9 @@ const NavLink = ({ text, href, isActive, onClick }: NavLinkProps) => {
       </Link>
     </motion.div>
   );
-};
+});
+
+NavLink.displayName = 'NavLink';
 
 // Animation variants - Slowed down for smoother, more elegant opening
 const navVariants = {

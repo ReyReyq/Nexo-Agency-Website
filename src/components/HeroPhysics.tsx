@@ -1,9 +1,23 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState, useMemo, createContext, useContext } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
 import { Float, Environment, MeshTransmissionMaterial } from '@react-three/drei';
-import * as THREE from 'three';
+import {
+  Mesh,
+  Vector3,
+  OctahedronGeometry,
+  TorusGeometry,
+  ConeGeometry,
+  CylinderGeometry,
+  IcosahedronGeometry,
+  SphereGeometry,
+  BoxGeometry
+} from 'three';
 import { motion } from 'framer-motion';
+import { useVisibilityPause } from '@/hooks/useVisibilityPause';
+
+// Context to pass visibility state to 3D components
+const VisibilityContext = createContext(true);
 
 // Shape types for variety
 const SHAPE_TYPES = ['star', 'moon', 'crystal', 'ring', 'key', 'heart', 'diamond', 'sphere'] as const;
@@ -28,13 +42,16 @@ function Shape3D({ type, position, color, scale = 1 }: {
   color: string;
   scale?: number;
 }) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<Mesh>(null);
   const rigidBodyRef = useRef<any>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  // Rotate shapes gently
+  const isVisible = useContext(VisibilityContext);
+
+  // Rotate shapes gently - skip when off-screen
   useFrame((state) => {
+    if (!isVisible) return;
     if (meshRef.current && !isDragging) {
       meshRef.current.rotation.x += 0.005;
       meshRef.current.rotation.y += 0.008;
@@ -45,23 +62,23 @@ function Shape3D({ type, position, color, scale = 1 }: {
   const geometry = useMemo(() => {
     switch (type) {
       case 'star':
-        return new THREE.OctahedronGeometry(0.5 * scale, 0);
+        return new OctahedronGeometry(0.5 * scale, 0);
       case 'moon':
-        return new THREE.TorusGeometry(0.4 * scale, 0.15 * scale, 8, 24, Math.PI * 1.5);
+        return new TorusGeometry(0.4 * scale, 0.15 * scale, 8, 24, Math.PI * 1.5);
       case 'crystal':
-        return new THREE.ConeGeometry(0.3 * scale, 0.8 * scale, 6);
+        return new ConeGeometry(0.3 * scale, 0.8 * scale, 6);
       case 'ring':
-        return new THREE.TorusGeometry(0.35 * scale, 0.1 * scale, 8, 32);
+        return new TorusGeometry(0.35 * scale, 0.1 * scale, 8, 32);
       case 'key':
-        return new THREE.CylinderGeometry(0.15 * scale, 0.15 * scale, 0.6 * scale, 6);
+        return new CylinderGeometry(0.15 * scale, 0.15 * scale, 0.6 * scale, 6);
       case 'heart':
-        return new THREE.IcosahedronGeometry(0.4 * scale, 0);
+        return new IcosahedronGeometry(0.4 * scale, 0);
       case 'diamond':
-        return new THREE.OctahedronGeometry(0.45 * scale, 0);
+        return new OctahedronGeometry(0.45 * scale, 0);
       case 'sphere':
-        return new THREE.SphereGeometry(0.35 * scale, 16, 16);
+        return new SphereGeometry(0.35 * scale, 16, 16);
       default:
-        return new THREE.BoxGeometry(0.5 * scale, 0.5 * scale, 0.5 * scale);
+        return new BoxGeometry(0.5 * scale, 0.5 * scale, 0.5 * scale);
     }
   }, [type, scale]);
 
@@ -100,10 +117,13 @@ function Shape3D({ type, position, color, scale = 1 }: {
 // Mouse interaction - applies force to nearby objects
 function MouseForce() {
   const { camera, pointer, scene } = useThree();
-  const lastPos = useRef(new THREE.Vector3());
+  const lastPos = useRef(new Vector3());
+  const isVisible = useContext(VisibilityContext);
 
   useFrame(() => {
-    const vec = new THREE.Vector3(pointer.x, pointer.y, 0.5);
+    if (!isVisible) return; // Skip when off-screen
+
+    const vec = new Vector3(pointer.x, pointer.y, 0.5);
     vec.unproject(camera);
 
     // Calculate velocity from mouse movement
@@ -114,7 +134,7 @@ function MouseForce() {
     scene.traverse((obj: any) => {
       if (obj.rigidBody) {
         const pos = obj.rigidBody.translation();
-        const dist = vec.distanceTo(new THREE.Vector3(pos.x, pos.y, pos.z));
+        const dist = vec.distanceTo(new Vector3(pos.x, pos.y, pos.z));
 
         if (dist < 2) {
           const force = velocity.clone().multiplyScalar(50 / (dist + 0.5));
@@ -164,11 +184,11 @@ function Walls() {
 }
 
 // Scene with all 3D elements
-function Scene() {
-  // Generate random shapes
+function Scene({ isVisible }: { isVisible: boolean }) {
+  // Generate random shapes - reduced from 40 to 25 for better performance
   const shapes = useMemo(() => {
     const items = [];
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 25; i++) {
       items.push({
         id: i,
         type: SHAPE_TYPES[Math.floor(Math.random() * SHAPE_TYPES.length)],
@@ -185,13 +205,13 @@ function Scene() {
   }, []);
 
   return (
-    <>
+    <VisibilityContext.Provider value={isVisible}>
       <ambientLight intensity={0.4} />
       <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
       <pointLight position={[-10, 10, -10]} intensity={0.5} color="#FF69B4" />
       <pointLight position={[10, -10, 10]} intensity={0.5} color="#8A2BE2" />
 
-      <Physics gravity={[0, -3, 0]}>
+      <Physics gravity={[0, -3, 0]} paused={!isVisible}>
         <Floor />
         <Walls />
 
@@ -207,14 +227,17 @@ function Scene() {
       </Physics>
 
       <Environment preset="city" />
-    </>
+    </VisibilityContext.Provider>
   );
 }
 
 // Main Hero Component
 const HeroPhysics = () => {
+  const containerRef = useRef<HTMLElement>(null);
+  const isVisible = useVisibilityPause(containerRef);
+
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <section ref={containerRef} className="relative min-h-screen overflow-hidden">
       {/* Gradient Background */}
       <div
         className="absolute inset-0"
@@ -229,8 +252,9 @@ const HeroPhysics = () => {
           shadows
           camera={{ position: [0, 0, 12], fov: 50 }}
           style={{ background: 'transparent' }}
+          frameloop={isVisible ? 'always' : 'demand'}
         >
-          <Scene />
+          <Scene isVisible={isVisible} />
         </Canvas>
       </div>
 

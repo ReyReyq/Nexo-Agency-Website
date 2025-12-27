@@ -1,4 +1,4 @@
-import { useState, useRef, memo, useMemo } from "react";
+import { useState, useRef, memo, useMemo, useCallback } from "react";
 import { motion, useMotionValue, animate, PanInfo } from "framer-motion";
 
 interface CardData {
@@ -127,7 +127,8 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragX = useMotionValue(0);
 
-  const handleDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  // Memoized drag end handler
+  const handleDragEnd = useCallback((_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 50;
     const velocity = info.velocity.x;
     const offset = info.offset.x;
@@ -145,14 +146,21 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
 
     // Animate drag back to center
     animate(dragX, 0, { type: "spring", stiffness: 300, damping: 30 });
-  };
+  }, [activeIndex, cards.length, onCardChange, dragX]);
 
-  const handleCardClick = (index: number) => {
+  // Memoized card click handler
+  const handleCardClick = useCallback((index: number) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
       onCardChange?.(index);
     }
-  };
+  }, [activeIndex, onCardChange]);
+
+  // Create stable click handlers for each card
+  const cardClickHandlers = useMemo(() =>
+    cards.map((_, index) => () => handleCardClick(index)),
+    [cards, handleCardClick]
+  );
 
   // Memoize card styles
   const cardStyles = useMemo(() =>
@@ -183,7 +191,7 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
             activeIndex={activeIndex}
             style={cardStyles[index]}
             isActive={index === activeIndex}
-            onClick={() => handleCardClick(index)}
+            onClick={cardClickHandlers[index]}
           />
         ))}
       </motion.div>
@@ -193,7 +201,7 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
         {cards.map((_, index) => (
           <motion.button
             key={index}
-            onClick={() => handleCardClick(index)}
+            onClick={cardClickHandlers[index]}
             className={`rounded-full transition-all duration-300 ${
               index === activeIndex
                 ? "w-7 h-2 bg-gray-900"

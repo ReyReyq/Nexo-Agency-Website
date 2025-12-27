@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 
 interface GlassmorphicCardProps {
@@ -42,12 +42,19 @@ const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl border transition-all duration-300',
+        'relative overflow-hidden rounded-2xl border duration-300',
         intensityStyles[intensity],
         animated && 'hover:scale-[1.02] hover:shadow-2xl',
         className
       )}
-      style={glowStyles}
+      style={{
+        ...glowStyles,
+        // Performance: Use specific transition properties instead of transition-all
+        transitionProperty: 'transform, box-shadow, border-color',
+        // Performance: GPU acceleration for backdrop-filter
+        transform: 'translateZ(0)',
+        willChange: animated ? 'transform, box-shadow' : 'auto',
+      }}
     >
       {/* Border gradient overlay */}
       <div
@@ -64,6 +71,9 @@ const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
           className="absolute inset-0 rounded-2xl opacity-0 pointer-events-none animate-[pulse-glow_3s_ease-in-out_infinite]"
           style={{
             background: `radial-gradient(circle at 50% 50%, ${glowColor}15, transparent 70%)`,
+            // Performance: GPU acceleration for animation
+            willChange: 'opacity',
+            transform: 'translateZ(0)',
           }}
         />
       )}

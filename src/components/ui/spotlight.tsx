@@ -17,6 +17,10 @@ export function Spotlight({
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 3787 2842"
       fill="none"
+      style={{
+        willChange: "opacity, transform", // Performance: hint for animation
+        transform: "translateZ(0)", // Force GPU layer
+      }}
     >
       <g filter="url(#filter)">
         <ellipse

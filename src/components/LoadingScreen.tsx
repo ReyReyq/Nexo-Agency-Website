@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface LoadingScreenProps {
   onComplete: () => void;
@@ -8,23 +8,34 @@ interface LoadingScreenProps {
 const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
+  const timeoutIdsRef = useRef<NodeJS.Timeout[]>([]);
 
   useEffect(() => {
+    // Clear any existing timeouts from previous renders
+    timeoutIdsRef.current.forEach(clearTimeout);
+    timeoutIdsRef.current = [];
+
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(() => {
+          const exitingTimeoutId = setTimeout(() => {
             setIsExiting(true);
-            setTimeout(onComplete, 800);
+            const completeTimeoutId = setTimeout(onComplete, 800);
+            timeoutIdsRef.current.push(completeTimeoutId);
           }, 300);
+          timeoutIdsRef.current.push(exitingTimeoutId);
           return 100;
         }
         return prev + Math.random() * 15 + 5;
       });
     }, 100);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      timeoutIdsRef.current.forEach(clearTimeout);
+      timeoutIdsRef.current = [];
+    };
   }, [onComplete]);
 
   return (

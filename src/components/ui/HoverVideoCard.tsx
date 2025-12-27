@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import HoverVideoPlayer from "react-hover-video-player";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ExternalLink, Play } from "lucide-react";
 
@@ -50,9 +50,10 @@ const PRIMARY_COLOR_RGB = "255, 20, 147"; // Approximate RGB for the primary col
 
 interface LoadingSkeletonProps {
   aspectRatio: string;
+  isInView?: boolean;
 }
 
-const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ aspectRatio }) => (
+const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ aspectRatio, isInView = true }) => (
   <div
     className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 animate-pulse"
     style={{ aspectRatio }}
@@ -61,7 +62,7 @@ const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ aspectRatio }) => (
       <motion.div
         className="w-12 h-12 rounded-full border-2 border-t-transparent"
         style={{ borderColor: `${PRIMARY_COLOR} transparent transparent transparent` }}
-        animate={{ rotate: 360 }}
+        animate={isInView ? { rotate: 360 } : undefined}
         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
       />
     </div>
@@ -72,7 +73,7 @@ const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ aspectRatio }) => (
         style={{
           background: `linear-gradient(90deg, transparent, rgba(${PRIMARY_COLOR_RGB}, 0.1), transparent)`,
         }}
-        animate={{ translateX: ["100%", "-100%"] }}
+        animate={isInView ? { translateX: ["100%", "-100%"] } : undefined}
         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
       />
     </div>
@@ -91,11 +92,15 @@ const PosterOverlay: React.FC<PosterOverlayProps> = ({
   showPlayIcon,
 }) => (
   <div className="absolute inset-0">
+    {/* TODO: Consider converting external poster URLs to local optimized images */}
     <img
       src={posterSrc}
       alt={title}
       className="w-full h-full object-cover"
       loading="lazy"
+      decoding="async"
+      width={800}
+      height={450}
     />
     {showPlayIcon && (
       <div className="absolute inset-0 flex items-center justify-center">
@@ -263,6 +268,7 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { margin: "100px" });
 
   const aspectRatioMap = {
     "16/9": "16/9",
@@ -339,7 +345,7 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({
           />
         }
         loadingOverlay={
-          <LoadingSkeleton aspectRatio={aspectRatioMap[aspectRatio]} />
+          <LoadingSkeleton aspectRatio={aspectRatioMap[aspectRatio]} isInView={isInView} />
         }
         loadingStateTimeout={200}
         onLoadStart={() => setIsLoading(true)}

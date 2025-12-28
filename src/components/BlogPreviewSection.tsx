@@ -4,49 +4,18 @@ import { useRef, useMemo, memo, lazy, Suspense } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowLeft, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { blogPosts } from "@/data/blogPosts";
 
 // Lazy load GridMotion - uses GSAP which adds to bundle size
 const GridMotion = lazy(() => import("./ui/GridMotion"));
 
-// Blog data - defined outside component to prevent recreation
-// Optimized images: 400px width for small cards, WebP format
-// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
-const blogPosts = [
-  {
-    id: 1,
-    title: "10 טרנדים בעיצוב אתרים שישלטו ב-2025",
-    excerpt: "מהאנימציות המיקרו ועד הצבעים הניאון החדשים - כל מה שצריך לדעת",
-    category: "עיצוב",
-    readTime: 5,
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=80&fm=webp&fit=crop",
-    slug: "/blog/design-trends-2025",
-  },
-  {
-    id: 2,
-    title: "איך AI משנה את עולם הפיתוח",
-    excerpt: "הכלים החדשים שמאיצים את העבודה של מפתחים בכל הרמות",
-    category: "פיתוח",
-    readTime: 3,
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80&fm=webp&fit=crop",
-    slug: "/blog/ai-development",
-  },
-  {
-    id: 3,
-    title: "המדריך המלא לשיווק דיגיטלי",
-    excerpt: "אסטרטגיות שעובדות להגדלת החשיפה והמכירות שלך",
-    category: "שיווק",
-    readTime: 4,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80&fm=webp&fit=crop",
-    slug: "/blog/digital-marketing-guide",
-  },
-] as const;
-
+// Type for blog posts from centralized data
 type BlogPost = typeof blogPosts[number];
 
 // Compact Article Card - memoized to prevent re-renders
 const ArticleCard = memo(({ post }: { post: BlogPost }) => (
   <Link
-    to={post.slug}
+    to={`/blog/${post.slug}`}
     className="group block w-full aspect-[4/3] bg-white rounded-xl overflow-hidden border border-[#e5e5e5] hover:border-primary/40 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10"
   >
     {/* Flex container to fill the aspect-ratio box */}
@@ -103,7 +72,7 @@ const GridPlaceholder = memo(({ variant }: { variant: 'gradient' | 'dots' | 'emp
   switch (variant) {
     case 'gradient':
       return (
-        <div className="w-full aspect-[4/3] rounded-xl bg-gradient-to-br from-primary/10 via-[#8330c2]/5 to-transparent" />
+        <div className="w-full aspect-[4/3] rounded-xl bg-primary/[0.06]" />
       );
     case 'dots':
       return (
@@ -134,7 +103,7 @@ const BlogPreviewSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // Grid items - memoized to prevent recreation on each render
+  // Grid items - using first 3 posts from centralized data
   const gridItems = useMemo(() => [
     <GridPlaceholder key="p1" variant="gradient" />,
     <GridPlaceholder key="p2" variant="empty" />,
@@ -186,7 +155,7 @@ const BlogPreviewSection = () => {
         >
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
             חושבים{" "}
-            <span className="bg-gradient-to-l from-primary to-[#8330c2] bg-clip-text text-transparent">
+            <span className="text-primary">
               קדימה
             </span>
           </h2>

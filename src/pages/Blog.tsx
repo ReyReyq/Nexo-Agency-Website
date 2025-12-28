@@ -1,91 +1,36 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Calendar, Clock, ArrowLeft, Tag } from "lucide-react";
+import { useRef, useState, useMemo } from "react";
+import { Calendar, Clock, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar";
+import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
-import ScrollProgress from "@/components/ScrollProgress";
 import Contact from "@/components/Contact";
-
-// Article images: 600px for cards, 800px for featured, WebP format
-// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
-const articles = [
-  {
-    id: "ai-business-2024",
-    title: "איך AI משנה את פני העסקים ב-2024",
-    excerpt: "בינה מלאכותית כבר לא עניין של עתיד רחוק. היא כאן, עכשיו, ומשנה את הכללים. מדריך מקיף לעסקים שרוצים להישאר רלוונטיים.",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
-    category: "AI & טכנולוגיה",
-    readTime: "8 דקות קריאה",
-    date: "15 ינואר 2024",
-    featured: true,
-  },
-  {
-    id: "branding-mistakes",
-    title: "5 טעויות מיתוג שהורסות לעסקים",
-    excerpt: "אחרי מאות פרויקטי מיתוג, זיהינו את הטעויות הנפוצות ביותר שעסקים עושים. הנה איך להימנע מהן.",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&q=80&fm=webp&fit=crop",
-    category: "מיתוג",
-    readTime: "5 דקות קריאה",
-    date: "10 ינואר 2024",
-    featured: false,
-  },
-  {
-    id: "website-conversion",
-    title: "האתר שלך לא ממיר? הנה למה",
-    excerpt: "המרות זה לא קסם - זו מדע. ניתוח מעמיק של הגורמים שמונעים מהאתר שלך להמיר מבקרים ללקוחות.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fm=webp&fit=crop",
-    category: "המרות",
-    readTime: "6 דקות קריאה",
-    date: "5 ינואר 2024",
-    featured: false,
-  },
-  {
-    id: "digital-trends-2024",
-    title: "טרנדים דיגיטליים שאסור לפספס ב-2024",
-    excerpt: "מה יהיה חם בשנה הקרובה? סקירה מקיפה של הטרנדים שישנו את התעשייה.",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80&fm=webp&fit=crop",
-    category: "טרנדים",
-    readTime: "7 דקות קריאה",
-    date: "1 ינואר 2024",
-    featured: false,
-  },
-  {
-    id: "ux-psychology",
-    title: "הפסיכולוגיה מאחורי UX מנצח",
-    excerpt: "איך להשתמש בעקרונות פסיכולוגיים כדי ליצור חוויות משתמש שמניעות לפעולה.",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80&fm=webp&fit=crop",
-    category: "UX/UI",
-    readTime: "9 דקות קריאה",
-    date: "25 דצמבר 2023",
-    featured: false,
-  },
-  {
-    id: "ecommerce-growth",
-    title: "הנוסחה להגדלת מכירות באיקומרס",
-    excerpt: "מה עושה חנות אונליין מצליחה? טיפים מעשיים שהוכחו בשטח.",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80&fm=webp&fit=crop",
-    category: "E-commerce",
-    readTime: "6 דקות קריאה",
-    date: "20 דצמבר 2023",
-    featured: false,
-  },
-];
-
-const categories = ["הכל", "AI & טכנולוגיה", "מיתוג", "המרות", "UX/UI", "E-commerce"];
+import { blogPosts, getAllCategories, getPostsByCategory, getFeaturedPosts } from "@/data/blogPosts";
 
 const Blog = () => {
   const heroRef = useRef(null);
   const isHeroInView = useInView(heroRef, { once: true });
+  const [activeCategory, setActiveCategory] = useState("הכל");
 
-  const featuredArticle = articles.find(a => a.featured);
-  const regularArticles = articles.filter(a => !a.featured);
+  // Get categories and filtered posts
+  const categories = useMemo(() => getAllCategories(), []);
+  const filteredPosts = useMemo(() => getPostsByCategory(activeCategory), [activeCategory]);
+
+  // Get featured article (first featured or first article)
+  const featuredArticle = useMemo(() => {
+    const featured = getFeaturedPosts();
+    return featured.length > 0 ? featured[0] : filteredPosts[0];
+  }, [filteredPosts]);
+
+  // Regular articles (excluding featured)
+  const regularArticles = useMemo(() => {
+    return filteredPosts.filter(post => post.id !== featuredArticle?.id);
+  }, [filteredPosts, featuredArticle]);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <CustomCursor />
-      <ScrollProgress />
-      <Navbar />
+      <GlassNavbar />
 
       {/* Hero */}
       <section className="min-h-[50vh] flex items-center bg-hero-bg pt-20">
@@ -103,13 +48,13 @@ const Blog = () => {
               transition={{ duration: 0.6 }}
               className="h-1 bg-primary mb-8"
             />
-            
+
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-8">
               תובנות
               <br />
               <span className="text-gradient">ומחשבות.</span>
             </h1>
-            
+
             <p className="text-hero-fg/70 text-xl md:text-2xl leading-relaxed max-w-2xl">
               מאמרים, מדריכים ותובנות מעולם הדיגיטל, המיתוג והטכנולוגיה.
             </p>
@@ -126,7 +71,7 @@ const Blog = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <Link to={`/blog/${featuredArticle.id}`}>
+              <Link to={`/blog/${featuredArticle.slug}`}>
                 <div className="grid lg:grid-cols-2 gap-8 items-center glass rounded-3xl overflow-hidden group">
                   <div className="aspect-[16/10] overflow-hidden">
                     <img
@@ -141,9 +86,11 @@ const Blog = () => {
                   </div>
                   <div className="p-8 lg:p-12">
                     <div className="flex items-center gap-4 mb-4">
-                      <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                        מאמר מומלץ
-                      </span>
+                      {featuredArticle.featured && (
+                        <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
+                          מאמר מומלץ
+                        </span>
+                      )}
                       <span className="text-xs font-medium text-muted-foreground bg-muted px-3 py-1 rounded-full">
                         {featuredArticle.category}
                       </span>
@@ -159,7 +106,7 @@ const Blog = () => {
                       </span>
                       <span className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
-                        {featuredArticle.readTime}
+                        {featuredArticle.readTime} דקות קריאה
                       </span>
                     </div>
                   </div>
@@ -177,7 +124,12 @@ const Blog = () => {
             {categories.map((cat) => (
               <button
                 key={cat}
-                className="px-5 py-2 rounded-full text-sm font-medium bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all"
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeCategory === cat
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-primary/20"
+                }`}
               >
                 {cat}
               </button>
@@ -199,7 +151,7 @@ const Blog = () => {
                 transition={{ delay: index * 0.1 }}
                 className="group"
               >
-                <Link to={`/blog/${article.id}`}>
+                <Link to={`/blog/${article.slug}`}>
                   {/* Image */}
                   <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-4">
                     <img
@@ -223,7 +175,7 @@ const Blog = () => {
                   <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
                     {article.title}
                   </h3>
-                  
+
                   <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                     {article.excerpt}
                   </p>
@@ -235,13 +187,22 @@ const Blog = () => {
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {article.readTime}
+                      {article.readTime} דקות קריאה
                     </span>
                   </div>
                 </Link>
               </motion.article>
             ))}
           </div>
+
+          {/* Empty State */}
+          {regularArticles.length === 0 && (
+            <div className="text-center py-16">
+              <p className="text-muted-foreground text-lg">
+                אין עוד מאמרים בקטגוריה זו
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

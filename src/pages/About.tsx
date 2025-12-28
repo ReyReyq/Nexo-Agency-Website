@@ -2,9 +2,8 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Award, Users, Target, Lightbulb, Calendar, Trophy, Heart, Zap, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar";
+import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
-import ScrollProgress from "@/components/ScrollProgress";
 import Contact from "@/components/Contact";
 
 const milestones = [
@@ -74,8 +73,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <CustomCursor />
-      <ScrollProgress />
-      <Navbar />
+      <GlassNavbar />
 
       {/* Hero */}
       <section className="min-h-screen flex items-center bg-hero-bg pt-20">

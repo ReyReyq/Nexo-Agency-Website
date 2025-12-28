@@ -15,6 +15,7 @@ export default {
     extend: {
       fontFamily: {
         heebo: ['Heebo', 'sans-serif'],
+        display: ['Clash Display', 'Heebo', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

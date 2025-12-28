@@ -2,9 +2,8 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar";
+import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
-import ScrollProgress from "@/components/ScrollProgress";
 import Contact from "@/components/Contact";
 
 // Project images: 800px for card display, WebP format
@@ -80,8 +79,7 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <CustomCursor />
-      <ScrollProgress />
-      <Navbar />
+      <GlassNavbar />
 
       {/* Hero */}
       <section className="min-h-[60vh] flex items-center bg-hero-bg pt-20">

@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import ServicesSection from "@/components/ServicesSection";
 import AboutSection from "@/components/AboutSection";
 import Preloader from "@/components/Preloader";
+import Footer from "@/components/Footer";
 
 // Lazy load sections below the fold for better initial bundle size
 // These sections are not immediately visible, so we can defer their loading
@@ -98,6 +99,7 @@ const Index = () => {
               <Suspense fallback={<SectionLoader />}>
                 <Contact />
               </Suspense>
+              <Footer />
             </div>
           </div>
         </main>

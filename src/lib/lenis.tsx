@@ -65,14 +65,8 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
   const lenisRef = useRef<Lenis | null>(null);
   const rafIdRef = useRef<number | null>(null);
   const isRunningRef = useRef<boolean>(false);
-  const [isPreloaderComplete, setIsPreloaderComplete] = useState(() => {
-    // Check if preloader has already completed (session storage check)
-    if (typeof window !== 'undefined') {
-      const hasSeenPreloader = sessionStorage.getItem("nexo-preloader-shown");
-      return !!hasSeenPreloader;
-    }
-    return false;
-  });
+  // Note: We no longer block scroll during preloader - users should be able to scroll
+  // while the preloader animation plays. The preloader is a fixed overlay on top.
   const [isTabVisible, setIsTabVisible] = useState(() => {
     if (typeof document !== 'undefined') {
       return document.visibilityState === 'visible';
@@ -136,34 +130,27 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
       setIsTabVisible(document.visibilityState === 'visible');
     };
 
-    // Handle preloader completion event
-    const handlePreloaderComplete = () => {
-      setIsPreloaderComplete(true);
-    };
-
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener(PRELOADER_COMPLETE_EVENT, handlePreloaderComplete);
 
     // Cleanup
     return () => {
       stopRafLoop();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener(PRELOADER_COMPLETE_EVENT, handlePreloaderComplete);
       lenis.destroy();
       lenisRef.current = null;
     };
   }, [options, stopRafLoop]);
 
-  // Control RAF loop based on visibility and preloader state
+  // Control RAF loop based on visibility only (scroll works even during preloader)
   useEffect(() => {
-    const shouldRun = isTabVisible && isPreloaderComplete && lenisRef.current !== null;
+    const shouldRun = isTabVisible && lenisRef.current !== null;
 
     if (shouldRun) {
       startRafLoop();
     } else {
       stopRafLoop();
     }
-  }, [isTabVisible, isPreloaderComplete, startRafLoop, stopRafLoop]);
+  }, [isTabVisible, startRafLoop, stopRafLoop]);
 
   return (
     <LenisContext.Provider value={lenisRef.current}>

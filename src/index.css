@@ -122,7 +122,8 @@
   }
 
   .text-gradient {
-    @apply bg-gradient-to-l from-primary to-accent bg-clip-text text-transparent;
+    /* Solid color instead of gradient - cleaner, more editorial look */
+    @apply text-primary;
   }
 
   .hover-lift {
@@ -175,22 +176,9 @@
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  /* Animated gradient background for text */
+  /* Solid accent color for emphasized text - cleaner than animated gradients */
   .text-gradient-animated {
-    background: linear-gradient(90deg, #667eea, #764ba2, #f5576c, #667eea);
-    background-size: 300% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gradient-shift 4s ease infinite;
-    /* Performance: GPU acceleration for background animation */
-    will-change: background-position;
-    transform: translateZ(0);
-  }
-
-  @keyframes gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    @apply text-primary;
   }
 
   /* Hebrew-optimized typography utilities */
@@ -326,6 +314,21 @@
     transform: translateZ(0) rotate(360deg);
     }
   }
+}
+
+/* Navbar Marquee Button - Smooth infinite scroll animation */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-scroll {
+  animation: marquee-scroll 10s linear infinite;
+  will-change: transform;
 }
 
 /* Accessibility: Respect user's motion preferences */

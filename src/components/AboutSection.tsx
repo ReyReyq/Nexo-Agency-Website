@@ -82,10 +82,7 @@ const AboutSection = () => {
                   position: 'relative',
                   fontSize: 'clamp(2.25rem, 5vw, 3.75rem)',
                   lineHeight: 1.1,
-                  background: 'linear-gradient(to left, hsl(328, 100%, 54%), hsl(328, 100%, 54%))',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text'
+                  color: 'hsl(328, 100%, 54%)'
                 }}
               >
                 <VariableProximity

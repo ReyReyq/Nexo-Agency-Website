@@ -14,7 +14,9 @@ import NotFound from "./pages/NotFound";
 const About = lazy(() => import("./pages/About"));
 const Services = lazy(() => import("./pages/Services"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const CaseStudy = lazy(() => import("./pages/CaseStudy"));
 const Blog = lazy(() => import("./pages/Blog"));
+const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const ImagePicker = lazy(() => import("./pages/ImagePicker"));
 
@@ -51,9 +53,19 @@ const App = () => (
                 <Portfolio />
               </Suspense>
             } />
+            <Route path="/case-studies/:slug" element={
+              <Suspense fallback={<PageLoader />}>
+                <CaseStudy />
+              </Suspense>
+            } />
             <Route path="/blog" element={
               <Suspense fallback={<PageLoader />}>
                 <Blog />
+              </Suspense>
+            } />
+            <Route path="/blog/:slug" element={
+              <Suspense fallback={<PageLoader />}>
+                <BlogArticle />
               </Suspense>
             } />
             <Route path="/contact" element={

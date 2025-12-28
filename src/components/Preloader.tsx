@@ -7,20 +7,19 @@ interface PreloaderProps {
 }
 
 // Hero image that we transition into - MUST match Hero.tsx first image exactly
-// Full resolution for hero transition, WebP format for smaller file size
-export const HERO_TRANSITION_IMAGE = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80&fm=webp&fit=crop";
+export const HERO_TRANSITION_IMAGE = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=90&fm=jpg&fit=crop";
 
-/**
- * Optimized Preloader - ~2.5 second total duration
- *
- * Timeline:
- * - 0.0s: Logo appears with clip-path reveal animation (faster 450ms)
- * - 0.5s: Logo wipes out, fade to dark begins
- * - 1.6s: Preloader starts fading out
- * - 2.0s: onComplete called, preloader removed
- */
+// Preloader images - middle one (index 2) will become hero background
+const preloaderPhotos = [
+  { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&q=90&fm=jpg&fit=crop', alt: 'Road trip' },
+  { src: 'https://images.unsplash.com/photo-1553949345-eb786bb3f7ba?w=1920&q=90&fm=jpg&fit=crop', alt: 'Purple neon' },
+  { src: HERO_TRANSITION_IMAGE, alt: 'Team collaboration' }, // MAIN - matches Hero first image
+  { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=90&fm=jpg&fit=crop', alt: 'Mountain' },
+  { src: 'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=1920&q=90&fm=jpg&fit=crop', alt: 'Path' },
+];
+
 const Preloader = ({ onComplete }: PreloaderProps) => {
-  const [phase, setPhase] = useState<'logo' | 'transition' | 'complete'>('logo');
+  const [phase, setPhase] = useState<'logo' | 'photos' | 'zooming' | 'complete'>('logo');
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Check for reduced motion preference
@@ -37,24 +36,33 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
 
     const timers: NodeJS.Timeout[] = [];
 
-    // Phase 1: Logo shows for 0.5s (faster reveal + hold)
-    timers.push(setTimeout(() => setPhase('transition'), 500));
+    // Phase 1: Logo shows for 1.5s
+    timers.push(setTimeout(() => setPhase('photos'), 1500));
 
-    // Phase 2: Transition to dark, start fade out
-    timers.push(setTimeout(() => setPhase('complete'), 1600));
+    // Phase 2: Photos reveal for 2.5s
+    timers.push(setTimeout(() => setPhase('zooming'), 4000));
 
-    // Remove preloader at 2s total
+    // Phase 3: Zoom + crossfade to hero (overlapping animations)
+    // The settled image starts fading in during zoom
+    // Text starts animating in during the crossfade
+    // Everything happens smoothly without gaps
+
+    // Phase 4: Complete - preloader fades out
+    timers.push(setTimeout(() => setPhase('complete'), 9500));
+
+    // Remove preloader
     timers.push(setTimeout(() => {
-      // Notify Lenis that preloader is complete so it can start RAF loop
       dispatchPreloaderComplete();
       onComplete();
-    }, 2000));
+    }, 10500));
 
     return () => timers.forEach(clearTimeout);
   }, [onComplete, prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 
+  // Phase checks - all based on single 'zooming' phase with CSS animation timing
+  const isZooming = phase === 'zooming';
   const shouldFadeOut = phase === 'complete';
 
   return (
@@ -63,28 +71,20 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       data-preloader
       initial={{ opacity: 1 }}
       animate={{ opacity: shouldFadeOut ? 0 : 1 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       className="fixed inset-0 z-[100] overflow-hidden"
       style={{
-        backgroundColor: phase === 'logo' ? '#FAFAFA' : 'hsl(0, 0%, 4%)',
+        backgroundColor: '#FAFAFA',
         willChange: 'opacity'
       }}
     >
-      {/* Dark background that fades in during transition */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: phase !== 'logo' ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute inset-0 bg-[hsl(0,0%,4%)]"
-      />
-
       {/* Phase 1: Logo with reveal and wipe-out */}
       <AnimatePresence>
         {phase === 'logo' && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.3 }}
             className="absolute inset-0 flex items-center justify-center z-10"
           >
             <motion.div
@@ -98,13 +98,12 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 ]
               }}
               transition={{
-                duration: 0.45,
-                delay: 0.05,
-                times: [0, 0.5, 0.7, 1],
+                duration: 1.4,
+                delay: 0.2,
+                times: [0, 0.4, 0.7, 1],
                 ease: [0.16, 1, 0.3, 1]
               }}
-              className="text-gray-900 text-5xl md:text-7xl font-medium tracking-[0.1em] uppercase"
-              style={{ fontFamily: 'system-ui, sans-serif' }}
+              className="text-gray-900 text-5xl md:text-7xl font-display font-semibold tracking-[0.15em] uppercase"
             >
               NEXO
             </motion.div>
@@ -112,16 +111,186 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         )}
       </AnimatePresence>
 
-      {/* Gradient overlays for smooth transition to hero */}
-      {phase !== 'logo' && (
+      {/* Phase 2 & 3: Photos that zoom together as a group */}
+      {(phase === 'photos' || phase === 'zooming') && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="absolute inset-0 z-10"
+          transition={{ duration: 0.5 }}
+          className="absolute inset-0 flex items-center justify-center"
         >
+          {/* The entire photos container scales up together */}
+          <motion.div
+            className="flex items-center justify-center gap-4 md:gap-6 lg:gap-8"
+            initial={{ scale: 1 }}
+            animate={{
+              scale: isZooming ? 7 : 1,
+            }}
+            transition={{
+              duration: 4,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            style={{
+              transformOrigin: 'center center',
+              willChange: 'transform',
+            }}
+          >
+            {preloaderPhotos.map((photo, index) => (
+              <motion.div
+                key={index}
+                initial={{
+                  clipPath: 'polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)',
+                  opacity: 0,
+                }}
+                animate={{
+                  clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
+                  opacity: 1,
+                }}
+                transition={{
+                  clipPath: {
+                    duration: 1.2,
+                    delay: (preloaderPhotos.length - 1 - index) * 0.18,
+                    ease: [0.16, 1, 0.3, 1]
+                  },
+                  opacity: {
+                    duration: 0.8,
+                    delay: (preloaderPhotos.length - 1 - index) * 0.18,
+                  }
+                }}
+                className="relative overflow-hidden flex-shrink-0 w-36 h-24 sm:w-44 sm:h-28 md:w-56 md:h-36 lg:w-64 lg:h-40"
+                style={{ borderRadius: '4px' }}
+              >
+                <motion.img
+                  src={photo.src}
+                  alt={photo.alt}
+                  initial={{ scale: 1.4 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    duration: 1.5,
+                    delay: (preloaderPhotos.length - 1 - index) * 0.18,
+                    ease: [0.16, 1, 0.3, 1]
+                  }}
+                  className="w-full h-full object-cover"
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/*
+        Full screen hero image - starts fading in DURING the zoom
+        This creates the seamless "settling" effect - no gap, no pause
+        The crossfade happens while zoom is still progressing
+      */}
+      {isZooming && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{
+            duration: 2.5,
+            delay: 2, // Start 2s into the 4s zoom - overlapping transition
+            ease: [0.16, 1, 0.3, 1]
+          }}
+          className="absolute inset-0 z-20"
+          style={{
+            backgroundColor: 'hsl(0, 0%, 4%)'
+          }}
+        >
+          <img
+            src={HERO_TRANSITION_IMAGE}
+            alt="Team collaboration"
+            className="w-full h-full object-cover"
+          />
+
+          {/* Gradient overlays fade in with the image */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 2.5 }}
+            className="absolute inset-0 bg-gradient-to-t from-[hsl(0,0%,4%)]/80 via-[hsl(0,0%,4%)]/30 to-transparent"
+          />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 2.5 }}
+            className="absolute inset-0 bg-gradient-to-r from-[hsl(0,0%,4%)]/60 to-transparent"
+          />
+        </motion.div>
+      )}
+
+      {/* Keep settled image visible during complete phase for smooth fade out */}
+      {phase === 'complete' && (
+        <div
+          className="absolute inset-0 z-20"
+          style={{
+            backgroundColor: 'hsl(0, 0%, 4%)'
+          }}
+        >
+          <img
+            src={HERO_TRANSITION_IMAGE}
+            alt="Team collaboration"
+            className="w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(0,0%,4%)]/80 via-[hsl(0,0%,4%)]/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-r from-[hsl(0,0%,4%)]/60 to-transparent" />
+        </div>
+      )}
+
+      {/* Hero text - starts animating during the crossfade for seamless flow */}
+      {(isZooming || phase === 'complete') && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: isZooming ? 3 : 0 }}
+          className="absolute inset-0 z-30 flex items-end"
+        >
+          <div className="container mx-auto px-6 md:px-12 pb-24 md:pb-32">
+            <div className="max-w-4xl ml-auto text-right" dir="rtl">
+              {/* Stacked Headlines */}
+              {["הופכים", "חזון", "למציאות", "דיגיטלית."].map((line, index) => (
+                <div key={index} className="overflow-hidden">
+                  <motion.h1
+                    initial={{ y: 200, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{
+                      duration: 1,
+                      delay: (isZooming ? 3.2 : 0) + index * 0.1,
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
+                    className="text-[12vw] md:text-[10vw] lg:text-[9vw] font-black text-white leading-[0.85] tracking-[-0.02em]"
+                  >
+                    {line}
+                  </motion.h1>
+                </div>
+              ))}
+
+              {/* Subheadline */}
+              <motion.p
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: isZooming ? 3.7 : 0.5 }}
+                className="text-white/70 text-lg md:text-xl max-w-2xl mt-8 leading-relaxed"
+              >
+                סוכנות דיגיטל שמובילה מותגים לצמיחה אמיתית. אסטרטגיה, עיצוב ופיתוח - הכל תחת קורת גג אחת.
+              </motion.p>
+
+              {/* CTA Button Preview */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: isZooming ? 3.9 : 0.7 }}
+                className="mt-10"
+              >
+                <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-semibold text-lg">
+                  <span>בואו נדבר על הפרויקט שלכם</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>
+                  </svg>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </motion.div>
       )}
     </motion.div>

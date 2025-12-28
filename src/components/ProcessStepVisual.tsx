@@ -176,11 +176,11 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
             className="relative z-10"
           >
-            {/* Icon container with gradient */}
+            {/* Icon container with solid color */}
             <motion.div
               className="w-32 h-32 md:w-40 md:h-40 rounded-3xl flex items-center justify-center shadow-lg"
               style={{
-                background: `linear-gradient(135deg, ${colors.from}, ${colors.to})`,
+                backgroundColor: colors.from,
               }}
               animate={{
                 y: [0, -8, 0],

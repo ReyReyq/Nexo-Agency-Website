@@ -2,8 +2,7 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Monitor, Palette, Brain, Megaphone, BarChart3, Code, Sparkles, ArrowLeft, Check, Zap, Target, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar";
-import ScrollProgress from "@/components/ScrollProgress";
+import GlassNavbar from "@/components/GlassNavbar";
 import Contact from "@/components/Contact";
 
 // Service cards with optimized images: 800px for card display, WebP format
@@ -298,8 +297,7 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
-      <ScrollProgress />
-      <Navbar />
+      <GlassNavbar />
 
       {/* Hero */}
       <section className="min-h-[70vh] flex items-center bg-hero-bg pt-20">

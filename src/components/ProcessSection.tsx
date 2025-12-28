@@ -145,7 +145,7 @@ const ProcessSection = () => {
                     </span>
 
                     <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-3">
-                      <span className={`bg-gradient-to-l ${currentStep.color.gradient} bg-clip-text text-transparent`}>
+                      <span style={{ color: currentStep.color.primary }}>
                         {currentStep.title}
                       </span>
                     </h2>
@@ -171,20 +171,26 @@ const ProcessSection = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Progress bar */}
+              {/* Enhanced Progress bar with glow */}
               <div className="mt-8">
-                <div className="h-1.5 bg-[#1a1a1a]/10 rounded-full overflow-hidden relative">
+                {/* Track */}
+                <div className="h-2 bg-[#1a1a1a]/10 rounded-full overflow-visible relative">
+                  {/* Solid color fill with subtle glow */}
                   <motion.div
                     className="h-full rounded-full absolute inset-y-0 right-0"
                     style={{
-                      background: `linear-gradient(to left, ${currentStep.color.primary}, ${currentStep.color.secondary})`,
+                      backgroundColor: currentStep.color.primary,
                     }}
                     animate={{
                       width: `${((activeStep + 1) / processSteps.length) * 100}%`,
                     }}
-                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    transition={{
+                      width: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                    }}
                   />
                 </div>
+
+                {/* Labels */}
                 <div className="flex justify-between mt-3 text-xs text-[#404040] font-medium">
                   <span>{processLabels.startLabel}</span>
                   <span>{processLabels.endLabel}</span>

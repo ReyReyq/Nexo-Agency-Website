@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowLeft, ArrowRight, Check, Send, Rocket, AlertCircle } from "lucide-react";
 import confetti from "canvas-confetti";
+import { submitContactForm, type FormData as SubmissionFormData } from "@/utils/formSubmission";
 
 interface TypeformPopupProps {
   isOpen: boolean;
@@ -574,13 +575,33 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    formSubmittedRef.current = true; // Mark as submitted to prevent abandonment tracking
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    // Confetti is triggered via useEffect when isSuccess becomes true
-    console.log("Form submitted:", formData);
+
+    try {
+      // Prepare form data for submission
+      const submissionData: SubmissionFormData = {
+        name: formData.name,
+        phone: formData.phone.replace(/\D/g, ''), // Send clean phone number
+        email: formData.email || undefined,
+        budget: formData.budget || undefined,
+        message: formData.message || undefined,
+        source: formData.source || undefined,
+      };
+
+      // Submit to Airtable and Monday.com
+      const result = await submitContactForm(submissionData);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Submission failed');
+      }
+
+      formSubmittedRef.current = true; // Mark as submitted to prevent abandonment tracking
+      setIsSuccess(true);
+      // Confetti is triggered via useEffect when isSuccess becomes true
+    } catch {
+      setError({ field: "submit", message: "שגיאה בשליחה, נסו שוב" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const updateFormData = (field: keyof FormData, value: string | string[]) => {

@@ -9,7 +9,7 @@ const SOCIAL_LINKS: { icon: LucideIcon; href: string; label: string }[] = [
   { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram" },
   { icon: Facebook, href: "https://facebook.com/nexo.agency", label: "Facebook" },
   { icon: Linkedin, href: "https://linkedin.com/company/nexo-agency", label: "LinkedIn" },
-  { icon: Phone, href: "tel:050-123-4567", label: "Phone" },
+  { icon: Phone, href: "tel:+972533622423", label: "Phone" },
 ];
 
 // Nexo Logo SVG - memoized and defined outside component to prevent recreation on each render
@@ -85,8 +85,8 @@ const Footer = () => {
             <a href="mailto:sales@nexoagency.com" className="text-white/60 hover:text-primary transition-colors">
               sales@nexoagency.com
             </a>
-            <a href="tel:050-123-4567" className="text-white/60 hover:text-primary transition-colors">
-              050-123-4567
+            <a href="tel:+972533622423" className="text-white/60 hover:text-primary transition-colors">
+              053-362-2423
             </a>
             <span className="text-white/40">תל אביב, ישראל</span>
           </motion.div>

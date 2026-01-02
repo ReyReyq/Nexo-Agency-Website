@@ -623,7 +623,7 @@ const Contact = () => {
               </motion.a>
 
               <motion.a
-                href="tel:+972501234567"
+                href="tel:+972533622423"
                 whileHover={{ x: -10, scale: 1.02 }}
                 className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-[#e5e5e5] hover:border-primary/50 hover:shadow-lg transition-all"
               >
@@ -632,13 +632,13 @@ const Contact = () => {
                 </div>
                 <div className="flex-1 text-right">
                   <p className="text-[#6a6a6a] text-sm mb-1">טלפון</p>
-                  <p className="text-[#1a1a1a] text-lg font-bold">050-123-4567</p>
+                  <p className="text-[#1a1a1a] text-lg font-bold">053-362-2423</p>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-[#c0c0c0] group-hover:text-primary transition-colors" />
               </motion.a>
 
               <motion.a
-                href="https://wa.me/972501234567"
+                href="https://wa.me/972533622423"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ x: -10, scale: 1.02 }}

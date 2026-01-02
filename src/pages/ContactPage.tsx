@@ -15,7 +15,7 @@ const socialLinks = [
   { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram", color: "hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500" },
   { icon: Facebook, href: "https://facebook.com/nexo.agency", label: "Facebook", color: "hover:bg-blue-600" },
   { icon: Linkedin, href: "https://linkedin.com/company/nexo-agency", label: "LinkedIn", color: "hover:bg-blue-700" },
-  { icon: MessageCircle, href: "https://wa.me/972501234567", label: "WhatsApp", color: "hover:bg-green-500" },
+  { icon: MessageCircle, href: "https://wa.me/972533622423", label: "WhatsApp", color: "hover:bg-green-500" },
 ];
 
 
@@ -441,7 +441,7 @@ const ContactPage = () => {
               </motion.button>
 
               <motion.a
-                href="https://wa.me/972501234567"
+                href="https://wa.me/972533622423"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
@@ -502,7 +502,7 @@ const ContactPage = () => {
                 </a>
 
                 <a
-                  href="tel:+972501234567"
+                  href="tel:+972533622423"
                   className="group flex items-center gap-4 p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
                 >
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -510,13 +510,13 @@ const ContactPage = () => {
                   </div>
                   <div className="flex-1">
                     <p className="text-muted-foreground text-sm mb-1">טלפון</p>
-                    <p className="text-foreground text-lg font-medium">050-123-4567</p>
+                    <p className="text-foreground text-lg font-medium">053-362-2423</p>
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </a>
 
                 <a
-                  href="https://wa.me/972501234567"
+                  href="https://wa.me/972533622423"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-4 p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"

@@ -135,44 +135,43 @@ async function createMondayItem(payload: SubmissionPayload): Promise<string | nu
     return null;
   }
 
-  // Build column values - adjust column IDs based on your Monday.com board structure
-  // You'll need to find your actual column IDs from the Monday.com board
+  // Column IDs for Monday.com board 5089364102 (Leads)
   const columnValues: Record<string, string | object> = {};
 
-  // Phone column (usually type: phone)
+  // Phone column (lead_phone)
   if (formData.phone) {
-    columnValues['phone'] = { phone: formData.phone, countryShortName: 'IL' };
+    columnValues['lead_phone'] = { phone: formData.phone, countryShortName: 'IL' };
   }
 
-  // Email column (usually type: email)
+  // Email column (lead_email)
   if (formData.email) {
-    columnValues['email'] = { email: formData.email, text: formData.email };
+    columnValues['lead_email'] = { email: formData.email, text: formData.email };
   }
 
-  // Budget column (status or text)
+  // Budget column (text_mkz7k8s)
   if (formData.budget) {
-    columnValues['budget'] = budgetLabels[formData.budget] || formData.budget;
+    columnValues['text_mkz7k8s'] = budgetLabels[formData.budget] || formData.budget;
   }
 
-  // Message column (long text - requires {text: value} format)
+  // Message column (long_text_mkz7r7wy - long text requires {text: value} format)
   if (formData.message) {
-    columnValues['message'] = { text: formData.message };
+    columnValues['long_text_mkz7r7wy'] = { text: formData.message };
   }
 
-  // Source (how they found us)
+  // Source/How they found us (color_mkyb8krc - status column)
   if (formData.source) {
-    columnValues['source'] = sourceLabels[formData.source] || formData.source;
+    columnValues['color_mkyb8krc'] = { label: sourceLabels[formData.source] || formData.source };
   }
 
-  // Traffic source
-  columnValues['traffic_source'] = trafficSourceSummary;
+  // Traffic source (text_mkz7w93t)
+  columnValues['text_mkz7w93t'] = trafficSourceSummary;
 
-  // Page submitted from
-  columnValues['page_submitted'] = tracking.currentPageTitle;
+  // Page submitted from (text_mkz7by1s)
+  columnValues['text_mkz7by1s'] = tracking.currentPageTitle;
 
-  // UTM data
+  // UTM source (text_mkz729zf)
   if (tracking.utmSource) {
-    columnValues['utm_source'] = tracking.utmSource;
+    columnValues['text_mkz729zf'] = tracking.utmSource;
   }
 
   try {

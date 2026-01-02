@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 
 interface TrueFocusProps {
@@ -31,11 +31,13 @@ const TrueFocus = ({
   pauseBetweenAnimations = 1,
   className = "",
 }: TrueFocusProps) => {
-  const words = sentence.split(separator);
+  // Memoize words array to prevent unnecessary recalculations
+  const words = useMemo(() => sentence.split(separator), [sentence, separator]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [lastActiveIndex, setLastActiveIndex] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const wordRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const rafIdRef = useRef<number | null>(null);
   const [focusRect, setFocusRect] = useState<FocusRect>({
     x: 0,
     y: 0,
@@ -43,6 +45,35 @@ const TrueFocus = ({
     height: 0,
   });
 
+  // Memoized function to update focus rect position
+  const updateFocusRect = useCallback((index: number) => {
+    if (index === null || index === -1) return;
+    if (!wordRefs.current[index] || !containerRef.current) return;
+
+    // Cancel any pending RAF to prevent stale updates
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+
+    // Use RAF for smoother performance and to batch with browser paint
+    rafIdRef.current = requestAnimationFrame(() => {
+      if (!wordRefs.current[index] || !containerRef.current) return;
+
+      const parentRect = containerRef.current.getBoundingClientRect();
+      const activeRect = wordRefs.current[index]!.getBoundingClientRect();
+
+      setFocusRect({
+        x: activeRect.left - parentRect.left,
+        y: activeRect.top - parentRect.top,
+        width: activeRect.width,
+        height: activeRect.height,
+      });
+
+      rafIdRef.current = null;
+    });
+  }, []);
+
+  // Auto-advance interval effect with proper cleanup
   useEffect(() => {
     if (!manualMode) {
       const interval = setInterval(
@@ -56,33 +87,53 @@ const TrueFocus = ({
     }
   }, [manualMode, animationDuration, pauseBetweenAnimations, words.length]);
 
+  // Focus rect update effect with RAF cleanup
   useEffect(() => {
-    if (currentIndex === null || currentIndex === -1) return;
-    if (!wordRefs.current[currentIndex] || !containerRef.current) return;
+    updateFocusRect(currentIndex);
 
-    const parentRect = containerRef.current.getBoundingClientRect();
-    const activeRect = wordRefs.current[currentIndex]!.getBoundingClientRect();
+    // Cleanup: cancel any pending RAF on unmount or dependency change
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+    };
+  }, [currentIndex, updateFocusRect]);
 
-    setFocusRect({
-      x: activeRect.left - parentRect.left,
-      y: activeRect.top - parentRect.top,
-      width: activeRect.width,
-      height: activeRect.height,
+  // ResizeObserver to update focus rect on container resize
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateFocusRect(currentIndex);
     });
-  }, [currentIndex, words.length]);
 
-  const handleMouseEnter = (index: number) => {
+    resizeObserver.observe(containerRef.current);
+
+    // Cleanup ResizeObserver on unmount
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [currentIndex, updateFocusRect]);
+
+  // Reset wordRefs array when words change to prevent memory leaks
+  useEffect(() => {
+    wordRefs.current = wordRefs.current.slice(0, words.length);
+  }, [words.length]);
+
+  // Memoized event handlers to prevent unnecessary child re-renders
+  const handleMouseEnter = useCallback((index: number) => {
     if (manualMode) {
       setLastActiveIndex(index);
       setCurrentIndex(index);
     }
-  };
+  }, [manualMode]);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     if (manualMode) {
-      setCurrentIndex(lastActiveIndex!);
+      setCurrentIndex((prev) => lastActiveIndex ?? prev);
     }
-  };
+  }, [manualMode, lastActiveIndex]);
 
   return (
     <div

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useMemo, memo } from "react";
 
 // Type definitions
 interface BrandIdentityColor {
@@ -114,8 +114,9 @@ const workflowSteps: WorkflowStep[] = [
 ];
 
 // Brand Identity Showcase Component - Teenvestsor themed
-const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity }) => {
-  const ref = useRef(null);
+// Memoized to prevent unnecessary re-renders when parent re-renders
+const BrandIdentityShowcase = memo(function BrandIdentityShowcase({ brandIdentity }: { brandIdentity: BrandIdentity }) {
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   return (
@@ -203,7 +204,7 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
       </div>
     </motion.div>
   );
-};
+});
 
 // Individual Step Section
 interface StepSectionProps {
@@ -212,17 +213,22 @@ interface StepSectionProps {
   brandIdentity?: BrandIdentity;
 }
 
-const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
-  const ref = useRef(null);
+// Memoized to prevent unnecessary re-renders when parent re-renders
+const StepSection = memo(function StepSection({ step, index, brandIdentity }: StepSectionProps) {
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const isDesignStep = index === 2; // Design step shows brand identity
+
+  // Memoize computed value to prevent recalculation on every render
+  const isDesignStep = useMemo(() => index === 2, [index]); // Design step shows brand identity
 
   // Parallax effect for background number
-  const sectionRef = useRef(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
   });
+
+  // Memoize transform config to prevent recreation
   const numberY = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
   const smoothNumberY = useSpring(numberY, { stiffness: 80, damping: 25 });
 
@@ -447,7 +453,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
       </div>
     </section>
   );
-};
+});
 
 // Main workflow component
 const TeenvestsorWorkflow = ({
@@ -455,8 +461,12 @@ const TeenvestsorWorkflow = ({
   brandIdentity,
   clientName = "Teenvestsor"
 }: TeenvestsorWorkflowProps) => {
-  const introRef = useRef(null);
+  const introRef = useRef<HTMLElement>(null);
   const isIntroInView = useInView(introRef, { once: true });
+
+  // Memoize workflow steps to prevent recreation on every render
+  // Note: workflowSteps is already defined outside component, but we ensure stable reference
+  const memoizedSteps = useMemo(() => workflowSteps, []);
 
   return (
     <div className="relative">
@@ -540,7 +550,7 @@ const TeenvestsorWorkflow = ({
       </div>
 
       {/* ========== WORKFLOW STEPS ========== */}
-      {workflowSteps.map((step, index) => (
+      {memoizedSteps.map((step, index) => (
         <div
           key={step.number}
           className="sticky top-0"

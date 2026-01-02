@@ -33,6 +33,8 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const sparksRef = useRef<Spark[]>([]);
   const startTimeRef = useRef<number | null>(null);
+  const animationIdRef = useRef<number | null>(null);
+  const isAnimatingRef = useRef<boolean>(false);
 
   // Performance: visibility-based pausing
   const isVisible = useVisibilityPause(containerRef);
@@ -86,26 +88,34 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     [easing]
   );
 
-  useEffect(() => {
+  // Memoized draw function to start/manage animation loop
+  const startAnimation = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let animationId: number;
+    // Already animating, no need to start another loop
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
 
     const draw = (timestamp: number) => {
       // Performance: skip drawing when off-screen, but still schedule next frame
       // to resume when visible again
       if (!isVisible) {
-        animationId = requestAnimationFrame(draw);
+        if (sparksRef.current.length > 0) {
+          animationIdRef.current = requestAnimationFrame(draw);
+        } else {
+          isAnimatingRef.current = false;
+          animationIdRef.current = null;
+        }
         return;
       }
 
       if (!startTimeRef.current) {
         startTimeRef.current = timestamp;
       }
-      ctx?.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       sparksRef.current = sparksRef.current.filter((spark: Spark) => {
         const elapsed = timestamp - spark.startTime;
@@ -134,17 +144,35 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
         return true;
       });
 
-      animationId = requestAnimationFrame(draw);
+      // Only continue animation if there are sparks to draw
+      if (sparksRef.current.length > 0) {
+        animationIdRef.current = requestAnimationFrame(draw);
+      } else {
+        // No more sparks, stop animation loop to save CPU
+        isAnimatingRef.current = false;
+        animationIdRef.current = null;
+      }
     };
 
-    animationId = requestAnimationFrame(draw);
+    animationIdRef.current = requestAnimationFrame(draw);
+  }, [sparkColor, sparkSize, sparkRadius, duration, easeFunc, extraScale, isVisible]);
 
+  // Cleanup effect for unmount
+  useEffect(() => {
     return () => {
-      cancelAnimationFrame(animationId);
+      // Cancel any pending animation frame on unmount
+      if (animationIdRef.current !== null) {
+        cancelAnimationFrame(animationIdRef.current);
+        animationIdRef.current = null;
+      }
+      // Clear sparks array to prevent memory leaks
+      sparksRef.current = [];
+      isAnimatingRef.current = false;
+      startTimeRef.current = null;
     };
-  }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale, isVisible]);
+  }, []);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>): void => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -160,7 +188,10 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     }));
 
     sparksRef.current.push(...newSparks);
-  };
+
+    // Start animation loop if not already running
+    startAnimation();
+  }, [sparkCount, startAnimation]);
 
   return (
     <div ref={containerRef} className="relative w-full" style={{ minHeight: 'inherit' }} onClick={handleClick}>

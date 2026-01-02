@@ -89,6 +89,8 @@ class AsciiFilter {
   // Performance: cache ASCII output
   cachedAscii: string = '';
   lastRenderTime: number = 0;
+  // Performance: track disposed state
+  isDisposed: boolean = false;
   // Performance: limit max resolution for ASCII conversion
   static readonly MAX_COLS = 80;
   static readonly MAX_ROWS = 40;
@@ -185,6 +187,7 @@ class AsciiFilter {
   }
 
   onMouseMove(e: MouseEvent) {
+    if (this.isDisposed) return;
     this.mouse = { x: e.clientX * PX_RATIO, y: e.clientY * PX_RATIO };
   }
 
@@ -205,29 +208,40 @@ class AsciiFilter {
   asciify(ctx: CanvasRenderingContext2D, w: number, h: number) {
     if (w && h) {
       const imgData = ctx.getImageData(0, 0, w, h).data;
-      let str = '';
+      // Performance: pre-allocate array instead of string concatenation (O(n) vs O(n^2))
+      const charsetLen = this.charset.length;
+      const totalChars = w * h + h; // characters + newlines
+      const chars: string[] = new Array(totalChars);
+      let charIdx = 0;
+
       for (let y = 0; y < h; y++) {
+        const rowOffset = y * 4 * w;
         for (let x = 0; x < w; x++) {
-          const i = x * 4 + y * 4 * w;
-          const [r, g, b, a] = [imgData[i], imgData[i + 1], imgData[i + 2], imgData[i + 3]];
+          const i = x * 4 + rowOffset;
+          const a = imgData[i + 3];
 
           if (a === 0) {
-            str += ' ';
+            chars[charIdx++] = ' ';
             continue;
           }
 
+          const r = imgData[i];
+          const g = imgData[i + 1];
+          const b = imgData[i + 2];
           let gray = (0.3 * r + 0.6 * g + 0.1 * b) / 255;
-          let idx = Math.floor((1 - gray) * (this.charset.length - 1));
-          if (this.invert) idx = this.charset.length - idx - 1;
-          str += this.charset[idx];
+          let idx = Math.floor((1 - gray) * (charsetLen - 1));
+          if (this.invert) idx = charsetLen - idx - 1;
+          chars[charIdx++] = this.charset[idx];
         }
-        str += '\n';
+        chars[charIdx++] = '\n';
       }
-      this.pre.innerHTML = str;
+      // Performance: use textContent instead of innerHTML (no HTML parsing overhead)
+      this.pre.textContent = chars.join('');
     }
   }
 
   dispose() {
+    this.isDisposed = true;
     document.removeEventListener('mousemove', this.onMouseMove);
   }
 }
@@ -330,6 +344,8 @@ class CanvAscii {
   animationFrameId: number = 0;
   // Performance: visibility-based pausing
   isPaused: boolean = false;
+  // Performance: track disposed state to prevent operations after cleanup
+  isDisposed: boolean = false;
   // Performance: cache text canvas when unchanged
   lastTextRendered: string = '';
   // Performance: cache container bounds to avoid getBoundingClientRect on every mousemove
@@ -424,6 +440,7 @@ class CanvAscii {
 
   // Performance: update cached bounds
   updateContainerBounds() {
+    if (this.isDisposed) return;
     const bounds = this.container.getBoundingClientRect();
     this.containerBounds = { left: bounds.left, top: bounds.top };
   }
@@ -445,6 +462,7 @@ class CanvAscii {
   }
 
   onMouseMove(evt: MouseEvent | TouchEvent) {
+    if (this.isDisposed) return;
     const e = (evt as TouchEvent).touches ? (evt as TouchEvent).touches[0] : (evt as MouseEvent);
     // Performance: use cached bounds instead of calling getBoundingClientRect every time
     const x = e.clientX - this.containerBounds.left;
@@ -454,6 +472,9 @@ class CanvAscii {
 
   animate() {
     const animateFrame = () => {
+      // Performance: stop animation loop if disposed
+      if (this.isDisposed) return;
+
       this.animationFrameId = requestAnimationFrame(animateFrame);
       // Performance: skip render when paused (off-screen)
       if (!this.isPaused) {
@@ -474,7 +495,8 @@ class CanvAscii {
   }
 
   render() {
-    const time = new Date().getTime() * 0.001;
+    // Performance: use performance.now() instead of creating new Date objects
+    const time = performance.now() * 0.001;
 
     // Performance: only re-render text canvas if text changed
     if (this.lastTextRendered !== this.textString) {
@@ -527,16 +549,32 @@ class CanvAscii {
   }
 
   dispose() {
+    // Performance: mark as disposed to stop animation loop and prevent further operations
+    this.isDisposed = true;
+
     cancelAnimationFrame(this.animationFrameId);
     this.filter.dispose();
-    this.container.removeChild(this.filter.domElement);
+
+    // Safely remove DOM element
+    if (this.filter.domElement.parentNode === this.container) {
+      this.container.removeChild(this.filter.domElement);
+    }
+
     this.container.removeEventListener('mousemove', this.onMouseMove);
     this.container.removeEventListener('touchmove', this.onMouseMove);
+
     // Performance: clean up bound update listeners
     if (this.boundUpdateHandler) {
       window.removeEventListener('scroll', this.boundUpdateHandler);
       window.removeEventListener('resize', this.boundUpdateHandler);
+      this.boundUpdateHandler = null;
     }
+
+    // Performance: dispose texture to free GPU memory
+    if (this.texture) {
+      this.texture.dispose();
+    }
+
     this.clear();
     this.renderer.dispose();
   }
@@ -577,73 +615,81 @@ export default function ASCIIText({
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Performance: track cleanup state to prevent memory leaks
+    let isDisposed = false;
+    let intersectionObserver: IntersectionObserver | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+
+    const initAscii = (container: HTMLElement, w: number, h: number) => {
+      if (isDisposed) return; // Don't initialize if already cleaned up
+
+      asciiRef.current = new CanvAscii(
+        {
+          text,
+          asciiFontSize,
+          textFontSize,
+          textColor,
+          planeBaseHeight,
+          enableWaves
+        },
+        container,
+        w,
+        h
+      );
+      asciiRef.current.load();
+
+      // Set up resize observer after initialization
+      resizeObserver = new ResizeObserver(entries => {
+        if (!entries[0] || !asciiRef.current || isDisposed) return;
+        const { width: rw, height: rh } = entries[0].contentRect;
+        if (rw > 0 && rh > 0) {
+          asciiRef.current.setSize(rw, rh);
+        }
+      });
+      resizeObserver.observe(container);
+    };
+
     const { width, height } = containerRef.current.getBoundingClientRect();
 
     if (width === 0 || height === 0) {
-      const observer = new IntersectionObserver(
+      // Wait for element to become visible
+      intersectionObserver = new IntersectionObserver(
         ([entry]) => {
+          if (isDisposed) return; // Don't proceed if already cleaned up
+
           if (entry.isIntersecting && entry.boundingClientRect.width > 0 && entry.boundingClientRect.height > 0) {
             const { width: w, height: h } = entry.boundingClientRect;
-
-            asciiRef.current = new CanvAscii(
-              {
-                text,
-                asciiFontSize,
-                textFontSize,
-                textColor,
-                planeBaseHeight,
-                enableWaves
-              },
-              containerRef.current!,
-              w,
-              h
-            );
-            asciiRef.current.load();
-
-            observer.disconnect();
+            initAscii(containerRef.current!, w, h);
+            intersectionObserver?.disconnect();
+            intersectionObserver = null;
           }
         },
         { threshold: 0.1 }
       );
 
-      observer.observe(containerRef.current);
-
-      return () => {
-        observer.disconnect();
-        if (asciiRef.current) {
-          asciiRef.current.dispose();
-        }
-      };
+      intersectionObserver.observe(containerRef.current);
+    } else {
+      // Initialize immediately if dimensions are available
+      initAscii(containerRef.current, width, height);
     }
 
-    asciiRef.current = new CanvAscii(
-      {
-        text,
-        asciiFontSize,
-        textFontSize,
-        textColor,
-        planeBaseHeight,
-        enableWaves
-      },
-      containerRef.current,
-      width,
-      height
-    );
-    asciiRef.current.load();
-
-    const ro = new ResizeObserver(entries => {
-      if (!entries[0] || !asciiRef.current) return;
-      const { width: w, height: h } = entries[0].contentRect;
-      if (w > 0 && h > 0) {
-        asciiRef.current.setSize(w, h);
-      }
-    });
-    ro.observe(containerRef.current);
-
+    // Performance: unified cleanup function handles all cases
     return () => {
-      ro.disconnect();
+      isDisposed = true;
+
+      if (intersectionObserver) {
+        intersectionObserver.disconnect();
+        intersectionObserver = null;
+      }
+
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+        resizeObserver = null;
+      }
+
       if (asciiRef.current) {
         asciiRef.current.dispose();
+        asciiRef.current = null;
       }
     };
   }, [text, asciiFontSize, textFontSize, textColor, planeBaseHeight, enableWaves]);

@@ -17,6 +17,28 @@ export default {
         heebo: ['Heebo', 'sans-serif'],
         display: ['Clash Display', 'Heebo', 'sans-serif'],
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: 'none',
+          },
+        },
+        lg: {
+          css: {
+            maxWidth: 'none',
+          },
+        },
+        xl: {
+          css: {
+            maxWidth: 'none',
+          },
+        },
+        '2xl': {
+          css: {
+            maxWidth: 'none',
+          },
+        },
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -93,8 +115,12 @@ export default {
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
         marquee: {
-          "0%": { transform: "translateX(0%)" },
-          "100%": { transform: "translateX(-100%)" },
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+        },
+        "marquee-vertical": {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(calc(-100% - var(--gap)))" },
         },
         "shimmer-slide": {
           to: {
@@ -150,7 +176,8 @@ export default {
         float: "float 6s ease-in-out infinite",
         "text-reveal": "text-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "slide-up": "slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-        marquee: "marquee 30s linear infinite",
+        marquee: "marquee var(--duration) linear infinite",
+        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
         "shimmer-slide": "shimmer-slide var(--speed) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
         spotlight: "spotlight 2s ease 0.75s 1 forwards",
@@ -159,5 +186,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 } satisfies Config;

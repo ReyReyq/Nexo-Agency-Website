@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, createContext, useContext } from "react";
+import { useRef, useState, useEffect, createContext, useContext, memo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Sparkles, MeshWobbleMaterial } from "@react-three/drei";
 import { MathUtils, Mesh } from "three";
@@ -203,8 +203,8 @@ const SceneContent = ({ activeStep, isVisible }: { activeStep: number; isVisible
   );
 };
 
-// Main component
-const ProcessVisualization = ({ activeStep, steps }: ProcessVisualizationProps) => {
+// Main component - memoized to prevent unnecessary re-renders
+const ProcessVisualization = memo(({ activeStep, steps }: ProcessVisualizationProps) => {
   const currentStep = steps[activeStep];
   const containerRef = useRef<HTMLDivElement>(null);
   const isVisible = useVisibilityPause(containerRef);
@@ -230,6 +230,8 @@ const ProcessVisualization = ({ activeStep, steps }: ProcessVisualizationProps) 
       </div>
     </div>
   );
-};
+});
+
+ProcessVisualization.displayName = 'ProcessVisualization';
 
 export default ProcessVisualization;

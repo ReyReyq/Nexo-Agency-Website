@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import React, { useRef, ReactNode, useCallback } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import React, { useRef, ReactNode, useCallback, useEffect } from "react";
 
 interface MagneticButtonProps {
   children: ReactNode;
@@ -32,6 +32,14 @@ const MagneticButton = React.memo(({ children, className = "", onClick }: Magnet
   const handleMouseLeave = useCallback(() => {
     x.set(0);
     y.set(0);
+  }, [x, y]);
+
+  // Cleanup: Reset motion values on unmount to prevent stale state
+  useEffect(() => {
+    return () => {
+      x.set(0);
+      y.set(0);
+    };
   }, [x, y]);
 
   return (

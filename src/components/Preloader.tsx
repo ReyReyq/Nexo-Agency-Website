@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { dispatchPreloaderComplete } from "@/lib/lenis";
 
 interface PreloaderProps {
@@ -20,27 +20,50 @@ const preloaderPhotos = [
 
 const Preloader = ({ onComplete }: PreloaderProps) => {
   const [phase, setPhase] = useState<'logo' | 'photos' | 'zooming' | 'complete'>('logo');
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const isCompletedRef = useRef(false);
 
-  // Check for reduced motion preference
-  const prefersReducedMotion = typeof window !== 'undefined'
-    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    : false;
+  // Memoize onComplete callback to prevent unnecessary effect re-runs
+  const handleComplete = useCallback(() => {
+    if (isCompletedRef.current) return;
+    isCompletedRef.current = true;
+    dispatchPreloaderComplete();
+    onComplete();
+  }, [onComplete]);
+
+  // Check for reduced motion preference in useEffect to avoid SSR hydration mismatch
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    // Listen for changes to reduced motion preference
+    const handleChange = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   useEffect(() => {
     if (prefersReducedMotion) {
-      dispatchPreloaderComplete();
-      onComplete();
+      handleComplete();
       return;
     }
 
-    const timers: NodeJS.Timeout[] = [];
+    // Clear any existing timers before setting new ones
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
 
     // Phase 1: Logo shows for 1.5s
-    timers.push(setTimeout(() => setPhase('photos'), 1500));
+    timersRef.current.push(setTimeout(() => setPhase('photos'), 1500));
 
     // Phase 2: Photos reveal for 2.5s
-    timers.push(setTimeout(() => setPhase('zooming'), 4000));
+    timersRef.current.push(setTimeout(() => setPhase('zooming'), 4000));
 
     // Phase 3: Zoom + crossfade to hero (overlapping animations)
     // The settled image starts fading in during zoom
@@ -48,16 +71,18 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
     // Everything happens smoothly without gaps
 
     // Phase 4: Complete - preloader fades out
-    timers.push(setTimeout(() => setPhase('complete'), 9500));
+    timersRef.current.push(setTimeout(() => setPhase('complete'), 9500));
 
     // Remove preloader
-    timers.push(setTimeout(() => {
-      dispatchPreloaderComplete();
-      onComplete();
+    timersRef.current.push(setTimeout(() => {
+      handleComplete();
     }, 10500));
 
-    return () => timers.forEach(clearTimeout);
-  }, [onComplete, prefersReducedMotion]);
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    };
+  }, [handleComplete, prefersReducedMotion]);
 
   if (prefersReducedMotion) return null;
 

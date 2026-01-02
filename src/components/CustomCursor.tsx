@@ -17,12 +17,15 @@ const CustomCursor = () => {
   const heroSectionRef = useRef<Element | null>(null);
   const heroBoundsRef = useRef<DOMRect | null>(null);
 
+  // RAF reference for cleanup
+  const rafRef = useRef<number | null>(null);
+
   const springConfig = { damping: 25, stiffness: 400 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
   // Update cached hero bounds
-  const updateHeroBounds = useCallback(() => {
+  const updateHeroBoundsCallback = useCallback(() => {
     if (!heroSectionRef.current) {
       heroSectionRef.current = document.querySelector('section#home');
     }
@@ -30,6 +33,9 @@ const CustomCursor = () => {
       heroBoundsRef.current = heroSectionRef.current.getBoundingClientRect();
     }
   }, []);
+
+  // Throttle scroll updates to reduce layout thrashing
+  const updateHeroBounds = useThrottleCallback(updateHeroBoundsCallback, 100);
 
   // Check if preloader is still in DOM - optimized observer
   useEffect(() => {
@@ -67,17 +73,25 @@ const CustomCursor = () => {
     return clientY >= rect.top && clientY <= rect.bottom;
   }, []);
 
-  // Throttled mouse move handler
+  // Throttled mouse move handler with RAF optimization
   const moveCursorCallback = useCallback((e: MouseEvent) => {
-    cursorX.set(e.clientX);
-    cursorY.set(e.clientY);
-    setIsInHero(checkIfInHero(e.clientY));
+    // Cancel any pending RAF to prevent stacking
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+    }
+
+    rafRef.current = requestAnimationFrame(() => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+      setIsInHero(checkIfInHero(e.clientY));
+      rafRef.current = null;
+    });
   }, [cursorX, cursorY, checkIfInHero]);
 
   const throttledMoveCursor = useThrottleCallback(moveCursorCallback, 16);
 
   // Combined mouseover handler - checks both position and element type
-  const handleMouseOver = useCallback((e: MouseEvent) => {
+  const handleMouseOverCallback = useCallback((e: MouseEvent) => {
     const target = e.target as HTMLElement;
     const inHero = checkIfInHero(e.clientY);
 
@@ -109,6 +123,9 @@ const CustomCursor = () => {
     }
   }, [checkIfInHero]);
 
+  // Throttle mouseover to reduce excessive state updates
+  const handleMouseOver = useThrottleCallback(handleMouseOverCallback, 32);
+
   const handleMouseLeave = useCallback(() => {
     setIsHidden(true);
     setIsHoveringInteractive(false);
@@ -125,16 +142,16 @@ const CustomCursor = () => {
     };
     checkMobile();
 
-    // Initial hero bounds calculation
-    updateHeroBounds();
+    // Initial hero bounds calculation (use direct callback, not throttled)
+    updateHeroBoundsCallback();
 
     // Throttled resize handler for both mobile check and hero bounds update
-    let resizeTimeout: NodeJS.Timeout | null = null;
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
     const handleResize = () => {
       if (resizeTimeout) clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
         checkMobile();
-        updateHeroBounds();
+        updateHeroBoundsCallback();
       }, 100);
     };
 
@@ -146,7 +163,20 @@ const CustomCursor = () => {
     document.addEventListener('mouseenter', handleMouseEnter, { passive: true });
 
     return () => {
+      // Clear resize timeout
       if (resizeTimeout) clearTimeout(resizeTimeout);
+
+      // Cancel any pending RAF
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+
+      // Clear cached refs to prevent memory leaks
+      heroSectionRef.current = null;
+      heroBoundsRef.current = null;
+
+      // Remove all event listeners
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('scroll', updateHeroBounds);
       window.removeEventListener('mousemove', throttledMoveCursor);
@@ -154,7 +184,7 @@ const CustomCursor = () => {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
     };
-  }, [throttledMoveCursor, handleMouseOver, handleMouseLeave, handleMouseEnter, updateHeroBounds]);
+  }, [throttledMoveCursor, handleMouseOver, handleMouseLeave, handleMouseEnter, updateHeroBounds, updateHeroBoundsCallback]);
 
   if (isMobile) return null;
 

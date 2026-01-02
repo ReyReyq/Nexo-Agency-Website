@@ -1,10 +1,20 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Award, Users, Target, Lightbulb, Calendar, Trophy, Heart, Zap, ArrowLeft } from "lucide-react";
+import { useRef, useMemo, memo } from "react";
+import { Target, Trophy, Heart, Zap, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
-import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
+
+// Memoized animation configs to prevent recreating objects on each render
+const VIEWPORT_ONCE = { once: true } as const;
+const HERO_TRANSITION = { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as const;
+const LINE_TRANSITION = { duration: 0.6 } as const;
+const FADE_UP_INITIAL = { opacity: 0, y: 40 } as const;
+const FADE_UP_ANIMATE = { opacity: 1, y: 0 } as const;
+const FADE_LEFT_INITIAL = { opacity: 0, x: -40 } as const;
+const FADE_LEFT_ANIMATE = { opacity: 1, x: 0 } as const;
+const HERO_INITIAL = { opacity: 0, y: 60 } as const;
 
 const milestones = [
   { year: "2005", title: "הקמת NEXO", desc: "התחלנו כסטודיו קטן עם חזון גדול" },
@@ -66,9 +76,101 @@ const values = [
   },
 ];
 
+// Memoized milestone item to prevent unnecessary re-renders
+const MilestoneItem = memo(({ milestone, index }: { milestone: typeof milestones[0]; index: number }) => {
+  const transition = useMemo(() => ({ delay: index * 0.1 }), [index]);
+
+  return (
+    <motion.div
+      initial={FADE_LEFT_INITIAL}
+      whileInView={FADE_LEFT_ANIMATE}
+      viewport={VIEWPORT_ONCE}
+      transition={transition}
+      className="relative flex gap-8 mb-12"
+    >
+      {/* Dot */}
+      <div className="w-16 flex-shrink-0 flex items-center justify-center">
+        <div className="w-4 h-4 rounded-full bg-primary" />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 glass rounded-2xl p-6 md:p-8">
+        <span className="text-primary font-bold text-lg">{milestone.year}</span>
+        <h3 className="text-2xl font-bold text-foreground mt-2">{milestone.title}</h3>
+        <p className="text-muted-foreground mt-2">{milestone.desc}</p>
+      </div>
+    </motion.div>
+  );
+});
+MilestoneItem.displayName = 'MilestoneItem';
+
+// Memoized value card to prevent unnecessary re-renders
+const ValueCard = memo(({ value, index }: { value: typeof values[0]; index: number }) => {
+  const transition = useMemo(() => ({ delay: index * 0.1 }), [index]);
+  const IconComponent = value.icon;
+
+  return (
+    <motion.div
+      initial={FADE_UP_INITIAL}
+      whileInView={FADE_UP_ANIMATE}
+      viewport={VIEWPORT_ONCE}
+      transition={transition}
+      className="glass-dark rounded-2xl p-8"
+    >
+      <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-6">
+        <IconComponent className="w-7 h-7 text-primary" />
+      </div>
+      <h3 className="text-2xl font-bold text-hero-fg mb-3">{value.title}</h3>
+      <p className="text-hero-fg/70 leading-relaxed">{value.desc}</p>
+    </motion.div>
+  );
+});
+ValueCard.displayName = 'ValueCard';
+
+// Memoized team member card to prevent unnecessary re-renders
+const TeamMemberCard = memo(({ member, index }: { member: typeof team[0]; index: number }) => {
+  const transition = useMemo(() => ({ delay: index * 0.1 }), [index]);
+
+  return (
+    <motion.div
+      initial={FADE_UP_INITIAL}
+      whileInView={FADE_UP_ANIMATE}
+      viewport={VIEWPORT_ONCE}
+      transition={transition}
+      className="group"
+    >
+      <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4">
+        <img
+          src={member.image}
+          alt={member.name}
+          loading="lazy"
+          decoding="async"
+          width={400}
+          height={533}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+      </div>
+      <h3 className="text-xl font-bold text-foreground">{member.name}</h3>
+      <p className="text-primary font-medium">{member.role}</p>
+      <p className="text-muted-foreground text-sm mt-1">{member.bio}</p>
+    </motion.div>
+  );
+});
+TeamMemberCard.displayName = 'TeamMemberCard';
+
+// Static animate values for hero
+const HERO_ANIMATE = { opacity: 1, y: 0 };
+const HERO_EMPTY = {};
+const LINE_INITIAL = { width: 0 };
+const LINE_ANIMATE = { width: 80 };
+
 const About = () => {
   const heroRef = useRef(null);
-  const isHeroInView = useInView(heroRef, { once: true });
+  const isHeroInView = useInView(heroRef, VIEWPORT_ONCE);
+
+  // Memoize animate values to prevent object recreation
+  const heroAnimateValue = isHeroInView ? HERO_ANIMATE : HERO_EMPTY;
+  const lineAnimateValue = isHeroInView ? LINE_ANIMATE : HERO_EMPTY;
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -80,15 +182,15 @@ const About = () => {
         <div className="container mx-auto px-6">
           <motion.div
             ref={heroRef}
-            initial={{ opacity: 0, y: 60 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            initial={HERO_INITIAL}
+            animate={heroAnimateValue}
+            transition={HERO_TRANSITION}
             className="max-w-4xl"
           >
             <motion.div
-              initial={{ width: 0 }}
-              animate={isHeroInView ? { width: 80 } : {}}
-              transition={{ duration: 0.6 }}
+              initial={LINE_INITIAL}
+              animate={lineAnimateValue}
+              transition={LINE_TRANSITION}
               className="h-1 bg-primary mb-8"
             />
             
@@ -110,9 +212,9 @@ const About = () => {
       <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-6">
           <motion.h2
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={FADE_UP_INITIAL}
+            whileInView={FADE_UP_ANIMATE}
+            viewport={VIEWPORT_ONCE}
             className="text-4xl md:text-6xl font-black text-foreground mb-16"
           >
             אבני הדרך שלנו
@@ -123,26 +225,7 @@ const About = () => {
             <div className="absolute right-8 top-0 bottom-0 w-px bg-border" />
 
             {milestones.map((milestone, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative flex gap-8 mb-12"
-              >
-                {/* Dot */}
-                <div className="w-16 flex-shrink-0 flex items-center justify-center">
-                  <div className="w-4 h-4 rounded-full bg-primary" />
-                </div>
-                
-                {/* Content */}
-                <div className="flex-1 glass rounded-2xl p-6 md:p-8">
-                  <span className="text-primary font-bold text-lg">{milestone.year}</span>
-                  <h3 className="text-2xl font-bold text-foreground mt-2">{milestone.title}</h3>
-                  <p className="text-muted-foreground mt-2">{milestone.desc}</p>
-                </div>
-              </motion.div>
+              <MilestoneItem key={milestone.year} milestone={milestone} index={index} />
             ))}
           </div>
         </div>
@@ -152,9 +235,9 @@ const About = () => {
       <section className="py-24 md:py-32 bg-hero-bg">
         <div className="container mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={FADE_UP_INITIAL}
+            whileInView={FADE_UP_ANIMATE}
+            viewport={VIEWPORT_ONCE}
             className="max-w-3xl mb-16"
           >
             <h2 className="text-4xl md:text-6xl font-black text-hero-fg mb-6">
@@ -167,20 +250,7 @@ const About = () => {
 
           <div className="grid md:grid-cols-2 gap-8">
             {values.map((value, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="glass-dark rounded-2xl p-8"
-              >
-                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-6">
-                  <value.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-hero-fg mb-3">{value.title}</h3>
-                <p className="text-hero-fg/70 leading-relaxed">{value.desc}</p>
-              </motion.div>
+              <ValueCard key={value.title} value={value} index={index} />
             ))}
           </div>
         </div>
@@ -190,9 +260,9 @@ const About = () => {
       <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={FADE_UP_INITIAL}
+            whileInView={FADE_UP_ANIMATE}
+            viewport={VIEWPORT_ONCE}
             className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
           >
             <div>
@@ -204,7 +274,7 @@ const About = () => {
               </p>
             </div>
             <Link
-              to="/contact"
+              to="/contact#contact-form"
               className="inline-flex items-center gap-2 text-lg font-medium text-foreground hover:text-primary transition-colors"
             >
               הצטרפו לצוות
@@ -214,35 +284,13 @@ const About = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {team.map((member, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group"
-              >
-                <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    loading="lazy"
-                    decoding="async"
-                    width={400}
-                    height={533}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-foreground">{member.name}</h3>
-                <p className="text-primary font-medium">{member.role}</p>
-                <p className="text-muted-foreground text-sm mt-1">{member.bio}</p>
-              </motion.div>
+              <TeamMemberCard key={member.name} member={member} index={index} />
             ))}
           </div>
         </div>
       </section>
 
-      <Contact />
+      <Footer />
     </div>
   );
 };

@@ -1,465 +1,381 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { Monitor, Palette, Brain, Megaphone, BarChart3, Code, Sparkles, ArrowLeft, Check, Zap, Target, Users } from "lucide-react";
+import { useRef, useState, lazy, Suspense, memo, useMemo, useCallback } from "react";
+import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
-import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
+import { Globe } from "@/components/ui/globe";
+import { cn } from "@/lib/utils";
+import {
+  getMainServices,
+  getSecondaryServices,
+  type Service,
+} from "@/data/services";
 
-// Service cards with optimized images: 800px for card display, WebP format
-const services = [
-  {
-    id: "digital",
-    icon: Monitor,
-    title: "אתרים שמוכרים בשבילך",
-    subtitle: "פיתוח אתרים ופלטפורמות",
-    headline: "הנוכחות הדיגיטלית שלך",
-    description: "לא סתם אתר יפה - פלטפורמה עסקית שממירה מבקרים ללקוחות. כל פיקסל מתוכנן להביא תוצאות.",
-    features: [
-      "אתרי תדמית מעוררי השראה",
-      "חנויות אונליין עם המרות גבוהות",
-      "אפליקציות ווב מתקדמות",
-      "מהירות טעינה אולטרא-מהירה",
-    ],
-    stat: { value: "340%", label: "ROI ממוצע" },
-    gradient: "from-violet-600 via-purple-600 to-indigo-600",
-    bgColor: "rgba(139, 92, 246, 0.15)",
-    accentColor: "#8b5cf6",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fm=webp&fit=crop",
-  },
-  {
-    id: "branding",
-    icon: Palette,
-    title: "מיתוג שנשאר בזיכרון",
-    subtitle: "מיתוג ועיצוב",
-    headline: "הזהות שלך בעולם",
-    description: "מותג חזק זה לא רק לוגו - זו שפה שלמה שמספרת את הסיפור שלך ובונה אמון מהרגע הראשון.",
-    features: [
-      "אסטרטגיית מותג מנצחת",
-      "לוגו וזהות ויזואלית ייחודית",
-      "שפה עיצובית שלמה",
-      "מדריכי מותג מקצועיים",
-    ],
-    stat: { value: "500+", label: "מותגים שעיצבנו" },
-    gradient: "from-pink-500 via-rose-500 to-red-500",
-    bgColor: "rgba(236, 72, 153, 0.15)",
-    accentColor: "#ec4899",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80&fm=webp&fit=crop",
-  },
-  {
-    id: "ai",
-    icon: Brain,
-    title: "AI שחוסך לך זמן וכסף",
-    subtitle: "בינה מלאכותית ואוטומציה",
-    headline: "העתיד כבר כאן",
-    description: "פתרונות AI חכמים שעובדים 24/7. אוטומציות שחוסכות שעות עבודה ומייצרות תובנות שאי אפשר להשיג אחרת.",
-    features: [
-      "צ'אטבוטים חכמים שמוכרים",
-      "אוטומציות עסקיות מתקדמות",
-      "ניתוח נתונים ותובנות AI",
-      "אינטגרציות GPT מותאמות",
-    ],
-    stat: { value: "20h", label: "חיסכון שבועי" },
-    gradient: "from-cyan-500 via-blue-500 to-indigo-500",
-    bgColor: "rgba(6, 182, 212, 0.15)",
-    accentColor: "#06b6d4",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
-  },
-  {
-    id: "marketing",
-    icon: Megaphone,
-    title: "שיווק שמביא תוצאות",
-    subtitle: "שיווק דיגיטלי",
-    headline: "להגיע לקהל הנכון",
-    description: "לא סתם קליקים - לקוחות אמיתיים. קמפיינים חכמים שמשלבים קריאטיב מדויק עם אופטימיזציה מתמדת.",
-    features: [
-      "קמפיינים ממומנים מדויקים",
-      "ניהול רשתות חברתיות",
-      "SEO שמביא תנועה איכותית",
-      "אימייל מרקטינג ממיר",
-    ],
-    stat: { value: "2.5x", label: "שיפור בהמרות" },
-    gradient: "from-orange-500 via-amber-500 to-yellow-500",
-    bgColor: "rgba(249, 115, 22, 0.15)",
-    accentColor: "#f97316",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80&fm=webp&fit=crop",
-  },
-  {
-    id: "strategy",
-    icon: BarChart3,
-    title: "אסטרטגיה שמנחה הצלחה",
-    subtitle: "אסטרטגיה דיגיטלית",
-    headline: "התוכנית להצלחה",
-    description: "לפני שבונים - מתכננים. אסטרטגיה דיגיטלית מקיפה שמנחה כל החלטה ומובילה לתוצאות מדידות.",
-    features: [
-      "מחקר שוק ומתחרים מעמיק",
-      "מיפוי מסע לקוח מלא",
-      "הגדרת KPIs ומטרות",
-      "תוכנית פעולה מפורטת",
-    ],
-    stat: { value: "85%", label: "שיפור בביצועים" },
-    gradient: "from-emerald-500 via-green-500 to-teal-500",
-    bgColor: "rgba(16, 185, 129, 0.15)",
-    accentColor: "#10b981",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&fm=webp&fit=crop",
-  },
-  {
-    id: "development",
-    icon: Code,
-    title: "פיתוח שמתאים בדיוק לך",
-    subtitle: "פיתוח מותאם אישית",
-    headline: "פתרונות ייחודיים",
-    description: "כשפתרונות מדף לא מספיקים - בונים בדיוק מה שצריך. פיתוח מותאם לצרכים הייחודיים של העסק.",
-    features: [
-      "אפליקציות מותאמות אישית",
-      "אינטגרציות בין מערכות",
-      "APIs ושירותי Backend",
-      "פתרונות SaaS ייחודיים",
-    ],
-    stat: { value: "100%", label: "התאמה לצרכים" },
-    gradient: "from-slate-600 via-zinc-600 to-gray-600",
-    bgColor: "rgba(113, 113, 122, 0.15)",
-    accentColor: "#71717a",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80&fm=webp&fit=crop",
-  },
-];
+// Lazy load heavy components for better performance
+const ProcessSection = lazy(() => import("@/components/ProcessSection"));
+const FAQSection = lazy(() => import("@/components/FAQSection"));
+const BlogCarouselSection = lazy(() => import("@/components/BlogCarouselSection"));
 
-const process = [
-  { step: "01", title: "גילוי", desc: "מבינים את העסק, המטרות והאתגרים" },
-  { step: "02", title: "אסטרטגיה", desc: "מפתחים תוכנית פעולה מדויקת" },
-  { step: "03", title: "עיצוב", desc: "יוצרים את החזון הויזואלי" },
-  { step: "04", title: "פיתוח", desc: "בונים ומממשים" },
-  { step: "05", title: "השקה", desc: "יוצאים לאוויר ומודדים" },
-  { step: "06", title: "צמיחה", desc: "משפרים ומפתחים בהתמדה" },
-];
+// ============================================
+// BENTO CARD COMPONENT - Golden Ratio Based
+// ============================================
 
-// Service Card Component with improved glassmorphism design
-const ServiceCard = ({ service, index }: { service: typeof services[0]; index: number }) => {
+// Golden ratio = 1.618 - used for proportional card sizing
+// Card sizes based on golden ratio grid units
+type CardSize = "golden" | "square" | "wide" | "tall";
+
+interface ServiceBentoCardProps {
+  service: Service;
+  index: number;
+  size: CardSize;
+  customImage?: string;
+}
+
+// Grid uses golden ratio: base unit 100px, golden = 162px
+const sizeClasses: Record<CardSize, string> = {
+  square: "col-span-1 row-span-1",      // 1:1 ratio
+  golden: "col-span-2 row-span-2",      // Golden rectangle (large)
+  wide: "col-span-2 row-span-1",        // 1.618:1 horizontal
+  tall: "col-span-1 row-span-2",        // 1:1.618 vertical
+};
+
+// New images for services (different from other pages)
+const serviceImages: Record<string, string> = {
+  "web-development": "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=80",
+  "ecommerce": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
+  "branding": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80",
+  "ai-automation": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
+  "digital-marketing": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
+  "seo": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80",
+  "social-media": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80",
+  "strategy": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
+  "app-development": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
+  "custom-development": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+};
+
+const ServiceBentoCard = memo(({ service, index, size }: ServiceBentoCardProps) => {
   const cardRef = useRef(null);
-  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+  const isInView = useInView(cardRef, { once: true, margin: "-20px" });
   const [isHovered, setIsHovered] = useState(false);
-  const Icon = service.icon;
+
+  // Memoize handlers to prevent recreation on every render
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
+
+  // Show images on ALL cards for consistent visual style
+  const imageUrl = serviceImages[service.slug] || service.image;
+  const isLarge = size === "golden";
+  const isWide = size === "wide";
+  const isSmall = size === "square";
 
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 80 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={isInView ? { opacity: 1, scale: 1 } : {}}
+      transition={{ duration: 0.4, delay: index * 0.04 }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={cn("group", sizeClasses[size])}
     >
-      {/* Card Container */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-muted/50 to-muted/30 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-500">
-
-        {/* Decorative Background */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Gradient orb */}
-          <motion.div
-            className={`absolute -top-32 -right-32 w-64 h-64 rounded-full bg-gradient-to-br ${service.gradient} opacity-20 blur-3xl`}
-            animate={{
-              scale: isHovered ? 1.3 : 1,
-              opacity: isHovered ? 0.35 : 0.2,
-            }}
-            transition={{ duration: 0.5 }}
-          />
-          <motion.div
-            className={`absolute -bottom-32 -left-32 w-64 h-64 rounded-full bg-gradient-to-br ${service.gradient} opacity-10 blur-3xl`}
-            animate={{
-              scale: isHovered ? 1.2 : 1,
-              opacity: isHovered ? 0.25 : 0.1,
-            }}
-            transition={{ duration: 0.5 }}
-          />
-
-          {/* Grid pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)",
-              backgroundSize: "24px 24px",
-            }}
-          />
-        </div>
-
-        {/* Image Section */}
-        <div className="relative aspect-[16/10] overflow-hidden">
+      <Link to={`/services/${service.slug}`} className="block h-full">
+        <div className="relative h-full rounded-xl overflow-hidden transition-all duration-300 bg-muted/50 hover:shadow-xl">
+          {/* Background image for ALL cards */}
           <motion.img
-            src={service.image}
-            alt={service.title}
+            src={imageUrl}
+            alt={service.name}
             loading="lazy"
             decoding="async"
-            width={800}
-            height={500}
-            className="w-full h-full object-cover"
-            animate={{ scale: isHovered ? 1.08 : 1 }}
-            transition={{ duration: 0.6 }}
+            className="absolute inset-0 w-full h-full object-cover"
+            animate={{ scale: isHovered ? 1.05 : 1 }}
+            transition={{ duration: 0.5 }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+          <div className={cn(
+            "absolute inset-0 bg-gradient-to-t from-black/90 to-transparent",
+            isSmall ? "via-black/50" : "via-black/40"
+          )} />
 
-          {/* Stat Badge */}
-          <motion.div
-            className="absolute top-4 right-4 px-4 py-2 rounded-full backdrop-blur-md border border-white/20"
-            style={{ backgroundColor: service.bgColor }}
-            animate={{
-              scale: isHovered ? 1.05 : 1,
-              y: isHovered ? -2 : 0,
-            }}
-          >
-            <span className="font-bold text-lg" style={{ color: service.accentColor }}>
-              {service.stat.value}
-            </span>
-            <span className="text-foreground/70 text-sm mr-2">{service.stat.label}</span>
-          </motion.div>
-        </div>
+          {/* Content */}
+          <div className={cn(
+            "relative h-full flex flex-col justify-end",
+            isSmall ? "p-3" : "p-4"
+          )}>
+            <div>
+              {/* Title */}
+              <h3 className={cn(
+                "font-bold leading-tight text-white",
+                isSmall ? "text-sm" : "text-base md:text-lg"
+              )}>
+                {service.name}
+              </h3>
 
-        {/* Content Section */}
-        <div className="relative p-6 md:p-8">
-          {/* Icon */}
-          <motion.div
-            className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-5 shadow-lg`}
-            animate={{
-              rotate: isHovered ? 5 : 0,
-              scale: isHovered ? 1.1 : 1,
-            }}
-            transition={{ duration: 0.3 }}
-          >
-            <Icon className="w-7 h-7 text-white" />
-          </motion.div>
+              {/* Description - hide on small cards */}
+              {!isSmall && (
+                <p className={cn(
+                  "text-white/70 mt-1 text-xs",
+                  isWide ? "line-clamp-1" : "line-clamp-2"
+                )}>
+                  {service.description}
+                </p>
+              )}
 
-          {/* Subtitle */}
-          <span
-            className="inline-block text-sm font-medium mb-2"
-            style={{ color: service.accentColor }}
-          >
-            {service.subtitle}
-          </span>
-
-          {/* Title */}
-          <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3 leading-tight">
-            {service.title}
-          </h3>
-
-          {/* Description */}
-          <p className="text-muted-foreground leading-relaxed mb-6">
-            {service.description}
-          </p>
-
-          {/* Features */}
-          <div className="space-y-2 mb-6">
-            {service.features.map((feature, i) => (
+              {/* CTA arrow */}
               <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: index * 0.1 + i * 0.1 + 0.3 }}
-                className="flex items-center gap-3"
+                className={cn(
+                  "flex items-center gap-1 text-white/80",
+                  isSmall ? "text-[10px] mt-1" : "text-xs mt-2"
+                )}
+                animate={{ x: isHovered ? -3 : 0 }}
               >
-                <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: service.bgColor }}
-                >
-                  <Check className="w-3 h-3" style={{ color: service.accentColor }} />
-                </div>
-                <span className="text-foreground/80 text-sm">{feature}</span>
+                <span>למידע נוסף</span>
+                <ArrowLeft className={isSmall ? "w-2.5 h-2.5" : "w-3 h-3"} />
               </motion.div>
-            ))}
+            </div>
           </div>
-
-          {/* CTA Button */}
-          <Link
-            to="/contact"
-            className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium text-white bg-gradient-to-r ${service.gradient} hover:opacity-90 transition-all shadow-lg hover:shadow-xl`}
-          >
-            בואו נדבר
-            <ArrowLeft className="w-4 h-4" />
-          </Link>
         </div>
-
-        {/* Hover border glow */}
-        <motion.div
-          className="absolute inset-0 rounded-3xl pointer-events-none"
-          style={{
-            boxShadow: `0 0 40px ${service.accentColor}`,
-            opacity: 0,
-          }}
-          animate={{ opacity: isHovered ? 0.15 : 0 }}
-        />
-      </div>
+      </Link>
     </motion.div>
   );
-};
+});
 
-const Services = () => {
+ServiceBentoCard.displayName = 'ServiceBentoCard';
+
+// ============================================
+// HERO SECTION WITH GLOBE
+// ============================================
+
+const ServicesHero = memo(() => {
   const heroRef = useRef(null);
   const isHeroInView = useInView(heroRef, { once: true });
-  const [activeService, setActiveService] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <GlassNavbar />
+    <section className="relative min-h-[85vh] flex items-center bg-hero-bg pt-20 overflow-hidden">
+      {/* Globe Background - Centered */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-[600px] h-[600px] md:w-[800px] md:h-[800px] opacity-60">
+          <Globe className="w-full h-full" />
+        </div>
+      </div>
 
-      {/* Hero */}
-      <section className="min-h-[70vh] flex items-center bg-hero-bg pt-20">
-        <div className="container mx-auto px-6">
+      {/* Gradient Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-b from-hero-bg via-transparent to-hero-bg pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-hero-bg via-transparent to-hero-bg pointer-events-none" />
+
+      {/* Content */}
+      <div className="container mx-auto px-6 relative z-10">
+        <motion.div
+          ref={heroRef}
+          initial={{ opacity: 0, y: 60 }}
+          animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl"
+        >
           <motion.div
-            ref={heroRef}
-            initial={{ opacity: 0, y: 60 }}
+            initial={{ width: 0 }}
+            animate={isHeroInView ? { width: 80 } : {}}
+            transition={{ duration: 0.6 }}
+            className="h-1 bg-primary mb-8"
+          />
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-8">
+            השירותים
+            <br />
+            <span className="text-gradient">שלנו.</span>
+          </h1>
+
+          <p className="text-hero-fg/70 text-xl md:text-2xl leading-relaxed max-w-2xl mb-10">
+            עיצוב, טכנולוגיה ובינה עסקית שנועדו למטרה אחת - להצמיח את העסק שלך. מהרעיון הראשוני ועד להשקה והלאה.
+          </p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-4xl"
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="flex flex-wrap gap-4"
           >
-            <motion.div
-              initial={{ width: 0 }}
-              animate={isHeroInView ? { width: 80 } : {}}
-              transition={{ duration: 0.6 }}
-              className="h-1 bg-primary mb-8"
-            />
-            
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-8">
-              מה אנחנו
-              <br />
-              <span className="text-gradient">עושים.</span>
-            </h1>
-            
-            <p className="text-hero-fg/70 text-xl md:text-2xl leading-relaxed max-w-2xl">
-              עיצוב, טכנולוגיה ובינה עסקית שנועדו למטרה אחת - להצמיח את העסק שלך.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Services Grid */}
-      <section className="py-24 md:py-32 bg-background relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Floating orbs */}
-          <motion.div
-            className="absolute top-20 left-10 w-72 h-72 rounded-full bg-primary/5 blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              x: [0, 30, 0],
-              y: [0, -20, 0],
-            }}
-            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute bottom-40 right-10 w-96 h-96 rounded-full bg-violet-500/5 blur-3xl"
-            animate={{
-              scale: [1, 1.15, 1],
-              x: [0, -25, 0],
-              y: [0, 30, 0],
-            }}
-            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute top-1/2 left-1/2 w-80 h-80 rounded-full bg-pink-500/5 blur-3xl"
-            animate={{
-              scale: [1, 1.1, 1],
-              x: [0, 20, 0],
-              y: [0, -30, 0],
-            }}
-            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: 80 }}
-              viewport={{ once: true }}
-              className="h-1 bg-primary mx-auto mb-6"
-            />
-            <h2 className="text-4xl md:text-6xl font-black text-foreground mb-4">
-              השירותים שלנו
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              פתרונות דיגיטליים שמביאים תוצאות אמיתיות. כל שירות בנוי עם מטרה אחת - להצמיח את העסק שלך.
-            </p>
-          </motion.div>
-
-          {/* Services Cards Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <ServiceCard key={service.id} service={service} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process */}
-      <section className="py-24 md:py-32 bg-hero-bg">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-6xl font-black text-hero-fg mb-6">
-              תהליך העבודה שלנו
-            </h2>
-            <p className="text-hero-fg/70 text-lg max-w-xl mx-auto">
-              שש שלבים מוכחים שמבטיחים הצלחה בכל פרויקט
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {process.map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="glass-dark rounded-2xl p-8 group hover:border-primary/50 transition-colors"
-              >
-                <span className="text-6xl font-black text-primary/20 group-hover:text-primary/40 transition-colors">
-                  {item.step}
-                </span>
-                <h3 className="text-2xl font-bold text-hero-fg mt-4 mb-2">{item.title}</h3>
-                <p className="text-hero-fg/60">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 md:py-32 bg-background">
-        <div className="container mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-3xl mx-auto"
-          >
-            <Sparkles className="w-12 h-12 text-primary mx-auto mb-6" />
-            <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
-              מוכנים להתחיל?
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              בואו נדבר על איך אנחנו יכולים לעזור לכם להגיע למטרות שלכם.
-            </p>
             <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
+              to="/contact#contact-form"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl hover:shadow-primary/20"
             >
-              צרו קשר
+              בואו נדבר
               <ArrowLeft className="w-5 h-5" />
             </Link>
+            <a
+              href="#services"
+              className="inline-flex items-center gap-2 bg-white/10 text-hero-fg px-8 py-4 rounded-full text-lg font-medium hover:bg-white/20 transition-all border border-white/20"
+            >
+              גלו את השירותים
+            </a>
           </motion.div>
-        </div>
-      </section>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
 
-      <Contact />
+ServicesHero.displayName = 'ServicesHero';
+
+// ============================================
+// SERVICES BENTO GRID SECTION
+// ============================================
+
+// Size pattern defined outside component to prevent recreation
+const SIZE_PATTERN: CardSize[] = [
+  "golden",  // Web Development - 2x2 (4 units)
+  "golden",  // AI & Automation - 2x2 (4 units) - BIG SERVICE!
+  "tall",    // Branding + Social Media - 1x2 (2 units) - includes Social Media!
+  "tall",    // E-commerce - 1x2 (2 units)
+  "tall",    // Digital Marketing - 1x2 (2 units)
+  "tall",    // SEO - 1x2 (2 units) - expanded vertically to fill space
+  "wide",    // Digital Strategy - 2x1 (2 units)
+  "square",  // App Development - 1x1 (1 unit)
+  "square",  // Custom Development - 1x1 (1 unit)
+];
+// Total: 4+4+2+2+2+2+2+1+1 = 20 units = 5 rows exactly!
+
+const ServicesBentoGrid = memo(() => {
+  // Memoize service computation to prevent recalculation on every render
+  const customOrderedServices = useMemo(() => {
+    const mainServices = getMainServices();
+    const secondaryServices = getSecondaryServices();
+    const allServicesData = [...mainServices, ...secondaryServices];
+
+    // Custom order: AI & Automation bigger, Social Media INSIDE Branding
+    // Find services by slug for custom ordering
+    const findService = (slug: string) => allServicesData.find(s => s.slug === slug)!;
+
+    // Social Media is now part of Branding (tall card), so we have 9 cards
+    return [
+      findService("web-development"),      // 1. Golden - prominent
+      findService("ai-automation"),         // 2. Golden - NOW BIGGER (important service!)
+      findService("branding"),              // 3. Tall - includes Social Media inside!
+      findService("ecommerce"),             // 4. Tall
+      findService("digital-marketing"),     // 5. Tall
+      findService("seo"),                   // 6. Square
+      findService("strategy"),              // 7. Wide
+      findService("app-development"),       // 8. Square
+      findService("custom-development"),    // 9. Square
+    ];
+  }, []);
+
+  return (
+    <section id="services" className="py-12 md:py-20 bg-background">
+      <div className="container mx-auto px-4 md:px-6">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-8 md:mb-12"
+        >
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: 50 }}
+            viewport={{ once: true }}
+            className="h-0.5 bg-primary mx-auto mb-4"
+          />
+          <h2 className="text-2xl md:text-4xl font-black text-foreground mb-2">
+            כל מה שהעסק שלכם צריך
+          </h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-lg mx-auto">
+            פתרונות דיגיטליים מקיפים שמביאים תוצאות אמיתיות
+          </p>
+        </motion.div>
+
+        {/* Golden Ratio Bento Grid
+            Base row: 186px (300/1.618 = 185.4 ≈ 186) for TRUE golden ratio
+            1×1 = 300×186 = 1.61:1 ≈ φ | 2×2 = 600×372 = 1.61:1 ≈ φ */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 auto-rows-[155px] md:auto-rows-[186px]">
+          {customOrderedServices.map((service, index) => (
+            <ServiceBentoCard
+              key={service.id}
+              service={service}
+              index={index}
+              size={SIZE_PATTERN[index] || "square"}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
+
+ServicesBentoGrid.displayName = 'ServicesBentoGrid';
+
+// ProcessSection and FAQSection are imported from shared components
+
+// ============================================
+// CTA SECTION
+// ============================================
+
+const CTASection = memo(() => {
+  return (
+    <section className="py-24 md:py-32 bg-background">
+      <div className="container mx-auto px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="max-w-3xl mx-auto"
+        >
+          <Sparkles className="w-12 h-12 text-primary mx-auto mb-6" />
+          <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+            מוכנים להתחיל?
+          </h2>
+          <p className="text-muted-foreground text-lg mb-8">
+            בואו נדבר על איך אנחנו יכולים לעזור לכם להגיע למטרות שלכם.
+            שיחת ייעוץ ראשונית - ללא התחייבות.
+          </p>
+          <Link
+            to="/contact#contact-form"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl hover:shadow-primary/20"
+          >
+            צרו קשר
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+        </motion.div>
+      </div>
+    </section>
+  );
+});
+
+CTASection.displayName = 'CTASection';
+
+// ============================================
+// MAIN SERVICES PAGE
+// ============================================
+
+// Loading fallback for lazy components - memoized since it's a static component
+const SectionLoader = memo(() => (
+  <div className="min-h-[50vh] flex items-center justify-center">
+    <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
+  </div>
+));
+
+SectionLoader.displayName = 'SectionLoader';
+
+const Services = () => {
+  return (
+    <div className="min-h-screen bg-background overflow-x-clip">
+      <GlassNavbar />
+      <ServicesHero />
+      <ServicesBentoGrid />
+      <Suspense fallback={<SectionLoader />}>
+        <ProcessSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <FAQSection />
+      </Suspense>
+      <Suspense fallback={<SectionLoader />}>
+        <BlogCarouselSection
+          categories={["שיווק", "שיווק דיגיטלי", "עסקים", "AI & טכנולוגיה", "שיווק תוכן"]}
+          title="מאמרים רלוונטיים"
+          subtitle="טיפים ותובנות לשיפור הנוכחות הדיגיטלית של העסק שלכם"
+        />
+      </Suspense>
+      <CTASection />
+      <Footer />
     </div>
   );
 };

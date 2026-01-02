@@ -60,6 +60,12 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const confettiInstanceRef = useRef<ReturnType<typeof confetti.create> | null>(null);
 
+  // Refs for timeout cleanup to prevent memory leaks
+  const confettiTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const shakeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
@@ -72,6 +78,23 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
   // Track if phone was filled for abandonment tracking
   const phoneFilledRef = useRef(false);
   const formSubmittedRef = useRef(false);
+
+  // Master cleanup effect - runs on component unmount
+  useEffect(() => {
+    return () => {
+      // Clear all tracked timeouts
+      confettiTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+      confettiTimeoutsRef.current = [];
+      if (shakeTimeoutRef.current) clearTimeout(shakeTimeoutRef.current);
+      if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+      if (autoAdvanceTimeoutRef.current) clearTimeout(autoAdvanceTimeoutRef.current);
+      // Reset confetti instance
+      if (confettiInstanceRef.current) {
+        confettiInstanceRef.current.reset();
+        confettiInstanceRef.current = null;
+      }
+    };
+  }, []);
 
   // Steps configuration - optimized for faster completion
   const steps = [
@@ -132,6 +155,21 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     return null;
   };
 
+  // Helper function to clear all confetti timeouts
+  const clearConfettiTimeouts = useCallback(() => {
+    confettiTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+    confettiTimeoutsRef.current = [];
+  }, []);
+
+  // Helper function to cleanup confetti instance
+  const cleanupConfetti = useCallback(() => {
+    clearConfettiTimeouts();
+    if (confettiInstanceRef.current) {
+      confettiInstanceRef.current.reset();
+      confettiInstanceRef.current = null;
+    }
+  }, [clearConfettiTimeouts]);
+
   // Create confetti instance when canvas is available and trigger when success
   useEffect(() => {
     if (isSuccess) {
@@ -141,7 +179,6 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         const modal = modalRef.current;
 
         if (!canvas || !modal) {
-          console.log("Canvas or modal not available:", { canvas: !!canvas, modal: !!modal });
           // Fallback to global confetti
           triggerGlobalConfetti();
           return;
@@ -151,7 +188,6 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         const rect = modal.getBoundingClientRect();
         canvas.width = rect.width;
         canvas.height = rect.height;
-        console.log("Canvas dimensions set:", rect.width, rect.height);
 
         // Create confetti instance bound to the modal's canvas
         try {
@@ -159,7 +195,6 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
             resize: false,
             useWorker: false,
           });
-          console.log("Confetti instance created");
           triggerConfetti();
         } catch (e) {
           console.error("Failed to create confetti instance:", e);
@@ -167,23 +202,27 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         }
       }, 150);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        cleanupConfetti();
+      };
     }
 
     // Cleanup on unmount or when success changes
     return () => {
-      if (confettiInstanceRef.current) {
-        confettiInstanceRef.current.reset();
-        confettiInstanceRef.current = null;
-      }
+      cleanupConfetti();
     };
-  }, [isSuccess]);
+  }, [isSuccess, cleanupConfetti]);
 
   // Trigger confetti celebration - inside the modal canvas
   // Shoots from bottom corners with slower, gentler animation
   const triggerConfetti = () => {
     const myConfetti = confettiInstanceRef.current;
     if (!myConfetti) return;
+
+    // Clear any existing confetti timeouts before starting new ones
+    confettiTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+    confettiTimeoutsRef.current = [];
 
     const colors = ["#ff6b35", "#f7c59f", "#2ec4b6", "#ffffff", "#ec4899"];
     const defaults = {
@@ -216,7 +255,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     });
 
     // Second wave - slightly delayed
-    setTimeout(() => {
+    const timeout1 = setTimeout(() => {
       if (!confettiInstanceRef.current) return;
       // Bottom left
       confettiInstanceRef.current({
@@ -237,9 +276,10 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         scalar: 1.1,
       });
     }, 400);
+    confettiTimeoutsRef.current.push(timeout1);
 
     // Third wave - gentle follow-up
-    setTimeout(() => {
+    const timeout2 = setTimeout(() => {
       if (!confettiInstanceRef.current) return;
       // Bottom left
       confettiInstanceRef.current({
@@ -262,9 +302,10 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         startVelocity: 20,
       });
     }, 800);
+    confettiTimeoutsRef.current.push(timeout2);
 
     // Final gentle burst
-    setTimeout(() => {
+    const timeout3 = setTimeout(() => {
       if (!confettiInstanceRef.current) return;
       confettiInstanceRef.current({
         ...defaults,
@@ -283,11 +324,15 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         startVelocity: 18,
       });
     }, 1200);
+    confettiTimeoutsRef.current.push(timeout3);
   };
 
   // Fallback global confetti if canvas approach fails
   const triggerGlobalConfetti = () => {
-    console.log("Using global confetti fallback");
+    // Clear any existing confetti timeouts before starting new ones
+    confettiTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+    confettiTimeoutsRef.current = [];
+
     const colors = ["#ff6b35", "#f7c59f", "#2ec4b6", "#ffffff", "#ec4899"];
 
     // Initial burst
@@ -300,7 +345,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     });
 
     // Side bursts
-    setTimeout(() => {
+    const timeout1 = setTimeout(() => {
       confetti({
         particleCount: 50,
         angle: 60,
@@ -318,9 +363,10 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         zIndex: 10002,
       });
     }, 150);
+    confettiTimeoutsRef.current.push(timeout1);
 
     // Final burst
-    setTimeout(() => {
+    const timeout2 = setTimeout(() => {
       confetti({
         particleCount: 80,
         spread: 100,
@@ -329,6 +375,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         zIndex: 10002,
       });
     }, 300);
+    confettiTimeoutsRef.current.push(timeout2);
   };
 
   // Form abandonment tracking - send partial data if user leaves with phone filled
@@ -380,10 +427,14 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     }
   }, [formData.phone]);
 
-  // Reset form when closed
+  // Reset form when closed with proper cleanup
   useEffect(() => {
     if (!isOpen) {
-      setTimeout(() => {
+      // Clear existing reset timeout if any
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
+      }
+      resetTimeoutRef.current = setTimeout(() => {
         setShowStartScreen(true);
         setCurrentStep(0);
         setIsSuccess(false);
@@ -400,6 +451,12 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
         });
       }, 300);
     }
+
+    return () => {
+      if (resetTimeoutRef.current) {
+        clearTimeout(resetTimeoutRef.current);
+      }
+    };
   }, [isOpen]);
 
   // Handle keyboard navigation
@@ -422,11 +479,15 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, currentStep, formData, isSuccess, showStartScreen]);
 
-  // Trigger shake animation
-  const triggerShake = () => {
+  // Trigger shake animation with proper cleanup
+  const triggerShake = useCallback(() => {
+    // Clear any existing shake timeout
+    if (shakeTimeoutRef.current) {
+      clearTimeout(shakeTimeoutRef.current);
+    }
     setShake(true);
-    setTimeout(() => setShake(false), 500);
-  };
+    shakeTimeoutRef.current = setTimeout(() => setShake(false), 500);
+  }, []);
 
   // Validation for current step
   const validateCurrentStep = (): ValidationError | null => {
@@ -531,6 +592,15 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     const formatted = formatPhoneNumber(value);
     updateFormData("phone", formatted);
   };
+
+  // Auto-advance with tracked timeout for proper cleanup
+  const scheduleAutoAdvance = useCallback((callback: () => void, delay: number = 300) => {
+    // Clear any existing auto-advance timeout
+    if (autoAdvanceTimeoutRef.current) {
+      clearTimeout(autoAdvanceTimeoutRef.current);
+    }
+    autoAdvanceTimeoutRef.current = setTimeout(callback, delay);
+  }, []);
 
   const startForm = () => {
     setShowStartScreen(false);
@@ -756,7 +826,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                 key={option.value}
                 onClick={() => {
                   updateFormData("budget", option.value);
-                  setTimeout(handleNext, 300);
+                  scheduleAutoAdvance(handleNext, 300);
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -806,7 +876,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                 key={option.value}
                 onClick={() => {
                   updateFormData("source", option.value);
-                  setTimeout(handleSubmit, 300);
+                  scheduleAutoAdvance(handleSubmit, 300);
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

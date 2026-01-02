@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 interface LoadingScreenProps {
   onComplete: () => void;
@@ -9,19 +9,53 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   const [progress, setProgress] = useState(0);
   const [isExiting, setIsExiting] = useState(false);
   const timeoutIdsRef = useRef<NodeJS.Timeout[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Memoize onComplete to prevent unnecessary effect re-runs
+  const stableOnComplete = useCallback(() => {
+    if (isMountedRef.current) {
+      onComplete();
+    }
+  }, [onComplete]);
 
   useEffect(() => {
-    // Clear any existing timeouts from previous renders
+    // Mark component as mounted
+    isMountedRef.current = true;
+
+    // Clear any existing timeouts and interval from previous renders
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
     timeoutIdsRef.current.forEach(clearTimeout);
     timeoutIdsRef.current = [];
 
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
+      // Check if component is still mounted before updating state
+      if (!isMountedRef.current) {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+        }
+        return;
+      }
+
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(interval);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
           const exitingTimeoutId = setTimeout(() => {
+            // Check if still mounted before state updates
+            if (!isMountedRef.current) return;
+
             setIsExiting(true);
-            const completeTimeoutId = setTimeout(onComplete, 800);
+            const completeTimeoutId = setTimeout(() => {
+              // Check if still mounted before calling onComplete
+              if (isMountedRef.current) {
+                stableOnComplete();
+              }
+            }, 800);
             timeoutIdsRef.current.push(completeTimeoutId);
           }, 300);
           timeoutIdsRef.current.push(exitingTimeoutId);
@@ -32,11 +66,20 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
     }, 100);
 
     return () => {
-      clearInterval(interval);
+      // Mark component as unmounted to prevent state updates
+      isMountedRef.current = false;
+
+      // Clear interval
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+
+      // Clear all tracked timeouts
       timeoutIdsRef.current.forEach(clearTimeout);
       timeoutIdsRef.current = [];
     };
-  }, [onComplete]);
+  }, [stableOnComplete]);
 
   return (
     <AnimatePresence>

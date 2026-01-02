@@ -1,7 +1,7 @@
-import { useRef, useState, useMemo, createContext, useContext } from 'react';
+import { useRef, useState, useMemo, useCallback, useEffect, createContext, useContext } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Physics, RigidBody, CuboidCollider } from '@react-three/rapier';
-import { Float, Environment, MeshTransmissionMaterial } from '@react-three/drei';
+import { Environment, MeshTransmissionMaterial } from '@react-three/drei';
 import {
   Mesh,
   Vector3,
@@ -11,7 +11,8 @@ import {
   CylinderGeometry,
   IcosahedronGeometry,
   SphereGeometry,
-  BoxGeometry
+  BoxGeometry,
+  BufferGeometry
 } from 'three';
 import { motion } from 'framer-motion';
 import { useVisibilityPause } from '@/hooks/useVisibilityPause';
@@ -43,48 +44,66 @@ function Shape3D({ type, position, color, scale = 1 }: {
   scale?: number;
 }) {
   const meshRef = useRef<Mesh>(null);
-  const rigidBodyRef = useRef<any>(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [hovered, setHovered] = useState(false);
 
   const isVisible = useContext(VisibilityContext);
 
   // Rotate shapes gently - skip when off-screen
-  useFrame((state) => {
+  useFrame(() => {
     if (!isVisible) return;
-    if (meshRef.current && !isDragging) {
+    if (meshRef.current) {
       meshRef.current.rotation.x += 0.005;
       meshRef.current.rotation.y += 0.008;
     }
   });
 
-  // Get geometry based on shape type
+  // Get geometry based on shape type - with proper cleanup
   const geometry = useMemo(() => {
+    let geo: BufferGeometry;
     switch (type) {
       case 'star':
-        return new OctahedronGeometry(0.5 * scale, 0);
+        geo = new OctahedronGeometry(0.5 * scale, 0);
+        break;
       case 'moon':
-        return new TorusGeometry(0.4 * scale, 0.15 * scale, 8, 24, Math.PI * 1.5);
+        geo = new TorusGeometry(0.4 * scale, 0.15 * scale, 8, 24, Math.PI * 1.5);
+        break;
       case 'crystal':
-        return new ConeGeometry(0.3 * scale, 0.8 * scale, 6);
+        geo = new ConeGeometry(0.3 * scale, 0.8 * scale, 6);
+        break;
       case 'ring':
-        return new TorusGeometry(0.35 * scale, 0.1 * scale, 8, 32);
+        geo = new TorusGeometry(0.35 * scale, 0.1 * scale, 8, 32);
+        break;
       case 'key':
-        return new CylinderGeometry(0.15 * scale, 0.15 * scale, 0.6 * scale, 6);
+        geo = new CylinderGeometry(0.15 * scale, 0.15 * scale, 0.6 * scale, 6);
+        break;
       case 'heart':
-        return new IcosahedronGeometry(0.4 * scale, 0);
+        geo = new IcosahedronGeometry(0.4 * scale, 0);
+        break;
       case 'diamond':
-        return new OctahedronGeometry(0.45 * scale, 0);
+        geo = new OctahedronGeometry(0.45 * scale, 0);
+        break;
       case 'sphere':
-        return new SphereGeometry(0.35 * scale, 16, 16);
+        geo = new SphereGeometry(0.35 * scale, 16, 16);
+        break;
       default:
-        return new BoxGeometry(0.5 * scale, 0.5 * scale, 0.5 * scale);
+        geo = new BoxGeometry(0.5 * scale, 0.5 * scale, 0.5 * scale);
     }
+    return geo;
   }, [type, scale]);
+
+  // Dispose geometry on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      geometry.dispose();
+    };
+  }, [geometry]);
+
+  // Memoize pointer handlers to prevent unnecessary re-renders
+  const handlePointerOver = useCallback(() => setHovered(true), []);
+  const handlePointerOut = useCallback(() => setHovered(false), []);
 
   return (
     <RigidBody
-      ref={rigidBodyRef}
       position={position}
       colliders="hull"
       restitution={0.7}
@@ -95,8 +114,8 @@ function Shape3D({ type, position, color, scale = 1 }: {
       <mesh
         ref={meshRef}
         geometry={geometry}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
         castShadow
         receiveShadow
       >
@@ -117,29 +136,38 @@ function Shape3D({ type, position, color, scale = 1 }: {
 // Mouse interaction - applies force to nearby objects
 function MouseForce() {
   const { camera, pointer, scene } = useThree();
-  const lastPos = useRef(new Vector3());
   const isVisible = useContext(VisibilityContext);
+
+  // Reusable Vector3 instances to avoid garbage collection
+  const lastPos = useRef(new Vector3());
+  const currentPos = useRef(new Vector3());
+  const velocity = useRef(new Vector3());
+  const objPos = useRef(new Vector3());
+  const force = useRef(new Vector3());
 
   useFrame(() => {
     if (!isVisible) return; // Skip when off-screen
 
-    const vec = new Vector3(pointer.x, pointer.y, 0.5);
-    vec.unproject(camera);
+    // Reuse vector instead of creating new one
+    currentPos.current.set(pointer.x, pointer.y, 0.5);
+    currentPos.current.unproject(camera);
 
     // Calculate velocity from mouse movement
-    const velocity = vec.clone().sub(lastPos.current);
-    lastPos.current.copy(vec);
+    velocity.current.copy(currentPos.current).sub(lastPos.current);
+    lastPos.current.copy(currentPos.current);
 
     // Apply gentle push to nearby rigid bodies
     scene.traverse((obj: any) => {
       if (obj.rigidBody) {
         const pos = obj.rigidBody.translation();
-        const dist = vec.distanceTo(new Vector3(pos.x, pos.y, pos.z));
+        objPos.current.set(pos.x, pos.y, pos.z);
+        const dist = currentPos.current.distanceTo(objPos.current);
 
         if (dist < 2) {
-          const force = velocity.clone().multiplyScalar(50 / (dist + 0.5));
+          const multiplier = 50 / (dist + 0.5);
+          force.current.copy(velocity.current).multiplyScalar(multiplier);
           obj.rigidBody.applyImpulse(
-            { x: force.x, y: force.y, z: force.z },
+            { x: force.current.x, y: force.current.y, z: force.current.z },
             true
           );
         }
@@ -214,6 +242,7 @@ function Scene({ isVisible }: { isVisible: boolean }) {
       <Physics gravity={[0, -3, 0]} paused={!isVisible}>
         <Floor />
         <Walls />
+        <MouseForce />
 
         {shapes.map((shape) => (
           <Shape3D
@@ -234,7 +263,23 @@ function Scene({ isVisible }: { isVisible: boolean }) {
 // Main Hero Component
 const HeroPhysics = () => {
   const containerRef = useRef<HTMLElement>(null);
+  const glRef = useRef<any>(null);
   const isVisible = useVisibilityPause(containerRef);
+
+  // Cleanup WebGL context on unmount
+  useEffect(() => {
+    return () => {
+      if (glRef.current) {
+        glRef.current.dispose();
+        glRef.current = null;
+      }
+    };
+  }, []);
+
+  // Store GL context reference for cleanup
+  const handleCreated = useCallback(({ gl }: { gl: any }) => {
+    glRef.current = gl;
+  }, []);
 
   return (
     <section ref={containerRef} className="relative min-h-screen overflow-hidden">
@@ -253,6 +298,7 @@ const HeroPhysics = () => {
           camera={{ position: [0, 0, 12], fov: 50 }}
           style={{ background: 'transparent' }}
           frameloop={isVisible ? 'always' : 'demand'}
+          onCreated={handleCreated}
         >
           <Scene isVisible={isVisible} />
         </Canvas>

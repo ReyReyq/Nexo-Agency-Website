@@ -1,11 +1,15 @@
 "use client";
 
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { useRef, useState, useCallback, useEffect } from "react";
-import { Send, Instagram, Facebook, Linkedin, Phone, Mail, ArrowUpRight, MessageCircle, Clock, Sparkles, ArrowLeft, ArrowRight, Check, Rocket, AlertCircle, ExternalLink } from "lucide-react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
+import { Send, Instagram, Facebook, Linkedin, Phone, Mail, ArrowUpRight, MessageCircle, Clock, ArrowLeft, ArrowRight, Check, Rocket, AlertCircle, Heart } from "lucide-react";
 import GlassNavbar from "@/components/GlassNavbar";
+import FAQSection from "@/components/FAQSection";
+import PortfolioSection from "@/components/PortfolioSection";
+import { Globe } from "@/components/ui/globe";
 import confetti from "canvas-confetti";
 import { Link } from "react-router-dom";
+import { submitContactForm, type FormData as SubmissionFormData } from "@/utils/formSubmission";
 
 const socialLinks = [
   { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram", color: "hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500" },
@@ -14,13 +18,6 @@ const socialLinks = [
   { icon: MessageCircle, href: "https://wa.me/972501234567", label: "WhatsApp", color: "hover:bg-green-500" },
 ];
 
-
-// Featured projects for "See Our Work" section
-const featuredProjects = [
-  { name: "Sione", category: "מיתוג ואתר", image: "/portfolio/sione-thumb.jpg" },
-  { name: "TechFlow", category: "אפליקציה", image: "/portfolio/techflow-thumb.jpg" },
-  { name: "RetailPro", category: "חנות אונליין", image: "/portfolio/retailpro-thumb.jpg" },
-];
 
 // Form types and config
 interface FormData {
@@ -87,17 +84,18 @@ const ContactPage = () => {
     source: "",
   });
 
-  const totalSteps = steps.length;
-  const currentStepData = steps[currentStep];
-  const progress = ((currentStep + 1) / totalSteps) * 100;
+  // Memoized computed values to prevent recalculation on every render
+  const totalSteps = useMemo(() => steps.length, []);
+  const currentStepData = useMemo(() => steps[currentStep], [currentStep]);
+  const progress = useMemo(() => ((currentStep + 1) / totalSteps) * 100, [currentStep, totalSteps]);
 
-  // Phone number formatter
-  const formatPhoneNumber = (value: string): string => {
+  // Phone number formatter - memoized to prevent recreation on every render
+  const formatPhoneNumber = useCallback((value: string): string => {
     const digits = value.replace(/\D/g, "");
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
     return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
-  };
+  }, []);
 
   // Scroll to form function
   const scrollToForm = useCallback(() => {
@@ -151,30 +149,9 @@ const ContactPage = () => {
     }
   }, []);
 
-  // Handle next step
-  const handleNext = useCallback(() => {
-    const field = currentStepData.id;
-    const value = formData[field as keyof FormData];
-
-    if (currentStepData.required && !validateField(field, value)) {
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-      return;
-    }
-
-    if (field === "email" && value && !validateField(field, value)) {
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-      return;
-    }
-
-    setDirection("forward");
-    if (currentStep < totalSteps - 1) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      handleSubmit();
-    }
-  }, [currentStep, currentStepData, formData, totalSteps, validateField]);
+  // Refs to track timeouts for cleanup
+  const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle previous step
   const handleBack = useCallback(() => {
@@ -192,16 +169,31 @@ const ContactPage = () => {
     }
     setFormData((prev) => ({ ...prev, [field]: value }));
     setError(null);
-  }, []);
+  }, [formatPhoneNumber]);
 
-  // Handle submit
+  // Handle submit - defined before handleNext since handleNext depends on it
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Prepare form data for submission
+      const submissionData: SubmissionFormData = {
+        name: formData.name,
+        phone: formData.phone.replace(/\D/g, ''), // Send clean phone number
+        email: formData.email || undefined,
+        budget: formData.budget || undefined,
+        message: formData.message || undefined,
+        source: formData.source || undefined,
+      };
 
-      // Fire confetti
+      // Submit to Airtable and Monday.com
+      const result = await submitContactForm(submissionData);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Submission failed');
+      }
+
+      // Fire confetti on success
       confetti({
         particleCount: 100,
         spread: 70,
@@ -215,7 +207,58 @@ const ContactPage = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, []);
+  }, [formData]);
+
+  // Handle selection with auto-advance (for budget/source options)
+  const handleSelectionWithAutoAdvance = useCallback((field: string, value: string) => {
+    handleInputChange(field, value);
+    // Clear any existing auto-advance timeout
+    if (autoAdvanceTimeoutRef.current) {
+      clearTimeout(autoAdvanceTimeoutRef.current);
+    }
+    autoAdvanceTimeoutRef.current = setTimeout(() => {
+      setDirection("forward");
+      // Check if we're on the last step - submit instead of advancing
+      setCurrentStep((prev) => {
+        if (prev >= totalSteps - 1) {
+          // On last step, trigger submit
+          handleSubmit();
+          return prev; // Don't change step
+        }
+        return prev + 1;
+      });
+    }, 200);
+  }, [handleInputChange, totalSteps, handleSubmit]);
+
+  // Handle next step
+  const handleNext = useCallback(() => {
+    const field = currentStepData.id;
+    const value = formData[field as keyof FormData];
+
+    // Clear any existing shake timeout
+    if (shakeTimeoutRef.current) {
+      clearTimeout(shakeTimeoutRef.current);
+    }
+
+    if (currentStepData.required && !validateField(field, value)) {
+      setShake(true);
+      shakeTimeoutRef.current = setTimeout(() => setShake(false), 500);
+      return;
+    }
+
+    if (field === "email" && value && !validateField(field, value)) {
+      setShake(true);
+      shakeTimeoutRef.current = setTimeout(() => setShake(false), 500);
+      return;
+    }
+
+    setDirection("forward");
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      handleSubmit();
+    }
+  }, [currentStep, currentStepData, formData, totalSteps, validateField, handleSubmit]);
 
   // Focus input on step change
   useEffect(() => {
@@ -241,8 +284,20 @@ const ContactPage = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleNext, isSubmitting, showStartScreen]);
 
-  // Animation variants for form steps
-  const slideVariants = {
+  // Cleanup all timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (shakeTimeoutRef.current) {
+        clearTimeout(shakeTimeoutRef.current);
+      }
+      if (autoAdvanceTimeoutRef.current) {
+        clearTimeout(autoAdvanceTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Animation variants for form steps - memoized to prevent object recreation
+  const slideVariants = useMemo(() => ({
     enter: (direction: "forward" | "back") => ({
       x: direction === "forward" ? 50 : -50,
       opacity: 0,
@@ -252,10 +307,11 @@ const ContactPage = () => {
       x: direction === "forward" ? -50 : 50,
       opacity: 0,
     }),
-  };
+  }), []);
 
-  // Render form step content
-  const renderStepContent = () => {
+  // Render form step content - memoized to prevent recreation on every render
+  const renderStepContent = useCallback(() => {
+    if (!currentStepData) return null;
     const field = currentStepData.id;
 
     switch (field) {
@@ -266,10 +322,7 @@ const ContactPage = () => {
               <motion.button
                 key={option.value}
                 type="button"
-                onClick={() => {
-                  handleInputChange("budget", option.value);
-                  setTimeout(handleNext, 200);
-                }}
+                onClick={() => handleSelectionWithAutoAdvance("budget", option.value)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`p-4 rounded-xl border-2 text-right transition-all ${
@@ -292,10 +345,7 @@ const ContactPage = () => {
               <motion.button
                 key={option.value}
                 type="button"
-                onClick={() => {
-                  handleInputChange("source", option.value);
-                  setTimeout(handleNext, 200);
-                }}
+                onClick={() => handleSelectionWithAutoAdvance("source", option.value)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`p-4 rounded-xl border-2 text-center transition-all ${
@@ -342,7 +392,7 @@ const ContactPage = () => {
           />
         );
     }
-  };
+  }, [currentStepData?.id, formData.budget, formData.source, formData.message, formData, error, handleInputChange, handleSelectionWithAutoAdvance]);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -350,6 +400,15 @@ const ContactPage = () => {
 
       {/* Hero Section - Clean and Fast */}
       <section className="min-h-screen flex items-center bg-hero-bg relative overflow-hidden">
+        {/* Globe Background - Centered */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-[600px] h-[600px] md:w-[800px] md:h-[800px] opacity-60">
+            <Globe className="w-full h-full" />
+          </div>
+        </div>
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-b from-hero-bg via-transparent to-hero-bg pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-hero-bg via-transparent to-hero-bg pointer-events-none" />
         <div className="container mx-auto px-6 relative z-10">
           <motion.div
             ref={heroRef}
@@ -410,7 +469,7 @@ const ContactPage = () => {
 
 
       {/* Contact Section with Embedded Form */}
-      <section ref={contactRef} className="py-24 md:py-32 bg-background">
+      <section id="contact-form" ref={contactRef} className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
             {/* Left - Contact Info */}
@@ -429,7 +488,7 @@ const ContactPage = () => {
               {/* Contact Cards */}
               <div className="space-y-4 mb-12">
                 <a
-                  href="mailto:hello@nexo.agency"
+                  href="mailto:sales@nexoagency.com"
                   className="group flex items-center gap-4 p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
                 >
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -437,7 +496,7 @@ const ContactPage = () => {
                   </div>
                   <div className="flex-1">
                     <p className="text-muted-foreground text-sm mb-1">אימייל</p>
-                    <p className="text-foreground text-lg font-medium">hello@nexo.agency</p>
+                    <p className="text-foreground text-lg font-medium">sales@nexoagency.com</p>
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                 </a>
@@ -667,86 +726,38 @@ const ContactPage = () => {
         </div>
       </section>
 
-      {/* See Our Work Section (replacing testimonials) */}
-      <section className="py-24 bg-muted/30">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">
-              ראו מה יצרנו
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              פרויקטים שהפכו חזון למציאות
-            </p>
-          </motion.div>
+      {/* Portfolio Section */}
+      <PortfolioSection />
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
-            {featuredProjects.map((project, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group relative aspect-[4/3] rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-border overflow-hidden"
-              >
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Sparkles className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="font-bold text-foreground text-lg mb-1">{project.name}</h3>
-                  <p className="text-muted-foreground text-sm">{project.category}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      {/* FAQ Section */}
+      <FAQSection />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center"
-          >
-            <Link
-              to="/portfolio"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-foreground text-background rounded-full font-bold hover:bg-foreground/90 transition-colors"
-            >
-              <span>לכל הפרויקטים</span>
-              <ExternalLink className="w-4 h-4" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Final CTA Section */}
-      <section className="py-24 bg-hero-bg">
+      {/* CTA Section */}
+      <section className="bg-hero-bg py-24 md:py-32">
         <div className="container mx-auto px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl md:text-5xl font-black text-hero-fg mb-6">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-hero-fg mb-4">
               מוכנים לקחת את העסק שלכם
               <br />
-              <span className="text-gradient">לשלב הבא?</span>
+              <span className="text-primary">לשלב הבא?</span>
             </h2>
-            <p className="text-hero-fg/60 text-lg mb-8 max-w-xl mx-auto">
+            <p className="text-hero-fg/60 text-lg md:text-xl max-w-2xl mx-auto mb-10">
               בואו נדבר על איך אנחנו יכולים לעזור לכם להשיג את המטרות שלכם.
             </p>
-            <motion.button
-              onClick={scrollToForm}
+            <motion.a
+              href="#contact-form"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-primary text-white rounded-full text-lg font-bold inline-flex items-center gap-3 hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
             >
               <Send className="w-5 h-5" />
               בואו נתחיל
-            </motion.button>
+            </motion.a>
           </motion.div>
         </div>
       </section>
@@ -764,6 +775,26 @@ const ContactPage = () => {
               <a href="/privacy" className="hover:text-hero-fg transition-colors">מדיניות פרטיות</a>
               <a href="/terms" className="hover:text-hero-fg transition-colors">תנאי שימוש</a>
             </div>
+          </div>
+
+          {/* Credit Section */}
+          <div className="mt-6 pt-6 border-t border-hero-fg/10 flex items-center justify-center" dir="rtl">
+            <a
+              href="/"
+              className="flex items-center gap-2 text-hero-fg/30 hover:text-hero-fg/50 transition-colors duration-300"
+            >
+              <span className="text-xs font-medium">נוצר באהבה</span>
+              <Heart className="w-3.5 h-3.5 text-primary fill-primary animate-pulse" />
+              <span className="text-xs font-medium">ע״י</span>
+              <svg className="w-4 h-4" viewBox="0 0 486 336" fill="currentColor">
+                <g transform="translate(0,336) scale(0.1,-0.1)">
+                  <path d="M410 3350 c-63 -5 -167 -11 -230 -15 -63 -3 -130 -9 -147 -12 l-33 -5 0 -1661 0 -1660 82 6 c158 12 295 68 398 163 77 72 144 201 160 309 6 44 10 491 10 1188 l0 1117 93 0 c244 0 488 -75 697 -214 84 -57 230 -199 1290 -1262 1149 -1151 1198 -1199 1266 -1231 39 -19 100 -38 135 -44 35 -5 209 -8 387 -7 l322 3 -1487 1486 c-1377 1375 -1495 1491 -1588 1551 -229 150 -449 234 -710 272 -49 7 -173 14 -275 15 -102 1 -201 3 -220 5 -19 2 -87 0 -150 -4z"/>
+                  <path d="M4109 3316 c-83 -22 -133 -62 -314 -253 -99 -103 -247 -258 -330 -343 -83 -85 -226 -234 -317 -330 l-166 -175 208 -214 c115 -117 213 -211 218 -210 8 4 250 259 751 794 119 127 259 275 311 330 53 55 163 171 244 258 l148 157 -353 -1 c-247 0 -368 -4 -400 -13z"/>
+                  <path d="M2085 1273 c-187 -196 -279 -291 -815 -841 -200 -205 -369 -381 -376 -391 -12 -16 6 -17 339 -14 202 2 375 8 407 14 30 6 89 27 130 46 62 29 94 54 181 142 163 164 729 773 729 785 0 5 -96 106 -213 224 l-213 213 -169 -178z"/>
+                </g>
+              </svg>
+              <span className="text-xs font-semibold tracking-wider">Nexo</span>
+            </a>
           </div>
         </div>
       </footer>

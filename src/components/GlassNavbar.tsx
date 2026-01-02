@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useRef, useState, memo } from "react";
+import { useCallback, useEffect, useRef, useState, memo, lazy, Suspense } from "react";
 import { useAnimate, motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Menu, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import LiquidSideNav from "./LiquidSideNav";
-import TypeformPopup from "@/components/TypeformPopup";
+
+// Lazy load heavy components that are not immediately needed
+// LiquidSideNav is only shown when menu is opened
+// TypeformPopup is 1000+ lines with confetti library - lazy load for initial bundle reduction
+const LiquidSideNav = lazy(() => import("./LiquidSideNav"));
+const TypeformPopup = lazy(() => import("@/components/TypeformPopup"));
 
 // MarqueeButton with smooth infinite scrolling text animation
 const MarqueeButton = ({
@@ -56,9 +60,16 @@ const GlassNavbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  // Track if menu has ever been opened - keeps component mounted for AnimatePresence exit animations
+  const [menuHasOpened, setMenuHasOpened] = useState(false);
+  // Track if popup has ever been opened
+  const [popupHasOpened, setPopupHasOpened] = useState(false);
 
   const [scope, animate] = useAnimate();
   const navRef = useRef<HTMLElement>(null);
+  // Store animate function in ref to avoid recreating callbacks
+  const animateRef = useRef(animate);
+  animateRef.current = animate;
 
   // Ref to track requestAnimationFrame ID for cleanup
   const rafIdRef = useRef<number | null>(null);
@@ -109,6 +120,7 @@ const GlassNavbar = () => {
   }, [handleScroll, updateScrollState]);
 
   // Cursor follower effect - memoized with useCallback
+  // Uses refs to avoid dependency on animate/scope which change on each render
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const rect = navRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -119,16 +131,40 @@ const GlassNavbar = () => {
       setHovered(true);
       const top = e.clientY - rect.top + "px";
       const left = e.clientX - rect.left + "px";
-      animate(scope.current, { top, left }, { duration: 0 });
+      animateRef.current(scope.current, { top, left }, { duration: 0 });
     } else {
       setHovered(false);
     }
-  }, [animate, scope]);
+  }, [scope]);
 
   // Memoized onMouseLeave handler
   const handleMouseLeave = useCallback(() => {
     setHovered(false);
   }, []);
+
+  // Memoized popup handlers to prevent unnecessary re-renders
+  const handleOpenPopup = useCallback(() => {
+    setPopupHasOpened(true);
+    setIsPopupOpen(true);
+  }, []);
+
+  const handleClosePopup = useCallback(() => {
+    setIsPopupOpen(false);
+  }, []);
+
+  // Track when menu opens for the first time (for lazy loading + exit animations)
+  useEffect(() => {
+    if (menuOpen && !menuHasOpened) {
+      setMenuHasOpened(true);
+    }
+  }, [menuOpen, menuHasOpened]);
+
+  // Track when popup opens for the first time
+  useEffect(() => {
+    if (isPopupOpen && !popupHasOpened) {
+      setPopupHasOpened(true);
+    }
+  }, [isPopupOpen, popupHasOpened]);
 
   return (
     <>
@@ -167,7 +203,7 @@ const GlassNavbar = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="hidden lg:flex items-center z-10 justify-self-start"
           >
-            <MarqueeButton onClick={() => setIsPopupOpen(true)} isPastHero={isPastHero}>
+            <MarqueeButton onClick={handleOpenPopup} isPastHero={isPastHero}>
               צרו קשר עכשיו
             </MarqueeButton>
           </motion.div>
@@ -188,11 +224,19 @@ const GlassNavbar = () => {
         </div>
       </motion.nav>
 
-      {/* Liquid Side Navigation */}
-      <LiquidSideNav isOpen={menuOpen} setIsOpen={setMenuOpen} />
+      {/* Liquid Side Navigation - lazy loaded on first open, stays mounted for exit animations */}
+      {menuHasOpened && (
+        <Suspense fallback={null}>
+          <LiquidSideNav isOpen={menuOpen} setIsOpen={setMenuOpen} />
+        </Suspense>
+      )}
 
-      {/* Contact Form Popup */}
-      <TypeformPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
+      {/* Contact Form Popup - lazy loaded on first open, stays mounted for exit animations */}
+      {popupHasOpened && (
+        <Suspense fallback={null}>
+          <TypeformPopup isOpen={isPopupOpen} onClose={handleClosePopup} />
+        </Suspense>
+      )}
     </>
   );
 };

@@ -57,7 +57,7 @@ const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorPr
 
 StepIndicator.displayName = 'StepIndicator';
 
-const ProcessSection = () => {
+const ProcessSection = memo(() => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const lastStepChangeTime = useRef(0);
@@ -69,11 +69,14 @@ const ProcessSection = () => {
   });
 
   // Debounced scroll detection - single source of truth
+  // Scale progress so all steps complete within usable scroll range
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const now = Date.now();
     // Debounce: minimum 100ms between step changes
     if (now - lastStepChangeTime.current < 100) return;
 
+    // Ensure all steps complete before section ends
+    // Clamp to ensure we don't exceed step count
     const stepIndex = Math.min(
       Math.floor(latest * processSteps.length),
       processSteps.length - 1
@@ -92,7 +95,9 @@ const ProcessSection = () => {
       ref={containerRef}
       className="relative"
       style={{
-        height: `${processSteps.length * 100}vh`,
+        // Total height: enough scroll for all steps + viewport for last step visibility
+        // Each step needs ~50vh of scroll, plus 100vh for the sticky content
+        height: `${processSteps.length * 50 + 50}vh`,
         backgroundColor: '#FAF9F6'
       }}
       dir="rtl"
@@ -213,6 +218,8 @@ const ProcessSection = () => {
       </div>
     </section>
   );
-};
+});
+
+ProcessSection.displayName = 'ProcessSection';
 
 export default ProcessSection;

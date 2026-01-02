@@ -1,31 +1,97 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState, useMemo } from "react";
-import { Calendar, Clock, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useRef, useState, useMemo, useCallback } from "react";
+import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle, Loader2 } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
-import Contact from "@/components/Contact";
-import { blogPosts, getAllCategories, getPostsByCategory, getFeaturedPosts } from "@/data/blogPosts";
+import Footer from "@/components/Footer";
+import { subscribeToNewsletter, isValidEmail } from "@/utils/newsletterSubscription";
+import {
+  blogPostsMeta,
+  getAllCategoriesMeta,
+  getPostsMetaByCategory,
+  getFeaturedPostsMeta,
+  getPaginatedPostsMeta,
+  POSTS_PER_PAGE,
+  type BlogPostMeta
+} from "@/data/blogPostsMeta";
 
 const Blog = () => {
   const heroRef = useRef(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const isHeroInView = useInView(heroRef, { once: true });
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("הכל");
 
+  // Newsletter state
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [newsletterMessage, setNewsletterMessage] = useState("");
+
+  // Newsletter submission handler
+  const handleNewsletterSubmit = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!newsletterEmail) {
+      setNewsletterStatus("error");
+      setNewsletterMessage("נא להזין כתובת אימייל");
+      return;
+    }
+
+    if (!isValidEmail(newsletterEmail)) {
+      setNewsletterStatus("error");
+      setNewsletterMessage("כתובת האימייל אינה תקינה");
+      return;
+    }
+
+    setNewsletterStatus("loading");
+
+    const result = await subscribeToNewsletter(newsletterEmail, "Blog");
+
+    if (result.success) {
+      setNewsletterStatus("success");
+      setNewsletterMessage("תודה! נרשמת בהצלחה לניוזלטר");
+      setNewsletterEmail("");
+    } else {
+      setNewsletterStatus("error");
+      setNewsletterMessage(result.message || "אירעה שגיאה, נסו שוב");
+    }
+  }, [newsletterEmail]);
+
+  // Get current page from URL
+  const currentPage = useMemo(() => {
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    return isNaN(page) || page < 1 ? 1 : page;
+  }, [searchParams]);
+
   // Get categories and filtered posts
-  const categories = useMemo(() => getAllCategories(), []);
-  const filteredPosts = useMemo(() => getPostsByCategory(activeCategory), [activeCategory]);
+  const categories = useMemo(() => getAllCategoriesMeta(), []);
+  const filteredPosts = useMemo(() => getPostsMetaByCategory(activeCategory), [activeCategory]);
 
   // Get featured article (first featured or first article)
   const featuredArticle = useMemo(() => {
-    const featured = getFeaturedPosts();
+    const featured = getFeaturedPostsMeta();
     return featured.length > 0 ? featured[0] : filteredPosts[0];
   }, [filteredPosts]);
 
-  // Regular articles (excluding featured)
-  const regularArticles = useMemo(() => {
-    return filteredPosts.filter(post => post.id !== featuredArticle?.id);
-  }, [filteredPosts, featuredArticle]);
+  // Regular articles (excluding featured) with pagination
+  const { paginatedArticles, totalPages, hasMore } = useMemo(() => {
+    const postsWithoutFeatured = filteredPosts.filter(post => post.id !== featuredArticle?.id);
+    const { posts, totalPages, hasMore } = getPaginatedPostsMeta(postsWithoutFeatured, currentPage);
+    return { paginatedArticles: posts, totalPages, hasMore };
+  }, [filteredPosts, featuredArticle, currentPage]);
+
+  // Memoized category change handler - resets to page 1
+  const handleCategoryChange = useCallback((category: string) => {
+    setActiveCategory(category);
+    setSearchParams({});
+  }, [setSearchParams]);
+
+  // Page change handler with scroll to top of grid
+  const handlePageChange = useCallback((newPage: number) => {
+    setSearchParams({ page: String(newPage) });
+    gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [setSearchParams]);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -124,7 +190,7 @@ const Blog = () => {
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                   activeCategory === cat
                     ? "bg-primary text-primary-foreground"
@@ -139,10 +205,10 @@ const Blog = () => {
       </section>
 
       {/* Articles Grid */}
-      <section className="py-16 md:py-24 bg-background">
+      <section className="py-16 md:py-24 bg-background" ref={gridRef}>
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularArticles.map((article, index) => (
+            {paginatedArticles.map((article, index) => (
               <motion.article
                 key={article.id}
                 initial={{ opacity: 0, y: 40 }}
@@ -196,13 +262,88 @@ const Blog = () => {
           </div>
 
           {/* Empty State */}
-          {regularArticles.length === 0 && (
+          {paginatedArticles.length === 0 && (
             <div className="text-center py-16">
               <p className="text-muted-foreground text-lg">
                 אין עוד מאמרים בקטגוריה זו
               </p>
             </div>
           )}
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-12 pt-8 border-t border-border">
+              {/* Previous Button */}
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  currentPage === 1
+                    ? "bg-muted text-muted-foreground/50 cursor-not-allowed"
+                    : "bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+                }`}
+              >
+                <ChevronRight className="w-4 h-4" />
+                הקודם
+              </button>
+
+              {/* Page Numbers */}
+              <div className="flex gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                  // Show first, last, current, and adjacent pages
+                  const shouldShow =
+                    page === 1 ||
+                    page === totalPages ||
+                    Math.abs(page - currentPage) <= 1;
+
+                  if (!shouldShow) {
+                    // Show ellipsis for gaps
+                    if (page === 2 || page === totalPages - 1) {
+                      return (
+                        <span key={page} className="px-2 py-2 text-muted-foreground">
+                          ...
+                        </span>
+                      );
+                    }
+                    return null;
+                  }
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-full text-sm font-medium transition-all ${
+                        page === currentPage
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-primary/20"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Next Button */}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={!hasMore}
+                className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  !hasMore
+                    ? "bg-muted text-muted-foreground/50 cursor-not-allowed"
+                    : "bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+                }`}
+              >
+                הבא
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Post Count */}
+          <div className="text-center mt-4 text-sm text-muted-foreground">
+            מציג {((currentPage - 1) * POSTS_PER_PAGE) + 1}-{Math.min(currentPage * POSTS_PER_PAGE, filteredPosts.length)} מתוך {filteredPosts.length} מאמרים
+          </div>
         </div>
       </section>
 
@@ -221,21 +362,62 @@ const Blog = () => {
             <p className="text-hero-fg/70 text-lg mb-8">
               הצטרפו לניוזלטר שלנו וקבלו מאמרים, טיפים ועדכונים אחת לשבוע.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="הכניסו אימייל"
-                className="flex-1 px-6 py-4 rounded-full bg-hero-fg/10 border border-hero-fg/20 text-hero-fg placeholder:text-hero-fg/40 focus:outline-none focus:border-primary"
-              />
-              <button className="bg-primary text-primary-foreground px-8 py-4 rounded-full font-bold hover:bg-primary/90 transition-colors">
-                הרשמה
-              </button>
-            </div>
+            {newsletterStatus === "success" ? (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center justify-center gap-3 text-green-400"
+              >
+                <CheckCircle className="w-6 h-6" />
+                <span className="text-lg font-medium">{newsletterMessage}</span>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={(e) => {
+                    setNewsletterEmail(e.target.value);
+                    if (newsletterStatus === "error") setNewsletterStatus("idle");
+                  }}
+                  placeholder="הכניסו אימייל"
+                  className={`flex-1 px-6 py-4 rounded-full bg-hero-fg/10 border text-hero-fg placeholder:text-hero-fg/40 focus:outline-none transition-colors ${
+                    newsletterStatus === "error"
+                      ? "border-red-400 focus:border-red-400"
+                      : "border-hero-fg/20 focus:border-primary"
+                  }`}
+                  disabled={newsletterStatus === "loading"}
+                />
+                <button
+                  type="submit"
+                  disabled={newsletterStatus === "loading"}
+                  className="bg-primary text-primary-foreground px-8 py-4 rounded-full font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {newsletterStatus === "loading" ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>שולח...</span>
+                    </>
+                  ) : (
+                    "הרשמה"
+                  )}
+                </button>
+              </form>
+            )}
+            {newsletterStatus === "error" && (
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-400 text-sm mt-3"
+              >
+                {newsletterMessage}
+              </motion.p>
+            )}
           </motion.div>
         </div>
       </section>
 
-      <Contact />
+      <Footer />
     </div>
   );
 };

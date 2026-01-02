@@ -1,5 +1,5 @@
-import { motion, useInView } from "framer-motion";
-import React, { useMemo, useRef } from "react";
+import { motion, useInView, useAnimationControls } from "framer-motion";
+import React, { useMemo, useRef, useEffect } from "react";
 
 interface Client {
   name: string;
@@ -44,12 +44,38 @@ ClientCard.displayName = "ClientCard";
 const ClientsMarquee = () => {
   const marqueeRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(marqueeRef, { margin: "100px" });
+  const controls = useAnimationControls();
 
   // Memoize the duplicated clients array to prevent recreation on every render
   const duplicatedClients = useMemo(
     () => [...clients, ...clients, ...clients, ...clients],
     [] // Empty deps - clients array never changes
   );
+
+  // Properly manage animation lifecycle with cleanup
+  useEffect(() => {
+    if (isInView) {
+      controls.start({
+        x: [0, -1920],
+        transition: {
+          x: {
+            repeat: Infinity,
+            repeatType: "loop",
+            duration: 30,
+            ease: "linear",
+          },
+        },
+      });
+    } else {
+      controls.stop();
+    }
+
+    // Cleanup: stop animation when component unmounts or goes out of view
+    return () => {
+      controls.stop();
+    };
+  }, [isInView, controls]);
+
   return (
     <section className="py-16 md:py-24 bg-background border-y border-border overflow-hidden">
       <div className="container mx-auto px-6 mb-12">
@@ -77,15 +103,7 @@ const ClientsMarquee = () => {
 
         {/* Marquee Track */}
         <motion.div
-          animate={isInView ? { x: [0, -1920] } : undefined}
-          transition={{
-            x: {
-              repeat: Infinity,
-              repeatType: "loop",
-              duration: 30,
-              ease: "linear",
-            },
-          }}
+          animate={controls}
           className="flex gap-8 md:gap-16"
         >
           {/* Double the items for seamless loop */}

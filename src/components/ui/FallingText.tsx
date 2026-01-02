@@ -32,6 +32,9 @@ const FallingText: React.FC<FallingTextProps> = ({
   const canvasContainerRef = useRef<HTMLDivElement | null>(null);
   const runnerRef = useRef<Matter.Runner | null>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
+  const renderRef = useRef<Matter.Render | null>(null);
+  const mouseRef = useRef<Matter.Mouse | null>(null);
+  const rafIdRef = useRef<number | null>(null);
 
   const [effectStarted, setEffectStarted] = useState(false);
 
@@ -119,6 +122,9 @@ const FallingText: React.FC<FallingTextProps> = ({
       }
     });
 
+    // Store render ref for cleanup
+    renderRef.current = render;
+
     // Invisible boundaries
     const boundaryOptions = {
       isStatic: true,
@@ -170,6 +176,7 @@ const FallingText: React.FC<FallingTextProps> = ({
 
     // Mouse constraint for dragging
     const mouse = Mouse.create(containerRef.current);
+    mouseRef.current = mouse;
     const mouseConstraint = MouseConstraint.create(engine, {
       mouse,
       constraint: {
@@ -188,9 +195,11 @@ const FallingText: React.FC<FallingTextProps> = ({
     Render.run(render);
 
     // Update loop - sync DOM positions with physics bodies
-    let rafId: number;
+    // Track if effect is still mounted to prevent updates after cleanup
+    let isMounted = true;
     const updateLoop = () => {
-      rafId = requestAnimationFrame(updateLoop);
+      if (!isMounted) return;
+      rafIdRef.current = requestAnimationFrame(updateLoop);
 
       // Always update DOM positions (even when physics is paused, to show final state)
       wordBodies.forEach(({ body, elem }) => {
@@ -200,17 +209,49 @@ const FallingText: React.FC<FallingTextProps> = ({
         elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
       });
     };
-    rafId = requestAnimationFrame(updateLoop);
+    rafIdRef.current = requestAnimationFrame(updateLoop);
+
+    // Store reference to canvasContainer for cleanup
+    const canvasContainer = canvasContainerRef.current;
 
     return () => {
-      cancelAnimationFrame(rafId);
+      // Stop the animation loop first
+      isMounted = false;
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+
+      // Stop Matter.js render and runner
       Render.stop(render);
       Runner.stop(runner);
-      if (render.canvas && canvasContainerRef.current) {
-        canvasContainerRef.current.removeChild(render.canvas);
+
+      // Clean up mouse event listeners (Matter.js Mouse adds these)
+      if (mouse && mouse.element) {
+        // Matter.js Mouse.create adds mousemove, mousedown, mouseup, mousewheel listeners
+        // We need to clear the mouse to remove these
+        Mouse.clearSourceEvents(mouse);
       }
+
+      // Remove canvas from DOM safely
+      if (render.canvas && canvasContainer && canvasContainer.contains(render.canvas)) {
+        canvasContainer.removeChild(render.canvas);
+      }
+
+      // Clear render textures cache to prevent memory leaks
+      if (render.textures) {
+        render.textures = {};
+      }
+
+      // Clear world and engine
       World.clear(engine.world, false);
       Engine.clear(engine);
+
+      // Nullify refs to prevent stale references
+      runnerRef.current = null;
+      engineRef.current = null;
+      renderRef.current = null;
+      mouseRef.current = null;
     };
   }, [effectStarted, gravity, wireframes, backgroundColor, mouseConstraintStiffness]);
 

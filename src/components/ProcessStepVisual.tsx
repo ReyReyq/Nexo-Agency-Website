@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, memo, useMemo } from "react";
 import { MessageCircle, Target, Palette, Code2, Rocket, LucideIcon } from "lucide-react";
 
 // Lazy load heavy components for better initial bundle size
@@ -64,9 +64,10 @@ const stepIcons: LucideIcon[] = [MessageCircle, Target, Palette, Code2, Rocket];
 // Unified animation timing - 350ms to match parent
 const ANIMATION_DURATION = 0.35;
 
-const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) => {
-  const colors = stepColors[activeStep];
-  const Icon = stepIcons[activeStep];
+const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualProps) => {
+  // Memoize derived values to prevent recalculation on every render
+  const colors = useMemo(() => stepColors[activeStep], [activeStep]);
+  const Icon = useMemo(() => stepIcons[activeStep], [activeStep]);
 
   return (
     <div className="relative w-full h-full flex items-center justify-center">
@@ -218,6 +219,8 @@ const ProcessStepVisual = ({ activeStep, stepNumber }: ProcessStepVisualProps) =
       </motion.div>
     </div>
   );
-};
+});
+
+ProcessStepVisual.displayName = 'ProcessStepVisual';
 
 export default ProcessStepVisual;

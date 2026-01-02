@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { motion, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -67,7 +68,7 @@ const variantsMap: Record<AnimationType, Variants> = {
   charFadeIn: charFadeInVariants,
 };
 
-export function TextAnimate({
+function TextAnimateComponent({
   children,
   type = "blurInUp",
   delay = 0,
@@ -76,10 +77,54 @@ export function TextAnimate({
   className,
   by = "word",
 }: TextAnimateProps) {
-  const variants = variantsMap[type];
+  // Memoize variants lookup to prevent unnecessary object creation
+  const variants = useMemo(() => variantsMap[type], [type]);
 
-  const isWordAnimation = type === "wordFadeIn" || by === "word";
-  const isCharAnimation = type === "charFadeIn" || by === "character";
+  // Memoize animation type flags
+  const isWordAnimation = useMemo(
+    () => type === "wordFadeIn" || by === "word",
+    [type, by]
+  );
+  const isCharAnimation = useMemo(
+    () => type === "charFadeIn" || by === "character",
+    [type, by]
+  );
+
+  // Memoize split arrays to prevent recalculation on every render
+  const words = useMemo(
+    () => (isWordAnimation ? children.split(" ") : []),
+    [children, isWordAnimation]
+  );
+  const characters = useMemo(
+    () => (isCharAnimation ? children.split("") : []),
+    [children, isCharAnimation]
+  );
+
+  // Memoize transition objects to prevent new object creation on each render
+  const simpleTransition = useMemo(
+    () => ({
+      duration,
+      delay,
+      ease: [0.25, 0.4, 0.25, 1] as const,
+    }),
+    [duration, delay]
+  );
+
+  const staggerTransition = useMemo(
+    () => ({
+      staggerChildren: stagger,
+      delayChildren: delay,
+    }),
+    [stagger, delay]
+  );
+
+  const childTransition = useMemo(
+    () => ({
+      duration,
+      ease: [0.25, 0.4, 0.25, 1] as const,
+    }),
+    [duration]
+  );
 
   // Simple animation (no splitting)
   if (!isWordAnimation && !isCharAnimation) {
@@ -88,11 +133,7 @@ export function TextAnimate({
         initial="hidden"
         animate="visible"
         variants={variants}
-        transition={{
-          duration,
-          delay,
-          ease: [0.25, 0.4, 0.25, 1],
-        }}
+        transition={simpleTransition}
         className={cn(className)}
       >
         {children}
@@ -102,25 +143,18 @@ export function TextAnimate({
 
   // Split by words
   if (isWordAnimation) {
-    const words = children.split(" ");
     return (
       <motion.div
         initial="hidden"
         animate="visible"
-        transition={{
-          staggerChildren: stagger,
-          delayChildren: delay,
-        }}
+        transition={staggerTransition}
         className={cn("inline-block", className)}
       >
         {words.map((word, wordIndex) => (
           <motion.span
             key={`${word}-${wordIndex}`}
             variants={variants}
-            transition={{
-              duration,
-              ease: [0.25, 0.4, 0.25, 1],
-            }}
+            transition={childTransition}
             className="inline-block mr-[0.25em]"
           >
             {word}
@@ -132,25 +166,18 @@ export function TextAnimate({
 
   // Split by characters
   if (isCharAnimation) {
-    const characters = children.split("");
     return (
       <motion.div
         initial="hidden"
         animate="visible"
-        transition={{
-          staggerChildren: stagger,
-          delayChildren: delay,
-        }}
+        transition={staggerTransition}
         className={cn("inline-block", className)}
       >
         {characters.map((char, charIndex) => (
           <motion.span
             key={`${char}-${charIndex}`}
             variants={variants}
-            transition={{
-              duration,
-              ease: [0.25, 0.4, 0.25, 1],
-            }}
+            transition={childTransition}
             className="inline-block"
           >
             {char === " " ? "\u00A0" : char}
@@ -162,5 +189,8 @@ export function TextAnimate({
 
   return null;
 }
+
+// Wrap in memo to prevent unnecessary re-renders when parent re-renders with same props
+export const TextAnimate = memo(TextAnimateComponent);
 
 export default TextAnimate;

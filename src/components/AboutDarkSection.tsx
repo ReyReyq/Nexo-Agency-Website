@@ -1,23 +1,42 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, lazy, Suspense } from "react";
+import { useRef, lazy, Suspense, useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import RippleButton from "./RippleButton";
 
 // Lazy load PixelTrail - heavy Three.js/WebGL component
 const PixelTrail = lazy(() => import("./ui/PixelTrail"));
 
+// Memoized PixelTrail config to prevent unnecessary re-renders
+const PIXEL_TRAIL_CONFIG = {
+  gridSize: 50,
+  trailSize: 0.12,
+  maxAge: 400,
+  interpolate: 8,
+  color: "#FF1493",
+} as const;
+
 const AboutDarkSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Scroll-linked animations for parallax effect
-  const { scrollYProgress } = useScroll({
+  // Memoize scroll options to prevent re-subscription on each render
+  const scrollOptions = useMemo(() => ({
     target: sectionRef,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end start"] as const,
     layoutEffect: false, // Prevent layout thrashing
-  });
+  }), []);
+
+  // Scroll-linked animations for parallax effect
+  const { scrollYProgress } = useScroll(scrollOptions);
+
+  // Memoize transform input/output arrays to prevent recreation
+  const scaleInput = useMemo(() => [0, 1], []);
+  const scaleOutput = useMemo(() => [1, 1.2], []);
 
   // Background image zooms as user scrolls
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const imageScale = useTransform(scrollYProgress, scaleInput, scaleOutput);
+
+  // Memoize gooey filter config to prevent object recreation
+  const gooeyFilterConfig = useMemo(() => ({ id: "about-dark-goo-filter", strength: 3 }), []);
 
   return (
     <section
@@ -48,12 +67,12 @@ const AboutDarkSection = () => {
       <div className="absolute inset-0 z-10">
         <Suspense fallback={null}>
           <PixelTrail
-            gridSize={50}
-            trailSize={0.12}
-            maxAge={400}
-            interpolate={8}
-            color="#FF1493"
-            gooeyFilter={{ id: "about-dark-goo-filter", strength: 3 }}
+            gridSize={PIXEL_TRAIL_CONFIG.gridSize}
+            trailSize={PIXEL_TRAIL_CONFIG.trailSize}
+            maxAge={PIXEL_TRAIL_CONFIG.maxAge}
+            interpolate={PIXEL_TRAIL_CONFIG.interpolate}
+            color={PIXEL_TRAIL_CONFIG.color}
+            gooeyFilter={gooeyFilterConfig}
           />
         </Suspense>
       </div>
@@ -94,7 +113,7 @@ const AboutDarkSection = () => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="flex flex-wrap gap-6 pointer-events-auto"
           >
-            <RippleButton to="/contact" variant="charcoal" size="sm">
+            <RippleButton to="/contact#contact-form" variant="charcoal" size="sm">
               <span className="flex items-center gap-2">
                 התחילו פרויקט
                 <ArrowLeft className="w-4 h-4" />

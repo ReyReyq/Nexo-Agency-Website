@@ -27,7 +27,13 @@ export function useVisibilityPause(
 
   // IntersectionObserver for viewport visibility
   useEffect(() => {
-    if (!containerRef.current) return;
+    const element = containerRef.current;
+    if (!element) return;
+
+    // Disconnect any existing observer before creating a new one
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
 
     observerRef.current = new IntersectionObserver(
       ([entry]) => {
@@ -36,12 +42,15 @@ export function useVisibilityPause(
       { threshold, rootMargin }
     );
 
-    observerRef.current.observe(containerRef.current);
+    observerRef.current.observe(element);
 
     return () => {
-      observerRef.current?.disconnect();
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
     };
-  }, [containerRef, threshold, rootMargin]);
+  }, [threshold, rootMargin]); // Removed containerRef - it's a ref object that doesn't change
 
   // Tab visibility listener
   useEffect(() => {

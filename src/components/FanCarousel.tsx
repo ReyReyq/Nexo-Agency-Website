@@ -1,5 +1,5 @@
-import { useState, useRef, memo, useMemo, useCallback } from "react";
-import { motion, useMotionValue, animate, PanInfo } from "framer-motion";
+import { useState, useRef, memo, useMemo, useCallback, useEffect } from "react";
+import { motion, useMotionValue, animate, PanInfo, AnimationPlaybackControls } from "framer-motion";
 
 interface CardData {
   id: number;
@@ -127,6 +127,20 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dragX = useMotionValue(0);
 
+  // Track active animation for cleanup
+  const animationRef = useRef<AnimationPlaybackControls | null>(null);
+
+  // Cleanup animation on unmount
+  useEffect(() => {
+    return () => {
+      // Cancel any active drag animation on unmount
+      if (animationRef.current) {
+        animationRef.current.stop();
+        animationRef.current = null;
+      }
+    };
+  }, []);
+
   // Memoized drag end handler
   const handleDragEnd = useCallback((_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const threshold = 50;
@@ -144,8 +158,13 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
     setActiveIndex(newIndex);
     onCardChange?.(newIndex);
 
-    // Animate drag back to center
-    animate(dragX, 0, { type: "spring", stiffness: 300, damping: 30 });
+    // Cancel previous animation before starting new one
+    if (animationRef.current) {
+      animationRef.current.stop();
+    }
+
+    // Animate drag back to center and track for cleanup
+    animationRef.current = animate(dragX, 0, { type: "spring", stiffness: 300, damping: 30 });
   }, [activeIndex, cards.length, onCardChange, dragX]);
 
   // Memoized card click handler

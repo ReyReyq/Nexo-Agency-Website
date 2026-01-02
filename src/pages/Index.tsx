@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useCallback, memo } from "react";
 import GlassNavbar from "@/components/GlassNavbar";
 import Hero from "@/components/Hero";
 import ServicesSection from "@/components/ServicesSection";
@@ -15,34 +15,28 @@ const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const BlogPreviewSection = lazy(() => import("@/components/BlogPreviewSection"));
 const Contact = lazy(() => import("@/components/Contact"));
 
-// Minimal loading placeholder for lazy-loaded sections
-const SectionLoader = () => (
+// Memoized loading placeholder for lazy-loaded sections - prevents re-creation on parent re-renders
+const SectionLoader = memo(() => (
   <div className="min-h-[50vh] flex items-center justify-center bg-background">
     <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
   </div>
-);
+));
+
+SectionLoader.displayName = 'SectionLoader';
 
 const Index = () => {
-  // Check if preloader should show
+  // Check if preloader should show - only on first visit this session
   const [isLoading, setIsLoading] = useState(() => {
-    // Check if this is a page refresh
-    const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
-    const isRefresh = navEntries.length > 0 && navEntries[0].type === 'reload';
-
-    // Show preloader on refresh OR if it hasn't been shown yet this session
-    if (isRefresh) {
-      return true;
-    }
-
     const hasSeenPreloader = sessionStorage.getItem("nexo-preloader-shown");
     return !hasSeenPreloader;
   });
 
-  const handlePreloaderComplete = () => {
-    // Mark preloader as shown for this session (for internal navigation)
+  // Memoized callback to prevent unnecessary re-renders of Preloader
+  const handlePreloaderComplete = useCallback(() => {
+    // Mark preloader as shown for this session
     sessionStorage.setItem("nexo-preloader-shown", "true");
     setIsLoading(false);
-  };
+  }, []);
 
   return (
     <>

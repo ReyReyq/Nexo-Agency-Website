@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { cn } from '@/lib/utils';
 
 interface GlassmorphicCardProps {
@@ -9,6 +9,19 @@ interface GlassmorphicCardProps {
   animated?: boolean;
 }
 
+// Performance: Static object defined outside component to prevent recreation
+const INTENSITY_STYLES = {
+  subtle: 'bg-white/5 backdrop-blur-sm border-white/5',
+  medium: 'bg-white/10 backdrop-blur-md border-white/10',
+  strong: 'bg-white/15 backdrop-blur-lg border-white/15',
+} as const;
+
+// Performance: Static default shadow defined outside component
+const DEFAULT_BOX_SHADOW = `
+  0 8px 32px rgba(0, 0, 0, 0.1),
+  inset 0 1px 0 rgba(255, 255, 255, 0.1)
+`;
+
 const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
   children,
   className,
@@ -16,14 +29,10 @@ const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
   intensity = 'medium',
   animated = false,
 }) => {
-  const intensityStyles = {
-    subtle: 'bg-white/5 backdrop-blur-sm border-white/5',
-    medium: 'bg-white/10 backdrop-blur-md border-white/10',
-    strong: 'bg-white/15 backdrop-blur-lg border-white/15',
-  };
-
-  const glowStyles = glowColor
-    ? {
+  // Performance: Memoize glowStyles to prevent object recreation on every render
+  const glowStyles = useMemo(() => {
+    if (glowColor) {
+      return {
         boxShadow: `
           0 8px 32px rgba(0, 0, 0, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.1),
@@ -31,30 +40,43 @@ const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
           0 0 40px ${glowColor}20,
           0 0 60px ${glowColor}10
         `,
-      }
-    : {
-        boxShadow: `
-          0 8px 32px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1)
-        `,
       };
+    }
+    return {
+      boxShadow: DEFAULT_BOX_SHADOW,
+    };
+  }, [glowColor]);
+
+  // Performance: Memoize inline styles to prevent object recreation on every render
+  const containerStyles = useMemo(() => ({
+    ...glowStyles,
+    // Performance: Use specific transition properties instead of transition-all
+    transitionProperty: 'transform, box-shadow, border-color',
+    // Performance: GPU acceleration for backdrop-filter
+    transform: 'translateZ(0)',
+    willChange: animated ? 'transform, box-shadow' : 'auto',
+  }), [glowStyles, animated]);
+
+  // Performance: Memoize animated glow styles to prevent object recreation
+  const animatedGlowStyles = useMemo(() => {
+    if (!animated || !glowColor) return null;
+    return {
+      background: `radial-gradient(circle at 50% 50%, ${glowColor}15, transparent 70%)`,
+      // Performance: GPU acceleration for animation
+      willChange: 'opacity',
+      transform: 'translateZ(0)',
+    };
+  }, [animated, glowColor]);
 
   return (
     <div
       className={cn(
         'relative overflow-hidden rounded-2xl border duration-300',
-        intensityStyles[intensity],
+        INTENSITY_STYLES[intensity],
         animated && 'hover:scale-[1.02] hover:shadow-2xl',
         className
       )}
-      style={{
-        ...glowStyles,
-        // Performance: Use specific transition properties instead of transition-all
-        transitionProperty: 'transform, box-shadow, border-color',
-        // Performance: GPU acceleration for backdrop-filter
-        transform: 'translateZ(0)',
-        willChange: animated ? 'transform, box-shadow' : 'auto',
-      }}
+      style={containerStyles}
     >
       {/* Border gradient overlay */}
       <div
@@ -66,15 +88,10 @@ const GlassmorphicCard: React.FC<GlassmorphicCardProps> = ({
       />
 
       {/* Animated glow pulse (if animated is true) */}
-      {animated && glowColor && (
+      {animatedGlowStyles && (
         <div
           className="absolute inset-0 rounded-2xl opacity-0 pointer-events-none animate-[pulse-glow_3s_ease-in-out_infinite]"
-          style={{
-            background: `radial-gradient(circle at 50% 50%, ${glowColor}15, transparent 70%)`,
-            // Performance: GPU acceleration for animation
-            willChange: 'opacity',
-            transform: 'translateZ(0)',
-          }}
+          style={animatedGlowStyles}
         />
       )}
 

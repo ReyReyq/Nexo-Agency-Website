@@ -1,4 +1,4 @@
-import { motion, useInView, useSpring, useTransform } from "framer-motion";
+import { motion, useInView, useAnimationControls } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
 const stats = [
@@ -56,6 +56,35 @@ const StatsCounter = () => {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
   const isAnimationInView = useInView(sectionRef, { once: false, margin: "100px" });
 
+  // Animation controls for gradient orbs with proper cleanup
+  const orbControls1 = useAnimationControls();
+  const orbControls2 = useAnimationControls();
+
+  // Manage orb animations with proper cleanup when out of view or unmounting
+  useEffect(() => {
+    if (isAnimationInView) {
+      orbControls1.start({
+        x: [0, 50, 0],
+        y: [0, 30, 0],
+        transition: { duration: 10, repeat: Infinity, ease: "linear" },
+      });
+      orbControls2.start({
+        x: [0, -30, 0],
+        y: [0, 50, 0],
+        transition: { duration: 15, repeat: Infinity, ease: "linear" },
+      });
+    } else {
+      orbControls1.stop();
+      orbControls2.stop();
+    }
+
+    // Cleanup: stop animations when component unmounts
+    return () => {
+      orbControls1.stop();
+      orbControls2.stop();
+    };
+  }, [isAnimationInView, orbControls1, orbControls2]);
+
   return (
     <section
       ref={sectionRef}
@@ -64,21 +93,13 @@ const StatsCounter = () => {
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-hero-bg via-hero-bg to-primary/20" />
       
-      {/* Animated Gradient Orbs */}
+      {/* Animated Gradient Orbs - controlled animations with cleanup */}
       <motion.div
-        animate={isAnimationInView ? {
-          x: [0, 50, 0],
-          y: [0, 30, 0],
-        } : {}}
-        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        animate={orbControls1}
         className="absolute top-20 right-20 w-96 h-96 bg-primary/20 rounded-full blur-3xl"
       />
       <motion.div
-        animate={isAnimationInView ? {
-          x: [0, -30, 0],
-          y: [0, 50, 0],
-        } : {}}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        animate={orbControls2}
         className="absolute bottom-20 left-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
       />
 

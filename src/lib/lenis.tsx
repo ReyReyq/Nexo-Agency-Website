@@ -62,11 +62,14 @@ interface LenisProviderProps {
 }
 
 export const LenisProvider = ({ children, options = {} }: LenisProviderProps) => {
-  const lenisRef = useRef<Lenis | null>(null);
+  // Use state instead of ref so context updates trigger re-renders
+  const [lenis, setLenis] = useState<Lenis | null>(null);
   const rafIdRef = useRef<number | null>(null);
   const isRunningRef = useRef<boolean>(false);
-  // Note: We no longer block scroll during preloader - users should be able to scroll
-  // while the preloader animation plays. The preloader is a fixed overlay on top.
+  // Store options in ref to avoid dependency issues
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
+
   const [isTabVisible, setIsTabVisible] = useState(() => {
     if (typeof document !== 'undefined') {
       return document.visibilityState === 'visible';
@@ -75,15 +78,15 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
   });
 
   // Start RAF loop
-  const startRafLoop = useCallback(() => {
-    if (isRunningRef.current || !lenisRef.current) return;
+  const startRafLoop = useCallback((lenisInstance: Lenis) => {
+    if (isRunningRef.current) return;
 
     isRunningRef.current = true;
 
     function raf(time: number) {
-      if (!isRunningRef.current || !lenisRef.current) return;
+      if (!isRunningRef.current) return;
 
-      lenisRef.current.raf(time);
+      lenisInstance.raf(time);
       rafIdRef.current = requestAnimationFrame(raf);
     }
 
@@ -110,20 +113,23 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
       return;
     }
 
+    const opts = optionsRef.current;
+
     // Initialize Lenis with optimized defaults
-    const lenis = new Lenis({
-      duration: options.duration ?? 1.2,
-      easing: options.easing ?? ((t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
-      orientation: options.orientation ?? 'vertical',
-      gestureOrientation: options.gestureOrientation ?? 'vertical',
-      smoothWheel: options.smoothWheel ?? true,
-      smoothTouch: options.smoothTouch ?? false, // Better mobile performance
-      wheelMultiplier: options.wheelMultiplier ?? 1,
-      touchMultiplier: options.touchMultiplier ?? 2,
-      infinite: options.infinite ?? false,
+    const lenisInstance = new Lenis({
+      duration: opts.duration ?? 1.2,
+      easing: opts.easing ?? ((t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
+      orientation: opts.orientation ?? 'vertical',
+      gestureOrientation: opts.gestureOrientation ?? 'vertical',
+      smoothWheel: opts.smoothWheel ?? true,
+      smoothTouch: opts.smoothTouch ?? false, // Better mobile performance
+      wheelMultiplier: opts.wheelMultiplier ?? 1,
+      touchMultiplier: opts.touchMultiplier ?? 2,
+      infinite: opts.infinite ?? false,
     });
 
-    lenisRef.current = lenis;
+    // Set state to trigger re-render and update context
+    setLenis(lenisInstance);
 
     // Handle visibility change - pause RAF when tab is hidden
     const handleVisibilityChange = () => {
@@ -136,24 +142,23 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
     return () => {
       stopRafLoop();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      lenis.destroy();
-      lenisRef.current = null;
+      lenisInstance.destroy();
+      setLenis(null);
     };
-  }, [options, stopRafLoop]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stopRafLoop]); // Only run once on mount, options are read from ref
 
-  // Control RAF loop based on visibility only (scroll works even during preloader)
+  // Control RAF loop based on visibility and lenis instance
   useEffect(() => {
-    const shouldRun = isTabVisible && lenisRef.current !== null;
-
-    if (shouldRun) {
-      startRafLoop();
+    if (isTabVisible && lenis) {
+      startRafLoop(lenis);
     } else {
       stopRafLoop();
     }
-  }, [isTabVisible, startRafLoop, stopRafLoop]);
+  }, [isTabVisible, lenis, startRafLoop, stopRafLoop]);
 
   return (
-    <LenisContext.Provider value={lenisRef.current}>
+    <LenisContext.Provider value={lenis}>
       {children}
     </LenisContext.Provider>
   );

@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useCallback, memo } from "react";
+import { useEffect, useCallback, memo, useRef } from "react";
 
 interface LiquidSideNavProps {
   isOpen: boolean;
@@ -19,15 +19,20 @@ const navLinks = [
 
 const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
   const location = useLocation();
+  // Track the previous pathname to only close on actual route changes, not initial mount
+  const prevPathnameRef = useRef(location.pathname);
 
   // Memoized close handler
   const handleClose = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
 
-  // Close menu on route change
+  // Close menu on route change (but not on initial mount)
   useEffect(() => {
-    setIsOpen(false);
+    if (prevPathnameRef.current !== location.pathname) {
+      prevPathnameRef.current = location.pathname;
+      setIsOpen(false);
+    }
   }, [location.pathname, setIsOpen]);
 
   // Prevent body scroll when menu is open
@@ -114,13 +119,13 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
 
           {/* Email at bottom left */}
           <motion.a
-            href="mailto:hello@nexo.agency"
+            href="mailto:sales@nexoagency.com"
             className="absolute bottom-12 md:bottom-16 left-6 md:left-12 text-[#1a1a1a]/60 hover:text-primary transition-colors text-sm md:text-base font-medium"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
           >
-            hello@nexo.agency
+            sales@nexoagency.com
           </motion.a>
         </motion.nav>
       )}

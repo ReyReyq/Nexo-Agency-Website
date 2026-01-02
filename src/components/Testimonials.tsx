@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef, useCallback, memo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Quote, ChevronRight, ChevronLeft, Star } from "lucide-react";
 
 // Animation variants - defined outside component to prevent recreation
@@ -54,52 +54,81 @@ const testimonials = [
   },
 ];
 
+const AUTOPLAY_INTERVAL = 6000;
+const TESTIMONIALS_COUNT = testimonials.length;
+
 const Testimonials = () => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout>();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Memoized star arrays to prevent recreation on each render
+  const starArrays = useMemo(() =>
+    testimonials.map(t => [...Array(t.rating)]),
+    []
+  );
+
+  // Helper to start/restart the autoplay interval
+  const startAutoplay = useCallback(() => {
+    // Clear any existing interval first
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    // Only start if component is still mounted
+    if (isMountedRef.current) {
+      intervalRef.current = setInterval(() => {
+        if (isMountedRef.current) {
+          setDirection(1);
+          setCurrent((prev) => (prev + 1) % TESTIMONIALS_COUNT);
+        }
+      }, AUTOPLAY_INTERVAL);
+    }
+  }, []);
+
+  // Helper to stop autoplay
+  const stopAutoplay = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setDirection(1);
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
+    isMountedRef.current = true;
+    startAutoplay();
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      isMountedRef.current = false;
+      stopAutoplay();
     };
-  }, []);
+  }, [startAutoplay, stopAutoplay]);
 
   // Memoized navigate function - restarts interval after manual navigation
   const navigate = useCallback((dir: number) => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    stopAutoplay();
     setDirection(dir);
     setCurrent((prev) => {
-      if (dir === 1) return (prev + 1) % testimonials.length;
-      return prev === 0 ? testimonials.length - 1 : prev - 1;
+      if (dir === 1) return (prev + 1) % TESTIMONIALS_COUNT;
+      return prev === 0 ? TESTIMONIALS_COUNT - 1 : prev - 1;
     });
-    // Restart the auto-advance interval after manual navigation
-    intervalRef.current = setInterval(() => {
-      setDirection(1);
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-  }, []);
+    startAutoplay();
+  }, [startAutoplay, stopAutoplay]);
 
   // Memoized navigation handlers
   const handlePrev = useCallback(() => navigate(-1), [navigate]);
   const handleNext = useCallback(() => navigate(1), [navigate]);
 
-  // Memoized dot click handler - restarts interval after manual navigation
+  // Memoized dot click handler - uses functional update to avoid stale closure
   const handleDotClick = useCallback((index: number) => {
-    if (intervalRef.current) clearInterval(intervalRef.current);
-    setDirection(index > current ? 1 : -1);
-    setCurrent(index);
-    // Restart the auto-advance interval after manual navigation
-    intervalRef.current = setInterval(() => {
-      setDirection(1);
-      setCurrent((prev) => (prev + 1) % testimonials.length);
-    }, 6000);
-  }, [current]);
+    stopAutoplay();
+    setCurrent((prevCurrent) => {
+      setDirection(index > prevCurrent ? 1 : -1);
+      return index;
+    });
+    startAutoplay();
+  }, [startAutoplay, stopAutoplay]);
 
   return (
     <section className="py-24 md:py-32 bg-background overflow-hidden">
@@ -145,7 +174,7 @@ const Testimonials = () => {
                 <div className="glass rounded-3xl p-8 md:p-12 text-center">
                   {/* Stars */}
                   <div className="flex justify-center gap-1 mb-6">
-                    {[...Array(testimonials[current].rating)].map((_, i) => (
+                    {starArrays[current].map((_, i) => (
                       <motion.div
                         key={i}
                         initial={{ opacity: 0, scale: 0 }}

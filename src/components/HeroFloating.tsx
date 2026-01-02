@@ -3,7 +3,7 @@
 import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { Float, Sphere, Environment, shaderMaterial, MeshWobbleMaterial } from '@react-three/drei';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
-import { useEffect, useRef, createContext, useContext } from 'react';
+import { useEffect, useRef, createContext, useContext, useMemo, useCallback } from 'react';
 import { Color, Group } from 'three';
 import { useVisibilityPause } from '@/hooks/useVisibilityPause';
 
@@ -152,6 +152,10 @@ function FirmBlob({
   const materialRef = useRef<any>(null);
   const isVisible = useContext(VisibilityContext);
 
+  // Performance: memoize Color objects to avoid creating new instances on every render
+  const uColor1 = useMemo(() => new Color(color1), [color1]);
+  const uColor2 = useMemo(() => new Color(color2), [color2]);
+
   useFrame(({ clock }) => {
     // Performance: skip updates when off-screen
     if (!isVisible) return;
@@ -172,8 +176,8 @@ function FirmBlob({
         <icosahedronGeometry args={[1, 32]} />
         <firmBlobMaterial
           ref={materialRef}
-          uColor1={new Color(color1)}
-          uColor2={new Color(color2)}
+          uColor1={uColor1}
+          uColor2={uColor2}
           uDistortAmount={distortAmount}
           uNoiseFreq={noiseFreq}
         />
@@ -242,6 +246,13 @@ function SolidSphere({
   );
 }
 
+// Circular arrangement parameters - defined outside component to avoid re-creation
+const CENTER_X = 0;
+const CENTER_Y = 0;
+const RADIUS_OUTER = 6;    // Outer ring
+const RADIUS_MIDDLE = 4;   // Middle ring
+const RADIUS_INNER = 2.5;  // Inner ring
+
 // 3D Scene - Smaller shapes arranged in a CIRCLE around the hero
 function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
   const groupRef = useRef<Group>(null);
@@ -265,23 +276,12 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
     };
   }, [mouseX, mouseY]);
 
-  // Circular arrangement parameters
-  const centerX = 0;
-  const centerY = 0;
-  const radiusOuter = 6;    // Outer ring
-  const radiusMiddle = 4;   // Middle ring
-  const radiusInner = 2.5;  // Inner ring
-
-  // Colors for the shapes
-  const pinkColors = ['#FFB6C1', '#FFC4D6', '#FFD1DC', '#FFAEC9', '#FF9EBB'];
-  const blueColors = ['#A7D8F0', '#B4E1FF', '#ADD8E6', '#C8E6FF', '#87CEEB'];
-
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
       {/* OUTER RING - 8 shapes in a circle */}
       {/* Top */}
       <FirmBlob
-        position={[centerX, centerY + radiusOuter, -3]}
+        position={[CENTER_X, CENTER_Y + RADIUS_OUTER, -3]}
         scale={0.7}
         color1="#FFB6C1"
         color2="#FFC4D6"
@@ -292,14 +292,14 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
       />
       {/* Top-right */}
       <SolidSphere
-        position={[centerX + radiusOuter * 0.7, centerY + radiusOuter * 0.7, -2.5]}
+        position={[CENTER_X + RADIUS_OUTER * 0.7, CENTER_Y + RADIUS_OUTER * 0.7, -2.5]}
         scale={0.55}
         color="#A7D8F0"
         floatSpeed={1.2}
       />
       {/* Right */}
       <WobblyBlob
-        position={[centerX + radiusOuter, centerY, -2]}
+        position={[CENTER_X + RADIUS_OUTER, CENTER_Y, -2]}
         scale={0.65}
         color="#FFD1DC"
         factor={0.06}
@@ -308,14 +308,14 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
       />
       {/* Bottom-right */}
       <SolidSphere
-        position={[centerX + radiusOuter * 0.7, centerY - radiusOuter * 0.7, -3]}
+        position={[CENTER_X + RADIUS_OUTER * 0.7, CENTER_Y - RADIUS_OUTER * 0.7, -3]}
         scale={0.5}
         color="#B4E1FF"
         floatSpeed={1.3}
       />
       {/* Bottom */}
       <FirmBlob
-        position={[centerX, centerY - radiusOuter, -2.5]}
+        position={[CENTER_X, CENTER_Y - RADIUS_OUTER, -2.5]}
         scale={0.6}
         color1="#FFC4D6"
         color2="#FFB6C1"
@@ -326,14 +326,14 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
       />
       {/* Bottom-left */}
       <SolidSphere
-        position={[centerX - radiusOuter * 0.7, centerY - radiusOuter * 0.7, -2]}
+        position={[CENTER_X - RADIUS_OUTER * 0.7, CENTER_Y - RADIUS_OUTER * 0.7, -2]}
         scale={0.55}
         color="#ADD8E6"
         floatSpeed={1.2}
       />
       {/* Left */}
       <WobblyBlob
-        position={[centerX - radiusOuter, centerY, -3]}
+        position={[CENTER_X - RADIUS_OUTER, CENTER_Y, -3]}
         scale={0.7}
         color="#FFAEC9"
         factor={0.06}
@@ -342,7 +342,7 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
       />
       {/* Top-left */}
       <SolidSphere
-        position={[centerX - radiusOuter * 0.7, centerY + radiusOuter * 0.7, -2.5]}
+        position={[CENTER_X - RADIUS_OUTER * 0.7, CENTER_Y + RADIUS_OUTER * 0.7, -2.5]}
         scale={0.5}
         color="#C8E6FF"
         floatSpeed={1.3}
@@ -350,7 +350,7 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
 
       {/* MIDDLE RING - 6 shapes offset from outer ring */}
       <FirmBlob
-        position={[centerX + radiusMiddle * 0.9, centerY + radiusMiddle * 0.4, -1.5]}
+        position={[CENTER_X + RADIUS_MIDDLE * 0.9, CENTER_Y + RADIUS_MIDDLE * 0.4, -1.5]}
         scale={0.5}
         color1="#A7D8F0"
         color2="#B4E1FF"
@@ -360,13 +360,13 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
         floatSpeed={1.4}
       />
       <SolidSphere
-        position={[centerX + radiusMiddle * 0.5, centerY - radiusMiddle * 0.85, -2]}
+        position={[CENTER_X + RADIUS_MIDDLE * 0.5, CENTER_Y - RADIUS_MIDDLE * 0.85, -2]}
         scale={0.4}
         color="#FFD1DC"
         floatSpeed={1.5}
       />
       <WobblyBlob
-        position={[centerX - radiusMiddle * 0.4, centerY - radiusMiddle * 0.9, -1.5]}
+        position={[CENTER_X - RADIUS_MIDDLE * 0.4, CENTER_Y - RADIUS_MIDDLE * 0.9, -1.5]}
         scale={0.45}
         color="#87CEEB"
         factor={0.05}
@@ -374,13 +374,13 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
         floatSpeed={1.3}
       />
       <SolidSphere
-        position={[centerX - radiusMiddle * 0.95, centerY + radiusMiddle * 0.3, -2]}
+        position={[CENTER_X - RADIUS_MIDDLE * 0.95, CENTER_Y + RADIUS_MIDDLE * 0.3, -2]}
         scale={0.5}
         color="#FF9EBB"
         floatSpeed={1.4}
       />
       <FirmBlob
-        position={[centerX - radiusMiddle * 0.3, centerY + radiusMiddle * 0.95, -1.8]}
+        position={[CENTER_X - RADIUS_MIDDLE * 0.3, CENTER_Y + RADIUS_MIDDLE * 0.95, -1.8]}
         scale={0.45}
         color1="#B4E1FF"
         color2="#A7D8F0"
@@ -390,7 +390,7 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
         floatSpeed={1.5}
       />
       <SolidSphere
-        position={[centerX + radiusMiddle * 0.85, centerY - radiusMiddle * 0.5, -1.5]}
+        position={[CENTER_X + RADIUS_MIDDLE * 0.85, CENTER_Y - RADIUS_MIDDLE * 0.5, -1.5]}
         scale={0.35}
         color="#FFC4D6"
         floatSpeed={1.6}
@@ -398,28 +398,28 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
 
       {/* INNER RING - Small accent spheres closer to center */}
       <SolidSphere
-        position={[centerX + radiusInner, centerY + 0.3, -1]}
+        position={[CENTER_X + RADIUS_INNER, CENTER_Y + 0.3, -1]}
         scale={0.3}
         color="#FFB6C1"
         floatSpeed={1.8}
         opacity={0.9}
       />
       <SolidSphere
-        position={[centerX - radiusInner * 0.8, centerY + radiusInner * 0.6, -1.2]}
+        position={[CENTER_X - RADIUS_INNER * 0.8, CENTER_Y + RADIUS_INNER * 0.6, -1.2]}
         scale={0.25}
         color="#ADD8E6"
         floatSpeed={1.9}
         opacity={0.85}
       />
       <SolidSphere
-        position={[centerX - radiusInner * 0.5, centerY - radiusInner * 0.85, -1]}
+        position={[CENTER_X - RADIUS_INNER * 0.5, CENTER_Y - RADIUS_INNER * 0.85, -1]}
         scale={0.28}
         color="#FFD4E5"
         floatSpeed={1.7}
         opacity={0.9}
       />
       <SolidSphere
-        position={[centerX + radiusInner * 0.6, centerY - radiusInner * 0.8, -1.3]}
+        position={[CENTER_X + RADIUS_INNER * 0.6, CENTER_Y - RADIUS_INNER * 0.8, -1.3]}
         scale={0.22}
         color="#C8E6FF"
         floatSpeed={2.0}
@@ -446,6 +446,9 @@ function FloatingShapes({ mouseX, mouseY }: { mouseX: any; mouseY: any }) {
   );
 }
 
+// Performance: spring config defined outside component to avoid re-creation
+const SPRING_CONFIG = { damping: 35, stiffness: 100 };
+
 export default function HeroFloating() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isVisible = useVisibilityPause(containerRef);
@@ -453,17 +456,17 @@ export default function HeroFloating() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const springConfig = { damping: 35, stiffness: 100 };
-  const mouseXSpring = useSpring(mouseX, springConfig);
-  const mouseYSpring = useSpring(mouseY, springConfig);
+  const mouseXSpring = useSpring(mouseX, SPRING_CONFIG);
+  const mouseYSpring = useSpring(mouseY, SPRING_CONFIG);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Performance: memoize event handler to prevent unnecessary re-renders
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
 
     mouseX.set((clientX / innerWidth - 0.5) * 2);
     mouseY.set((clientY / innerHeight - 0.5) * 2);
-  };
+  }, [mouseX, mouseY]);
 
   return (
     <div

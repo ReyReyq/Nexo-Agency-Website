@@ -1,8 +1,9 @@
 'use client';
 
 import Spline from '@splinetool/react-spline';
+import type { Application } from '@splinetool/runtime';
 import { motion } from 'framer-motion';
-import { useState, Suspense } from 'react';
+import { useState, Suspense, useRef, useEffect, useCallback } from 'react';
 
 // Loading component while Spline loads
 function SplineLoader() {
@@ -15,6 +16,40 @@ function SplineLoader() {
 
 export default function HeroSpline() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const splineRef = useRef<Application | null>(null);
+  const isMountedRef = useRef(true);
+
+  // Cleanup effect - dispose Spline runtime on unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    return () => {
+      isMountedRef.current = false;
+
+      // Dispose the Spline application to release WebGL context and resources
+      if (splineRef.current) {
+        try {
+          // Stop all rendering and events first
+          splineRef.current.stop();
+          // Dispose the runtime to release WebGL context and memory
+          splineRef.current.dispose();
+        } catch (error) {
+          // Silently handle disposal errors (may occur if already disposed)
+          console.warn('Spline cleanup warning:', error);
+        }
+        splineRef.current = null;
+      }
+    };
+  }, []);
+
+  // Memoized onLoad handler to prevent unnecessary re-renders
+  const handleSplineLoad = useCallback((splineApp: Application) => {
+    // Only update state if component is still mounted
+    if (isMountedRef.current) {
+      splineRef.current = splineApp;
+      setIsLoaded(true);
+    }
+  }, []);
 
   return (
     <div className="relative h-screen w-full bg-[#FAFAFA] overflow-hidden">
@@ -24,7 +59,7 @@ export default function HeroSpline() {
           {!isLoaded && <SplineLoader />}
           <Spline
             scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode"
-            onLoad={() => setIsLoaded(true)}
+            onLoad={handleSplineLoad}
             style={{
               width: '100%',
               height: '100%',

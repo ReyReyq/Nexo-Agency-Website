@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo, memo } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowLeft, ExternalLink, Palette, Sparkles, ShoppingBag, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,7 +16,7 @@ const projects = [
     category: "EdTech",
     description: "פלטפורמת לימוד עברית אינטראקטיבית עם חוויית משתמש מודרנית וממשק נקי",
     image: "/portfolio/simplyhebrew/simply-hero-img-optimized.webp",
-    link: "/case-studies/simplyhebrew",
+    link: "/portfolio/simplyhebrew",
     tags: ["React", "Next.js", "AI"],
     Icon: Sparkles,
     color: "from-blue-500/20 to-purple-500/20",
@@ -29,7 +29,7 @@ const projects = [
     category: "E-Commerce",
     description: "חנות אונליין יוקרתית עם חוויית קנייה פרימיום ועיצוב אלגנטי",
     image: "/portfolio/sione/sione-homepage-hero.png",
-    link: "/case-studies/sione",
+    link: "/portfolio/sione",
     tags: ["E-Commerce", "Fashion", "Premium"],
     Icon: ShoppingBag,
     color: "from-rose-500/20 to-orange-500/20",
@@ -42,14 +42,14 @@ const projects = [
     category: "FinTech",
     description: "פלטפורמת לימוד השקעות לבני נוער עם קורסים אינטראקטיביים",
     image: "/portfolio/teenvestsor/teenvestsor-hero.png",
-    link: "/case-studies/teenvestor",
+    link: "/portfolio/teenvestsor",
     tags: ["FinTech", "Education", "Courses"],
     Icon: TrendingUp,
     color: "from-emerald-500/20 to-cyan-500/20",
   },
 ];
 
-// Placeholder for visual balance
+// Placeholder for visual balance - defined outside component to prevent recreation
 const placeholder = {
   id: 4,
   title: "פרויקט חדש",
@@ -57,13 +57,58 @@ const placeholder = {
   description: "עיצוב ופיתוח",
   Icon: Palette,
   color: "from-amber-500/10 to-yellow-500/10",
-};
+} as const;
 
-const PortfolioSection = () => {
-  const headerRef = useRef(null);
-  const gridRef = useRef(null);
+// Animation variants - defined outside to prevent recreation on each render
+const fadeInUp = {
+  initial: { opacity: 0, y: 40 },
+  animate: { opacity: 1, y: 0 },
+} as const;
+
+const fadeInLeft = {
+  initial: { opacity: 0, x: -40 },
+  animate: { opacity: 1, x: 0 },
+} as const;
+
+const scaleIn = {
+  initial: { scaleX: 0 },
+  animate: { scaleX: 1 },
+} as const;
+
+// Memoized placeholder card component
+const PlaceholderCard = memo(function PlaceholderCard({ isInView, delay }: { isInView: boolean; delay: number }) {
+  return (
+    <motion.div
+      initial={fadeInUp.initial}
+      animate={isInView ? fadeInUp.animate : {}}
+      transition={{ duration: 0.6, delay }}
+      className={cn(
+        "relative col-span-1 row-span-1 rounded-3xl overflow-hidden",
+        "bg-gradient-to-br",
+        placeholder.color,
+        "border border-dashed border-[#e0e0e0]",
+        "flex flex-col items-center justify-center text-center p-6"
+      )}
+    >
+      <placeholder.Icon className="w-10 h-10 text-[#a0a0a0] mb-4" />
+      <h4 className="text-lg font-bold text-[#6a6a6a] mb-1" dir="rtl">
+        {placeholder.title}
+      </h4>
+      <p className="text-sm text-[#a0a0a0]" dir="rtl">
+        {placeholder.subtitle}
+      </p>
+    </motion.div>
+  );
+});
+
+const PortfolioSection = memo(function PortfolioSection() {
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" });
   const isGridInView = useInView(gridRef, { once: true, margin: "-50px" });
+
+  // Memoize projects data to prevent unnecessary re-renders
+  const memoizedProjects = useMemo(() => projects, []);
 
   return (
     <section
@@ -76,15 +121,15 @@ const PortfolioSection = () => {
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
             {/* Title */}
             <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={isHeaderInView ? { opacity: 1, x: 0 } : {}}
+              initial={fadeInLeft.initial}
+              animate={isHeaderInView ? fadeInLeft.animate : {}}
               transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
               className="max-w-xl"
               dir="rtl"
             >
               <motion.div
-                initial={{ scaleX: 0 }}
-                animate={isHeaderInView ? { scaleX: 1 } : {}}
+                initial={scaleIn.initial}
+                animate={isHeaderInView ? scaleIn.animate : {}}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="w-16 h-1 bg-primary mb-6 origin-right"
               />
@@ -97,8 +142,8 @@ const PortfolioSection = () => {
 
             {/* Description */}
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
+              initial={fadeInUp.initial}
+              animate={isHeaderInView ? fadeInUp.animate : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-[#6a6a6a] text-lg md:text-xl max-w-sm leading-relaxed"
               dir="rtl"
@@ -115,9 +160,9 @@ const PortfolioSection = () => {
         >
           {/* SimplyHebrew - Large Featured Card */}
           <motion.a
-            href={projects[0].link}
-            initial={{ opacity: 0, y: 40 }}
-            animate={isGridInView ? { opacity: 1, y: 0 } : {}}
+            href={memoizedProjects[0].link}
+            initial={fadeInUp.initial}
+            animate={isGridInView ? fadeInUp.animate : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
             className={cn(
               "group relative col-span-1 md:col-span-2 row-span-1 md:row-span-2 rounded-3xl overflow-hidden",
@@ -129,10 +174,13 @@ const PortfolioSection = () => {
             {/* Background Image */}
             <div className="absolute inset-0">
               <img
-                src={projects[0].image}
-                alt={projects[0].title}
+                src={memoizedProjects[0].image}
+                alt={memoizedProjects[0].title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                width={800}
+                height={640}
               />
               <div className={cn(
                 "absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent",
@@ -143,7 +191,7 @@ const PortfolioSection = () => {
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
               <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
-                {projects[0].category}
+                {memoizedProjects[0].category}
               </span>
             </div>
 
@@ -152,17 +200,17 @@ const PortfolioSection = () => {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-2xl md:text-3xl font-black text-white leading-tight mb-2">
-                    {projects[0].title}
+                    {memoizedProjects[0].title}
                   </h3>
                   <p className="text-white/70 text-sm md:text-base mb-3">
-                    {projects[0].subtitle}
+                    {memoizedProjects[0].subtitle}
                   </p>
                   <p className="text-white/60 text-sm max-w-md hidden md:block">
-                    {projects[0].description}
+                    {memoizedProjects[0].description}
                   </p>
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {projects[0].tags.map((tag) => (
+                    {memoizedProjects[0].tags.map((tag) => (
                       <span
                         key={tag}
                         className="px-3 py-1 text-xs font-medium bg-white/10 backdrop-blur-sm text-white/80 rounded-full"
@@ -187,11 +235,11 @@ const PortfolioSection = () => {
             </div>
           </motion.a>
 
-          {/* SIONÉ - Medium Card */}
+          {/* SIONE - Medium Card */}
           <motion.a
-            href={projects[1].link}
-            initial={{ opacity: 0, y: 40 }}
-            animate={isGridInView ? { opacity: 1, y: 0 } : {}}
+            href={memoizedProjects[1].link}
+            initial={fadeInUp.initial}
+            animate={isGridInView ? fadeInUp.animate : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
             className={cn(
               "group relative col-span-1 md:col-span-2 row-span-1 rounded-3xl overflow-hidden",
@@ -203,10 +251,13 @@ const PortfolioSection = () => {
             {/* Background Image */}
             <div className="absolute inset-0">
               <img
-                src={projects[1].image}
-                alt={projects[1].title}
+                src={memoizedProjects[1].image}
+                alt={memoizedProjects[1].title}
                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                width={600}
+                height={320}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             </div>
@@ -214,7 +265,7 @@ const PortfolioSection = () => {
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
               <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
-                {projects[1].category}
+                {memoizedProjects[1].category}
               </span>
             </div>
 
@@ -223,10 +274,10 @@ const PortfolioSection = () => {
               <div className="flex items-end justify-between gap-4">
                 <div>
                   <h3 className="text-xl md:text-2xl font-black text-white leading-tight mb-1">
-                    {projects[1].title}
+                    {memoizedProjects[1].title}
                   </h3>
                   <p className="text-white/70 text-sm">
-                    {projects[1].subtitle}
+                    {memoizedProjects[1].subtitle}
                   </p>
                 </div>
 
@@ -246,9 +297,9 @@ const PortfolioSection = () => {
 
           {/* TeenVestor - Small Card */}
           <motion.a
-            href={projects[2].link}
-            initial={{ opacity: 0, y: 40 }}
-            animate={isGridInView ? { opacity: 1, y: 0 } : {}}
+            href={memoizedProjects[2].link}
+            initial={fadeInUp.initial}
+            animate={isGridInView ? fadeInUp.animate : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
             className={cn(
               "group relative col-span-1 row-span-1 rounded-3xl overflow-hidden",
@@ -260,10 +311,13 @@ const PortfolioSection = () => {
             {/* Background Image */}
             <div className="absolute inset-0">
               <img
-                src={projects[2].image}
-                alt={projects[2].title}
+                src={memoizedProjects[2].image}
+                alt={memoizedProjects[2].title}
                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                width={400}
+                height={320}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             </div>
@@ -271,48 +325,29 @@ const PortfolioSection = () => {
             {/* Category Badge */}
             <div className="absolute top-4 right-4 z-10">
               <span className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
-                {projects[2].category}
+                {memoizedProjects[2].category}
               </span>
             </div>
 
             {/* Content */}
             <div className="absolute bottom-0 left-0 right-0 p-5 z-10" dir="rtl">
               <h3 className="text-lg font-black text-white leading-tight mb-1">
-                {projects[2].title}
+                {memoizedProjects[2].title}
               </h3>
               <p className="text-white/70 text-xs">
-                {projects[2].subtitle}
+                {memoizedProjects[2].subtitle}
               </p>
             </div>
           </motion.a>
 
           {/* Placeholder Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={isGridInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className={cn(
-              "relative col-span-1 row-span-1 rounded-3xl overflow-hidden",
-              "bg-gradient-to-br",
-              placeholder.color,
-              "border border-dashed border-[#e0e0e0]",
-              "flex flex-col items-center justify-center text-center p-6"
-            )}
-          >
-            <placeholder.Icon className="w-10 h-10 text-[#a0a0a0] mb-4" />
-            <h4 className="text-lg font-bold text-[#6a6a6a] mb-1" dir="rtl">
-              {placeholder.title}
-            </h4>
-            <p className="text-sm text-[#a0a0a0]" dir="rtl">
-              {placeholder.subtitle}
-            </p>
-          </motion.div>
+          <PlaceholderCard isInView={isGridInView} delay={0.4} />
         </div>
 
         {/* View All Portfolio Button */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isGridInView ? { opacity: 1, y: 0 } : {}}
+          initial={fadeInUp.initial}
+          animate={isGridInView ? fadeInUp.animate : {}}
           transition={{ duration: 0.6, delay: 0.5 }}
           className="flex justify-center mt-12 md:mt-16"
         >
@@ -330,6 +365,6 @@ const PortfolioSection = () => {
       </div>
     </section>
   );
-};
+});
 
 export default PortfolioSection;

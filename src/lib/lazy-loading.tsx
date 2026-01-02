@@ -22,6 +22,7 @@ export const useInView = (options: UseInViewOptions = {}) => {
   const [inView, setInView] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
   const ref = useRef<HTMLElement | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   useEffect(() => {
     const element = ref.current;
@@ -30,7 +31,13 @@ export const useInView = (options: UseInViewOptions = {}) => {
     // If already triggered and triggerOnce is true, skip
     if (triggerOnce && hasTriggered) return;
 
-    const observer = new IntersectionObserver(
+    // Disconnect any existing observer before creating a new one
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+
+    observerRef.current = new IntersectionObserver(
       ([entry]) => {
         const isIntersecting = entry.isIntersecting;
 
@@ -38,7 +45,7 @@ export const useInView = (options: UseInViewOptions = {}) => {
           setInView(true);
           if (triggerOnce) {
             setHasTriggered(true);
-            observer.unobserve(element);
+            observerRef.current?.unobserve(element);
           }
         } else if (!triggerOnce) {
           setInView(false);
@@ -47,9 +54,14 @@ export const useInView = (options: UseInViewOptions = {}) => {
       { threshold, rootMargin, root }
     );
 
-    observer.observe(element);
+    observerRef.current.observe(element);
 
-    return () => observer.disconnect();
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+    };
   }, [threshold, rootMargin, triggerOnce, hasTriggered, root]);
 
   return { ref, inView };

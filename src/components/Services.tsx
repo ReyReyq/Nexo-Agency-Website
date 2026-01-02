@@ -1,4 +1,4 @@
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { Monitor, Palette, Brain, ArrowLeft, Zap, TrendingUp, Clock } from "lucide-react";
 

@@ -1,10 +1,11 @@
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { BarChart3, Zap, MessageCircle, Rocket, ArrowLeft } from "lucide-react";
 import AboutRibbonBackground from "./AboutRibbonBackground";
 import RippleButton from "./RippleButton";
 import VariableProximity from "./ui/VariableProximity";
 
+// Values data defined outside component - stable reference prevents unnecessary re-renders
 const values = [
   {
     icon: BarChart3,
@@ -32,7 +33,10 @@ const AboutSection = () => {
   const sectionRef = useRef(null);
   const line1ContainerRef = useRef<HTMLDivElement>(null);
   const line2ContainerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+
+  // Memoize useInView options to prevent unnecessary re-subscriptions
+  const inViewOptions = useMemo(() => ({ once: true, margin: "-100px" as const }), []);
+  const isInView = useInView(sectionRef, inViewOptions);
 
   return (
     <section
@@ -107,24 +111,27 @@ const AboutSection = () => {
 
             {/* Values Grid - Centered with Enhanced Design */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6 mb-10 max-w-4xl mx-auto">
-              {values.map((value, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  className="group text-center"
-                >
-                  {/* Icon container with hover effect */}
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105">
-                    <value.icon className="w-7 h-7 text-primary transition-transform duration-300 group-hover:scale-110" />
-                  </div>
-                  {/* Title */}
-                  <span className="text-[#1a1a1a] font-bold text-sm md:text-base block mb-1.5">{value.title}</span>
-                  {/* Description */}
-                  <p className="text-[#666666] text-xs md:text-sm leading-relaxed">{value.desc}</p>
-                </motion.div>
-              ))}
+              {values.map((value, index) => {
+                const IconComponent = value.icon;
+                return (
+                  <motion.div
+                    key={value.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    className="group text-center"
+                  >
+                    {/* Icon container with hover effect */}
+                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-105">
+                      <IconComponent className="w-7 h-7 text-primary transition-transform duration-300 group-hover:scale-110" />
+                    </div>
+                    {/* Title */}
+                    <span className="text-[#1a1a1a] font-bold text-sm md:text-base block mb-1.5">{value.title}</span>
+                    {/* Description */}
+                    <p className="text-[#666666] text-xs md:text-sm leading-relaxed">{value.desc}</p>
+                  </motion.div>
+                );
+              })}
             </div>
 
             <motion.div

@@ -1,5 +1,5 @@
-import { useState, useCallback, memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback, memo, useMemo, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import useMeasure from "react-use-measure";
 
@@ -11,29 +11,45 @@ const QUESTIONS: Record<string, { question: string; answer: string }[]> = {
   "כללי": [
     {
       question: "למי שייך האתר והתוכן לאחר סיום העבודה?",
-      answer: "האתר הוא 100% שלכם. בניגוד לפלטפורמות השכרה, אנו בונים נכס דיגיטלי ומעבירים אותו ללקוח באופן מלא עם סיום הפרויקט. קוד האתר, העיצוב, והנתונים (כולל בסיס הנתונים של הלקוחות בחנות) שייכים לכם בלעדית, מה שמבטיח לכם עצמאות עסקית מלאה."
+      answer: "האתר הוא 100% שלכם. בניגוד לפלטפורמות השכרה, אנו בונים נכס דיגיטלי ומעבירים אותו לבעלותכם המלאה עם סיום הפרויקט. קוד האתר, העיצוב והנתונים (כולל בסיס הנתונים של הלקוחות בחנות) שייכים לכם בלעדית, מה שמבטיח לכם עצמאות עסקית מלאה."
     },
     {
-      question: "מה מבדיל אתכם מסוכנויות אחרות?",
-      answer: "אנחנו לא בונים סתם אתרים יפים - אנחנו בונים מכונות שמביאות תוצאות. הגישה שלנו משלבת אסטרטגיה עסקית, עיצוב ממיר ופיתוח מתקדם. בנוסף, אנו מתמחים בשילוב פתרונות AI ואוטומציה שחוסכים לכם זמן וכסף."
+      question: "מה קורה אם אצטרך שינויים או עדכונים באתר בעתיד?",
+      answer: "אנחנו לא נעלמים לאחר ההשקה. אנו מציעים חבילות שירות (\"בנק שעות\") או ריטיינר תחזוקה ללקוחות שרוצים ראש שקט, ודואגים לכל השינויים, העדכונים והתוספות הנדרשות באתר באופן שוטף ומקצועי."
     },
     {
-      question: "האם אפשר לראות דוגמאות לעבודות שלכם?",
-      answer: "כמובן! בדף הפורטפוליו שלנו תוכלו לראות פרויקטים שביצענו כמו SimplyHebrew, SIONÉ ו-TeenVestor. נשמח גם להציג לכם את היכולות שלנו בפגישה אישית ולהראות כיצד נוכל לעזור לעסק שלכם לצמוח."
+      question: "מה מבדיל אתכם מסוכנויות אחרות בשוק?",
+      answer: "השילוב בין מהירות, טכנולוגיה ובעלות. אנו משלבים כלי AI מתקדמים לייעול העסק, מתחייבים ללוחות זמנים קצרים (עד 3 שבועות לחנות!), והכי חשוב – משחררים אתכם ממודל ה\"חתונה הקתולית\". אצלנו אתם משלמים על הקמה ומקבלים נכס משלכם, לא שוכרים אותו חודשית."
+    },
+    {
+      question: "האם יש אחריות על האתר לאחר העלייה לאוויר?",
+      answer: "כן, אנו מעניקים תקופת אחריות של 3 חודשים על באגים ותקלות טכניות הקשורות לבנייה שלנו. המטרה שלנו היא שתצאו לדרך בביטחון מלא, בידיעה שהמערכת יציבה, נבדקה ועובדת בצורה חלקה."
+    },
+    {
+      question: "האם אפשר לראות דוגמאות לאתרים שבניתם?",
+      answer: "בוודאי. אנו גאים בתוצרים שלנו. נשמח לשלוח לכם קישורים לאתרים פעילים שבנינו, כדי שתוכלו להתרשם מרמת העיצוב, המהירות וחוויית המשתמש המוקפדת שאנו מספקים ללקוחותינו."
     },
   ],
   "תהליך העבודה": [
     {
-      question: "איך תהליך העבודה איתכם נראה?",
-      answer: "התהליך שלנו מתחיל בפגישת היכרות חינמית בה אנו מבינים את הצרכים והמטרות שלכם. לאחר מכן אנו בונים תכנית עבודה מפורטת, מעצבים, מפתחים ומשיקים - כשאתם מעודכנים בכל שלב. כל פרויקט מקבל מנהל פרויקט ייעודי שזמין עבורכם."
+      question: "מה אני צריך להכין כדי שנוכל להתחיל לעבוד?",
+      answer: "כדי לעמוד בלוחות הזמנים המהירים, נצטרך מכם את חומרי הגלם: לוגו (קובץ פתוח/איכותי), תמונות אווירה/מוצרים וטקסטים בסיסיים. אם חסרים לכם חומרים, נוכל להמליץ על אנשי מקצוע משלימים לעיצוב גרפי וכתיבה שיווקית שיסייעו לכם."
     },
     {
-      question: "איך מתחילים?",
-      answer: "פשוט השאירו פרטים בטופס יצירת הקשר או התקשרו אלינו. נקבע פגישת היכרות חינמית (פיזית או בזום) בה נבין את הצרכים שלכם ונציג כיצד נוכל לעזור. אין התחייבות - רק שיחה פתוחה על האפשרויות."
+      question: "האם אראה את עיצוב האתר לפני הבנייה?",
+      answer: "חד משמעית. אנחנו לא מתחילים לתכנת לפני שאנחנו מסונכרנים ויזואלית. בשלב הראשון נציג לכם קו עיצובי או סקיצה ראשונית לאישור. רק לאחר שתאהבו את הכיוון ותאשרו אותו, נמשיך לשלב הבנייה והפיתוח המלא."
     },
     {
-      question: "האם אתם מציעים תחזוקה אחרי ההשקה?",
-      answer: "בהחלט! אנו מציעים חבילות תחזוקה שכוללות עדכוני אבטחה, גיבויים, תמיכה טכנית וביצוע שינויים קטנים. ההצלחה שלכם היא ההצלחה שלנו, ואנחנו כאן לטווח הארוך."
+      question: "מי אחראי על כתיבת התוכן לאתר?",
+      answer: "כברירת מחדל, התוכן מסופק על ידיכם שכן אתם המומחים בתחום שלכם. עם זאת, במידה ותרצו שהאתר ישדר מקצועיות שיווקית גבוהה יותר, אנו מציעים שירותי קופירייטינג בתוספת תשלום לכתיבת הטקסטים בצורה חדה ומכירתית."
+    },
+    {
+      question: "האם אוכל לבקש שינויים במהלך הבנייה?",
+      answer: "התהליך שלנו שקוף ומשתף. יהיו נקודות ביקורת מוגדרות במהלך הפרויקט בהן תוכלו לתת פידבק ולבקש דיוקים. אנו עובדים יחד איתכם כדי שהתוצאה הסופית תתאים בדיוק לאפיון שסיכמנו בתחילת הדרך."
+    },
+    {
+      question: "איך מתבצעת ההשקה והמסירה של האתר?",
+      answer: "לאחר סיום הפיתוח ואישורכם הסופי, אנו מבצעים סדרת בדיקות איכות (QA) מקיפה, מחברים את הדומיין, ומוודאים שהכל תקין. לאחר מכן נעביר לכם את האתר ונספק לכם את כל הפרטים הטכניים הנדרשים כדי שהנכס יהיה רשום על שמכם."
     },
   ],
   "מחירים וזמנים": [
@@ -43,25 +59,41 @@ const QUESTIONS: Record<string, { question: string; answer: string }[]> = {
     },
     {
       question: "האם התשלום הוא חד-פעמי או שיש דמי מנוי חודשיים?",
-      answer: "המודל שלנו הוא תשלום חד-פעמי עבור בניית האתר. אין אצלנו \"חתונה קתולית\" או דמי מנוי נסתרים על הפיתוח. לאחר התשלום, האתר מועבר לבעלותכם המלאה. כחלק מהשירות, אנו מעניקים לכם במתנה את הדומיין (כתובת האתר) וחבילת אחסון מהירה וכלולה לשנה הראשונה."
+      answer: "המודל שלנו הוא תשלום חד-פעמי עבור הפיתוח. אין אצלנו דמי מנוי נסתרים על עצם קיום האתר. לאחר התשלום, האתר הוא שלכם. כחלק מהשירות, אנו מעניקים לכם במתנה את הדומיין (כתובת האתר) ואחסון מהיר לשנה הראשונה."
     },
     {
       question: "מה קורה בתום השנה הראשונה לגבי הדומיין והאחסון?",
       answer: "הדומיין והאחסון כלולים בחבילת ההקמה למשך 12 חודשים. לקראת סוף השנה, תוכלו לבחור האם לחדש את האחסון והדומיין דרכנו בעלות שנתית סטנדרטית, או להעביר את האתר לכל ספק אחסון אחר לבחירתכם. האתר הוא הנכס שלכם, והבחירה בידיים שלכם."
     },
+    {
+      question: "מהם תנאי התשלום?",
+      answer: "אנו עובדים במודל של מקדמה לתחילת עבודה, כאשר היתרה משולמת עם סיום הפרויקט ומסירת האתר לשביעות רצונכם. צורת עבודה זו מבטיחה מחויבות הדדית להצלחת הפרויקט ולעמידה בלוחות הזמנים."
+    },
+    {
+      question: "האם יש עלויות נסתרות שלא מופיעות בהצעת המחיר?",
+      answer: "אנו דוגלים בשקיפות מלאה. המחיר כולל את כל מה שמוגדר באפיון. עלויות נוספות ייתכנו רק אם תבקשו במהלך העבודה תוספות מיוחדות שלא סוכמו מראש (כגון רכישת תמונות ממאגרים, פלאגינים בתשלום מיוחד או פיתוחים מורכבים), וגם אז – הכל יעשה באישור ותמחור מראש."
+    },
   ],
   "טכנולוגיה": [
     {
-      question: "האם האתר יהיה מותאם לגלישה בסמארטפון (מובייל)?",
-      answer: "חד משמעית כן. אנו בונים את האתר בגישת Mobile-First, מתוך הבנה שרוב הלקוחות שלכם יגיעו דרך הטלפון הנייד. העיצוב, גודל הכפתורים והתפריטים מותאמים מראש לכל סוגי המסכים כדי להבטיח חוויית משתמש חלקה ומקסימום המרות."
-    },
-    {
       question: "האם המחיר כולל גם קידום בגוגל (SEO)?",
-      answer: "האתר נמסר לכם כ-\"SEO Ready\" – כלומר, עם תשתית טכנית מעולה, מהירות טעינה גבוהה והתאמה למובייל שגוגל אוהב. עם זאת, קידום אורגני פעיל (כתיבת תוכן, מחקר מילים ושיפור מיקומים שוטף) הוא תהליך נפרד הדורש מומחיות ייעודית, ואנו מציעים אותו כשירות נוסף (אקסטרה) ללקוחות המעוניינים בכך."
+      answer: "האתר נמסר לכם כ-\"SEO Ready\" – עם תשתית טכנית מצוינת שגוגל יודע לסרוק. עם זאת, קידום אורגני פעיל (הכולל כתיבת מאמרים שוטפת, מחקר מילים מתמיד וקישורים) הוא תהליך נפרד הדורש מומחיות, ואנו מציעים אותו כשירות פרימיום נפרד ללקוחות המעוניינים בצמיחה עקבית."
     },
     {
-      question: "איך פתרונות ה-AI שלכם יכולים לשדרג את העסק שלי מעבר לאתר רגיל?",
-      answer: "פתרונות ה-AI שלנו הופכים את האתר מ\"כרטיס ביקור\" סטטי לכלי עבודה חכם. אנו יכולים לשלב צ'אטבוטים לשירות לקוחות, מנועי המלצות, או כלי אוטומציה שחוסכים לכם זמן יקר. המטרה היא להקטין את החיכוך עם הלקוח ולהגביר את המכירות באמצעות טכנולוגיה מתקדמת ושקופה."
+      question: "האם האתר יהיה מותאם לגלישה בסמארטפון (מובייל)?",
+      answer: "חד משמעית כן. אנו בונים את האתר בגישת Mobile-First, מתוך הבנה שרוב הלקוחות שלכם יגיעו דרך הנייד. העיצוב והממשק מותאמים מראש לכל המסכים כדי להבטיח חוויית משתמש חלקה ומקסימום המרות."
+    },
+    {
+      question: "איך פתרונות ה-AI שלכם יכולים לשדרג את העסק שלי?",
+      answer: "ה-AI הופך את האתר מכרטיס ביקור לכלי חכם. אנו משלבים צ'אטבוטים לשירות לקוחות, מנועי המלצות וכלי אוטומציה שחוסכים זמן יקר. המטרה היא לייעל את העבודה ולהגדיל מכירות באמצעות טכנולוגיה מתקדמת."
+    },
+    {
+      question: "באיזו פלטפורמה טכנולוגית האתר ייבנה?",
+      answer: "אנחנו לא מאמינים בפתרון אחד שמתאים לכולם (\"One size fits all\"). אנו שולטים במגוון טכנולוגיות ומתאימים את הפלטפורמה (וורדפרס, שופיפיי, או פיתוח בקוד מותאם אישית) בהתאם לצרכים המדויקים של העסק שלכם. המטרה שלנו היא לבנות את האתר על ה\"מנוע\" המהיר, היציב והנכון ביותר עבורכם, שישרת אתכם לטווח ארוך."
+    },
+    {
+      question: "איך אתם שומרים על אבטחת האתר?",
+      answer: "אבטחת המידע קריטית לנו. כל אתר נמסר עם תעודת אבטחה (SSL) ויושב על שרתים הכוללים הגנות מתקדמות וגיבויים אוטומטיים. כך המידע שלכם ושל הלקוחות שלכם נשמר בטוח, ואתם נהנים מראש שקט."
     },
   ],
 };
@@ -132,12 +164,7 @@ const FAQSection = () => {
             className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-all"
           >
             <span>דברו איתנו ישירות</span>
-            <motion.span
-              animate={{ x: [0, -4, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-            >
-              ←
-            </motion.span>
+            <AnimatedArrow />
           </a>
         </motion.div>
       </div>
@@ -197,16 +224,30 @@ const Tabs = memo(({ selected, setSelected }: TabsProps) => {
 
 Tabs.displayName = 'Tabs';
 
-// Questions Container Component - memoized
+// Questions Container Component - manages which question is open (only one at a time)
 interface QuestionsProps {
   selected: string;
 }
 
 const Questions = memo(({ selected }: QuestionsProps) => {
+  // Track which question index is open (-1 means none are open)
+  const [openIndex, setOpenIndex] = useState<number>(-1);
+
+  // Reset open question when tab changes
+  const handleToggle = useCallback((idx: number) => {
+    setOpenIndex((prev) => (prev === idx ? -1 : idx));
+  }, []);
+
+  // Memoize the questions entries to prevent recreation on each render
+  const questionsEntries = useMemo(() => Object.entries(QUESTIONS), []);
+
+  // Get the current tab's questions
+  const currentQuestions = useMemo(() => QUESTIONS[selected] || [], [selected]);
+
   return (
     <div className="mx-auto max-w-3xl">
       <AnimatePresence mode="wait">
-        {Object.entries(QUESTIONS).map(([tab, questions]) => {
+        {questionsEntries.map(([tab]) => {
           return selected === tab ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -217,12 +258,14 @@ const Questions = memo(({ selected }: QuestionsProps) => {
                 ease: [0.16, 1, 0.3, 1],
               }}
               key={tab}
+              onAnimationStart={() => setOpenIndex(-1)}
             >
-              {questions.map((q, idx) => (
+              {currentQuestions.map((q, idx) => (
                 <Question
                   key={idx}
                   title={q.question}
-                  defaultOpen={false}
+                  isOpen={openIndex === idx}
+                  onToggle={() => handleToggle(idx)}
                 >
                   {q.answer}
                 </Question>
@@ -258,28 +301,57 @@ const questionChevronVariants = {
   },
 };
 
-// Individual Question Component - memoized with stable variants
+// Animated Arrow Component with proper cleanup for infinite animation
+const AnimatedArrow = memo(() => {
+  const controls = useAnimationControls();
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+
+    const runAnimation = async () => {
+      while (isMountedRef.current) {
+        await controls.start({ x: -4, transition: { duration: 0.75 } });
+        if (!isMountedRef.current) break;
+        await controls.start({ x: 0, transition: { duration: 0.75 } });
+      }
+    };
+
+    runAnimation();
+
+    return () => {
+      isMountedRef.current = false;
+      controls.stop();
+    };
+  }, [controls]);
+
+  return (
+    <motion.span animate={controls} initial={{ x: 0 }}>
+      ←
+    </motion.span>
+  );
+});
+
+AnimatedArrow.displayName = 'AnimatedArrow';
+
+// Individual Question Component - controlled by parent (only one open at a time)
 interface QuestionProps {
   title: string;
   children: React.ReactNode;
-  defaultOpen?: boolean;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-const Question = memo(({ title, children, defaultOpen = false }: QuestionProps) => {
+const Question = memo(({ title, children, isOpen, onToggle }: QuestionProps) => {
   const [ref, { height }] = useMeasure();
-  const [open, setOpen] = useState(defaultOpen);
-
-  const handleToggle = useCallback(() => {
-    setOpen((prev) => !prev);
-  }, []);
 
   return (
     <motion.div
-      animate={open ? "open" : "closed"}
+      animate={isOpen ? "open" : "closed"}
       className="border-b border-[#e5e5e5]"
     >
       <button
-        onClick={handleToggle}
+        onClick={onToggle}
         className="flex w-full items-center justify-between gap-4 py-6"
         dir="rtl"
       >
@@ -297,8 +369,8 @@ const Question = memo(({ title, children, defaultOpen = false }: QuestionProps) 
       <motion.div
         initial={false}
         animate={{
-          height: open ? height : "0px",
-          marginBottom: open ? "24px" : "0px",
+          height: isOpen ? height : "0px",
+          marginBottom: isOpen ? "24px" : "0px",
         }}
         className="overflow-hidden text-[#4a4a4a]"
       >

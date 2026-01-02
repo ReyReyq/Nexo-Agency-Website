@@ -8,6 +8,7 @@ import RippleButton from "./RippleButton";
 import { Spotlight } from "./ui/spotlight";
 import ClickSpark from "./ClickSpark";
 
+// Services data defined outside component - stable reference prevents FanCarousel re-renders
 const services = [
   {
     id: 1,
@@ -132,7 +133,7 @@ const ServicesSection = () => {
                 </svg>
 
                 {/* Primary CTA - Contact */}
-                <GooeyButton to="/contact" variant="primary">
+                <GooeyButton to="/contact#contact-form" variant="primary">
                   <span>צרו קשר</span>
                   <ArrowLeft className="w-4 h-4" />
                 </GooeyButton>

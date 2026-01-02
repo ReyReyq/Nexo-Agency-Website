@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentPropsWithoutRef, useEffect, useRef } from "react"
+import { ComponentPropsWithoutRef, useEffect, useMemo, useRef } from "react"
 import { useInView, useMotionValue, useSpring } from "framer-motion"
 
 import { cn } from "@/lib/utils"
@@ -30,6 +30,16 @@ export function NumberTicker({
   })
   const isInView = useInView(ref, { once: true, margin: "0px" })
 
+  // Memoize the NumberFormat instance to avoid creating it on every animation frame
+  const numberFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: decimalPlaces,
+        maximumFractionDigits: decimalPlaces,
+      }),
+    [decimalPlaces]
+  )
+
   useEffect(() => {
     if (isInView) {
       const timer = setTimeout(() => {
@@ -42,10 +52,8 @@ export function NumberTicker({
   useEffect(() => {
     const unsubscribe = springValue.on("change", (latest) => {
       if (ref.current) {
-        const formattedNumber = Intl.NumberFormat("en-US", {
-          minimumFractionDigits: decimalPlaces,
-          maximumFractionDigits: decimalPlaces,
-        }).format(Number(latest.toFixed(decimalPlaces)))
+        // Use memoized formatter and format the number directly
+        const formattedNumber = numberFormatter.format(latest)
 
         // Pad with zero if needed (e.g., 1 becomes 01)
         const paddedNumber = formattedNumber.padStart(2, "0")
@@ -56,7 +64,7 @@ export function NumberTicker({
     return () => {
       unsubscribe()
     }
-  }, [springValue, decimalPlaces])
+  }, [springValue, numberFormatter])
 
   return (
     <span

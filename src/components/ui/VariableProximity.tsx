@@ -1,6 +1,43 @@
 import { forwardRef, useMemo, useRef, useEffect, useCallback, MutableRefObject, CSSProperties, HTMLAttributes, useState } from 'react';
 import { motion } from 'framer-motion';
 
+// Performance: throttle function to limit event frequency
+function throttle<T extends (...args: Parameters<T>) => void>(fn: T, ms: number): T {
+  let lastCall = 0;
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const throttled = ((...args: Parameters<T>) => {
+    const now = Date.now();
+    const remaining = ms - (now - lastCall);
+
+    if (remaining <= 0) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      lastCall = now;
+      fn(...args);
+    } else if (!timeoutId) {
+      // Schedule trailing call to ensure final position is captured
+      timeoutId = setTimeout(() => {
+        lastCall = Date.now();
+        timeoutId = null;
+        fn(...args);
+      }, remaining);
+    }
+  }) as T;
+
+  // Attach cleanup method
+  (throttled as T & { cancel: () => void }).cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  return throttled as T;
+}
+
 // Performance: visibility-aware animation frame hook
 function useAnimationFrame(callback: () => void, isActive: boolean = true) {
   useEffect(() => {
@@ -38,9 +75,9 @@ function useMousePositionRef(containerRef: MutableRefObject<HTMLElement | null>)
       resizeObserver.observe(containerRef.current);
     }
 
-    // Also update on scroll (container position may change)
-    const handleScroll = () => updateContainerRect();
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Performance: throttle scroll handler to 16ms (~60fps) to reduce layout thrashing
+    const throttledScrollHandler = throttle(updateContainerRect, 16);
+    window.addEventListener('scroll', throttledScrollHandler, { passive: true });
 
     const updatePosition = (x: number, y: number) => {
       const rect = containerRectRef.current;
@@ -61,7 +98,9 @@ function useMousePositionRef(containerRef: MutableRefObject<HTMLElement | null>)
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     return () => {
       resizeObserver.disconnect();
-      window.removeEventListener('scroll', handleScroll);
+      // Clean up throttled handler's pending timeout
+      (throttledScrollHandler as typeof throttledScrollHandler & { cancel: () => void }).cancel();
+      window.removeEventListener('scroll', throttledScrollHandler);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
     };
@@ -100,6 +139,14 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
   const interpolatedSettingsRef = useRef<string[]>([]);
   const mousePositionRef = useMousePositionRef(containerRef);
   const lastPositionRef = useRef<{ x: number | null; y: number | null }>({ x: null, y: null });
+
+  // Performance: Clean up refs when label changes to prevent memory leaks
+  const labelLength = label.replace(/ /g, '').length;
+  useEffect(() => {
+    // Trim refs arrays to match current label length
+    letterRefs.current.length = labelLength;
+    interpolatedSettingsRef.current.length = labelLength;
+  }, [labelLength]);
 
   // Performance: track visibility for pausing animations
   const [isVisible, setIsVisible] = useState(true);
@@ -213,16 +260,21 @@ const VariableProximity = forwardRef<HTMLSpanElement, VariableProximityProps>((p
       resizeObserver.observe(containerRef.current);
     }
 
-    // Update positions on scroll (since positions are viewport-relative)
-    const handleScroll = () => updateLetterPositions();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', updateLetterPositions, { passive: true });
+    // Performance: throttle scroll/resize handlers to 16ms (~60fps) to reduce layout thrashing
+    const throttledScrollHandler = throttle(updateLetterPositions, 16);
+    const throttledResizeHandler = throttle(updateLetterPositions, 100); // Resize is less frequent, use 100ms
+
+    window.addEventListener('scroll', throttledScrollHandler, { passive: true });
+    window.addEventListener('resize', throttledResizeHandler, { passive: true });
 
     return () => {
       clearTimeout(timeoutId);
       resizeObserver.disconnect();
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', updateLetterPositions);
+      // Clean up throttled handlers' pending timeouts
+      (throttledScrollHandler as typeof throttledScrollHandler & { cancel: () => void }).cancel();
+      (throttledResizeHandler as typeof throttledResizeHandler & { cancel: () => void }).cancel();
+      window.removeEventListener('scroll', throttledScrollHandler);
+      window.removeEventListener('resize', throttledResizeHandler);
     };
   }, [containerRef, updateLetterPositions]);
 

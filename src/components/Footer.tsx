@@ -1,30 +1,33 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Instagram, Facebook, Linkedin, Phone, Heart } from "lucide-react";
+import { useRef, memo } from "react";
+import { Instagram, Facebook, Linkedin, Phone, Heart, LucideIcon } from "lucide-react";
+
+// Static social links - defined outside component to avoid recreation
+const SOCIAL_LINKS: { icon: LucideIcon; href: string; label: string }[] = [
+  { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram" },
+  { icon: Facebook, href: "https://facebook.com/nexo.agency", label: "Facebook" },
+  { icon: Linkedin, href: "https://linkedin.com/company/nexo-agency", label: "LinkedIn" },
+  { icon: Phone, href: "tel:050-123-4567", label: "Phone" },
+];
+
+// Nexo Logo SVG - memoized and defined outside component to prevent recreation on each render
+const NexoLogo = memo(() => (
+  <svg className="w-4 h-4" viewBox="0 0 486 336" fill="currentColor">
+    <g transform="translate(0,336) scale(0.1,-0.1)">
+      <path d="M410 3350 c-63 -5 -167 -11 -230 -15 -63 -3 -130 -9 -147 -12 l-33 -5 0 -1661 0 -1660 82 6 c158 12 295 68 398 163 77 72 144 201 160 309 6 44 10 491 10 1188 l0 1117 93 0 c244 0 488 -75 697 -214 84 -57 230 -199 1290 -1262 1149 -1151 1198 -1199 1266 -1231 39 -19 100 -38 135 -44 35 -5 209 -8 387 -7 l322 3 -1487 1486 c-1377 1375 -1495 1491 -1588 1551 -229 150 -449 234 -710 272 -49 7 -173 14 -275 15 -102 1 -201 3 -220 5 -19 2 -87 0 -150 -4z"/>
+      <path d="M4109 3316 c-83 -22 -133 -62 -314 -253 -99 -103 -247 -258 -330 -343 -83 -85 -226 -234 -317 -330 l-166 -175 208 -214 c115 -117 213 -211 218 -210 8 4 250 259 751 794 119 127 259 275 311 330 53 55 163 171 244 258 l148 157 -353 -1 c-247 0 -368 -4 -400 -13z"/>
+      <path d="M2085 1273 c-187 -196 -279 -291 -815 -841 -200 -205 -369 -381 -376 -391 -12 -16 6 -17 339 -14 202 2 375 8 407 14 30 6 89 27 130 46 62 29 94 54 181 142 163 164 729 773 729 785 0 5 -96 106 -213 224 l-213 213 -169 -178z"/>
+    </g>
+  </svg>
+));
+
+NexoLogo.displayName = 'NexoLogo';
 
 const Footer = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
-
-  const socialLinks = [
-    { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram" },
-    { icon: Facebook, href: "https://facebook.com/nexo.agency", label: "Facebook" },
-    { icon: Linkedin, href: "https://linkedin.com/company/nexo-agency", label: "LinkedIn" },
-    { icon: Phone, href: "tel:050-123-4567", label: "Phone" },
-  ];
-
-  // Nexo Logo SVG
-  const NexoLogo = () => (
-    <svg className="w-4 h-4" viewBox="0 0 486 336" fill="currentColor">
-      <g transform="translate(0,336) scale(0.1,-0.1)">
-        <path d="M410 3350 c-63 -5 -167 -11 -230 -15 -63 -3 -130 -9 -147 -12 l-33 -5 0 -1661 0 -1660 82 6 c158 12 295 68 398 163 77 72 144 201 160 309 6 44 10 491 10 1188 l0 1117 93 0 c244 0 488 -75 697 -214 84 -57 230 -199 1290 -1262 1149 -1151 1198 -1199 1266 -1231 39 -19 100 -38 135 -44 35 -5 209 -8 387 -7 l322 3 -1487 1486 c-1377 1375 -1495 1491 -1588 1551 -229 150 -449 234 -710 272 -49 7 -173 14 -275 15 -102 1 -201 3 -220 5 -19 2 -87 0 -150 -4z"/>
-        <path d="M4109 3316 c-83 -22 -133 -62 -314 -253 -99 -103 -247 -258 -330 -343 -83 -85 -226 -234 -317 -330 l-166 -175 208 -214 c115 -117 213 -211 218 -210 8 4 250 259 751 794 119 127 259 275 311 330 53 55 163 171 244 258 l148 157 -353 -1 c-247 0 -368 -4 -400 -13z"/>
-        <path d="M2085 1273 c-187 -196 -279 -291 -815 -841 -200 -205 -369 -381 -376 -391 -12 -16 6 -17 339 -14 202 2 375 8 407 14 30 6 89 27 130 46 62 29 94 54 181 142 163 164 729 773 729 785 0 5 -96 106 -213 224 l-213 213 -169 -178z"/>
-      </g>
-    </svg>
-  );
 
   return (
     <>
@@ -52,7 +55,7 @@ const Footer = () => {
           >
             <span className="text-white/40 text-sm hidden md:block">עקבו אחרינו</span>
             <div className="flex gap-3">
-              {socialLinks.map((social, i) => (
+              {SOCIAL_LINKS.map((social, i) => (
                 <motion.a
                   key={social.label}
                   href={social.href}
@@ -79,8 +82,8 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm"
           >
-            <a href="mailto:hello@nexo.agency" className="text-white/60 hover:text-primary transition-colors">
-              hello@nexo.agency
+            <a href="mailto:sales@nexoagency.com" className="text-white/60 hover:text-primary transition-colors">
+              sales@nexoagency.com
             </a>
             <a href="tel:050-123-4567" className="text-white/60 hover:text-primary transition-colors">
               050-123-4567

@@ -4,6 +4,55 @@
 // - Blog.tsx (listing page) - shows all posts
 // - BlogArticle.tsx (individual article page) - shows full content
 
+import { aiAutomationBlogPosts } from './aiAutomationBlogPosts';
+import { appDevelopmentBlogPosts } from './appDevelopmentBlogPosts';
+import { brandingBlogPosts } from './brandingBlogPosts';
+import { businessStrategyBlogPosts } from './businessStrategyBlogPosts';
+import { contentMarketingBlogPosts } from './contentMarketingBlogPosts';
+import { ecommerceBlogPosts } from './ecommerceBlogPosts';
+import { emailMarketingBlogPost } from './emailMarketingBlogPost';
+import { facebookAdsBlogPost } from './facebookAdsBlogPost';
+import { googleAdsBlogPost } from './googleAdsBlogPost';
+import { localSeoBlogPost } from './localSeoBlogPost';
+import { logoDesignPricingBlogPost } from './logoDesignPricingBlogPost';
+import { organicVsPaidSeoBlogPost } from './organicVsPaidSeoBlogPost';
+import { seoBlogPosts } from './seoBlogPosts';
+import { websitePricingBlogPost } from './websitePricingBlogPost';
+import { wordpressVsWixBlogPost } from './wordpressVsWixBlogPost';
+import { shopifyVsWoocommerceBlogPost } from './shopifyVsWoocommerceBlogPost';
+import { seoPricingBlogPost } from './seoPricingBlogPost';
+import { landingPageGuideBlogPost } from './landingPageGuideBlogPost';
+import { virtualStoreGuideBlogPost } from './virtualStoreGuideBlogPost';
+import { brandingGuideBlogPost } from './brandingGuideBlogPost';
+import { commonSeoMistakesBlogPost } from './commonSeoMistakesBlogPost';
+import { googleVsFacebookAdsBlogPost } from './googleVsFacebookAdsBlogPost';
+import { keywordResearchGuideBlogPost } from './keywordResearchGuideBlogPost';
+import { linkedinB2BBlogPost } from './linkedinB2BBlogPost';
+import { newWebsiteSeoGuideBlogPost } from './newWebsiteSeoGuideBlogPost';
+import { socialMediaBlogPosts } from './socialMediaBlogPosts';
+import { tiktokMarketingBlogPost } from './tiktokMarketingBlogPost';
+import { uxUiDesignBlogPost } from './uxUiDesignBlogPost';
+import { videoMarketingBlogPost } from './videoMarketingBlogPost';
+import { webDevelopmentBlogPosts } from './webDevelopmentBlogPosts';
+import { websiteRedesignBlogPost } from './websiteRedesignBlogPost';
+import { websiteSpeedOptimizationBlogPost } from './websiteSpeedOptimizationBlogPost';
+import { whatsappChatbotBlogPost } from './whatsappChatbotBlogPost';
+import { chatbotImplementationBlogPost } from './chatbotImplementationBlogPost';
+import { businessWebsiteGuideBlogPost } from './businessWebsiteGuideBlogPost';
+import { digitalMarketingSmallBusinessBlogPost } from './digitalMarketingSmallBusinessBlogPost';
+import { socialMediaPricingBlogPost } from './socialMediaPricingBlogPost';
+import { responsiveDesignGuideBlogPost } from './responsiveDesignGuideBlogPost';
+import { websiteMaintenanceBlogPost } from './websiteMaintenanceBlogPost';
+import { influencerMarketingGuideBlogPost } from './influencerMarketingGuideBlogPost';
+import { podcastMarketingBlogPost } from './podcastMarketingBlogPost';
+import { contentMarketingStrategyBlogPost } from './contentMarketingStrategyBlogPost';
+import { aiAutomationBusinessBlogPost } from './aiAutomationBusinessBlogPost';
+import { crmIntegrationBlogPost } from './crmIntegrationBlogPost';
+import { videoMarketingGuideBlogPost } from './videoMarketingGuideBlogPost';
+import { emailAutomationBlogPost } from './emailAutomationBlogPost';
+import { googleAnalyticsSetupBlogPost } from './googleAnalyticsSetupBlogPost';
+import { marketingFunnelBlogPost } from './marketingFunnelBlogPost';
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -14,11 +63,14 @@ export interface BlogPost {
   image: string;
   slug: string;
   date: string;
+  lastUpdated?: string; // Last updated date for freshness signals
   featured?: boolean;
   author?: {
     name: string;
     avatar?: string;
     role?: string;
+    bio?: string; // Author bio for E-E-A-T
+    credentials?: string[]; // Author credentials/expertise
   };
   tags?: string[];
 }
@@ -46,7 +98,7 @@ export const getAllCategories = (): string[] => {
 };
 
 // Optimized images: 400px width for cards, WebP format
-export const blogPosts: BlogPost[] = [
+const inlineBlogPosts: BlogPost[] = [
   {
     id: "ai-business-2024",
     title: "איך AI משנה את פני העסקים ב-2024",
@@ -865,4 +917,57 @@ export const blogPosts: BlogPost[] = [
     },
     tags: ["מיתוג", "זהות מותגית", "עסקים", "עיצוב"]
   }
+];
+
+// Combined blog posts - SEO, Local SEO, UX/UI, Video Marketing, Website Redesign, Web development, App development, Social Media, Google Ads, Facebook Ads, Email Marketing, AI automation, Business Strategy, Content Marketing articles first, then ecommerce, branding, then inline articles
+export const blogPosts: BlogPost[] = [
+  ...seoBlogPosts,
+  newWebsiteSeoGuideBlogPost,
+  commonSeoMistakesBlogPost,
+  keywordResearchGuideBlogPost,
+  seoPricingBlogPost,
+  localSeoBlogPost,
+  organicVsPaidSeoBlogPost,
+  uxUiDesignBlogPost,
+  videoMarketingBlogPost,
+  websiteRedesignBlogPost,
+  websiteSpeedOptimizationBlogPost,
+  websitePricingBlogPost,
+  wordpressVsWixBlogPost,
+  landingPageGuideBlogPost,
+  businessWebsiteGuideBlogPost,
+  responsiveDesignGuideBlogPost,
+  websiteMaintenanceBlogPost,
+  ...webDevelopmentBlogPosts,
+  ...appDevelopmentBlogPosts,
+  ...socialMediaBlogPosts,
+  socialMediaPricingBlogPost,
+  influencerMarketingGuideBlogPost,
+  podcastMarketingBlogPost,
+  tiktokMarketingBlogPost,
+  digitalMarketingSmallBusinessBlogPost,
+  videoMarketingGuideBlogPost,
+  marketingFunnelBlogPost,
+  googleAnalyticsSetupBlogPost,
+  googleAdsBlogPost,
+  facebookAdsBlogPost,
+  linkedinB2BBlogPost,
+  googleVsFacebookAdsBlogPost,
+  emailMarketingBlogPost,
+  emailAutomationBlogPost,
+  whatsappChatbotBlogPost,
+  chatbotImplementationBlogPost,
+  aiAutomationBusinessBlogPost,
+  crmIntegrationBlogPost,
+  ...aiAutomationBlogPosts,
+  ...businessStrategyBlogPosts,
+  ...contentMarketingBlogPosts,
+  contentMarketingStrategyBlogPost,
+  shopifyVsWoocommerceBlogPost,
+  virtualStoreGuideBlogPost,
+  ...ecommerceBlogPosts,
+  brandingGuideBlogPost,
+  ...brandingBlogPosts,
+  logoDesignPricingBlogPost,
+  ...inlineBlogPosts
 ];

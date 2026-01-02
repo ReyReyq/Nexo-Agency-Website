@@ -554,24 +554,20 @@ const Notification = React.memo(({ name, description, icon, color, time }: Notif
   )
 })
 
+Notification.displayName = "Notification"
+
 interface LaunchNotificationsProps {
   className?: string
 }
 
 export function LaunchNotifications({ className }: LaunchNotificationsProps) {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([])
   const [key, setKey] = useState(0)
 
   // Memoize shuffled notifications - only re-shuffle when key changes
-  const shuffledNotifications = useMemo(
+  const notifications = useMemo(
     () => shuffleArray(allNotifications),
     [key] // Re-shuffle only when key changes
   );
-
-  // Update notifications state when shuffled array changes
-  useEffect(() => {
-    setNotifications(shuffledNotifications);
-  }, [shuffledNotifications]);
 
   // Memoize total duration calculation
   const totalDuration = useMemo(

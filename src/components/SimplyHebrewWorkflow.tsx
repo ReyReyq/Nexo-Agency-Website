@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
-import { useRef } from "react";
+import { useRef, memo, useMemo } from "react";
 
 // Type definitions
 interface BrandIdentityColor {
@@ -113,10 +113,13 @@ const workflowSteps: WorkflowStep[] = [
   }
 ];
 
-// Brand Identity Showcase Component
-const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity }) => {
+// Memoized inView options to prevent recreation on each render
+const BRAND_IDENTITY_INVIEW_OPTIONS = { once: true, margin: "-50px" } as const;
+
+// Brand Identity Showcase Component - Memoized to prevent unnecessary re-renders
+const BrandIdentityShowcase = memo(({ brandIdentity }: { brandIdentity: BrandIdentity }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, BRAND_IDENTITY_INVIEW_OPTIONS);
 
   return (
     <motion.div
@@ -204,7 +207,18 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
       </div>
     </motion.div>
   );
-};
+});
+
+BrandIdentityShowcase.displayName = 'BrandIdentityShowcase';
+
+// Memoized inView options for StepSection
+const STEP_SECTION_INVIEW_OPTIONS = { once: true, margin: "-100px" } as const;
+
+// Memoized scroll offset for parallax effect
+const STEP_SECTION_SCROLL_OFFSET: ["start end", "end start"] = ["start end", "end start"];
+
+// Memoized spring config
+const SPRING_CONFIG = { stiffness: 80, damping: 25 } as const;
 
 // Individual Step Section
 interface StepSectionProps {
@@ -213,19 +227,23 @@ interface StepSectionProps {
   brandIdentity?: BrandIdentity;
 }
 
-const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
+// Memoized transform input/output ranges
+const TRANSFORM_INPUT_RANGE: [number, number] = [0, 1];
+const TRANSFORM_OUTPUT_RANGE: [string, string] = ["15%", "-15%"];
+
+const StepSection = memo(({ step, index, brandIdentity }: StepSectionProps) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, STEP_SECTION_INVIEW_OPTIONS);
   const isDesignStep = index === 2; // Design step shows brand identity
 
   // Parallax effect for background number
   const sectionRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"],
+    offset: STEP_SECTION_SCROLL_OFFSET,
   });
-  const numberY = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
-  const smoothNumberY = useSpring(numberY, { stiffness: 80, damping: 25 });
+  const numberY = useTransform(scrollYProgress, TRANSFORM_INPUT_RANGE, TRANSFORM_OUTPUT_RANGE);
+  const smoothNumberY = useSpring(numberY, SPRING_CONFIG);
 
   return (
     <section
@@ -451,16 +469,21 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
       </div>
     </section>
   );
-};
+});
+
+StepSection.displayName = 'StepSection';
+
+// Memoized inView options for intro section
+const INTRO_INVIEW_OPTIONS = { once: true } as const;
 
 // Main workflow component
-const SimplyHebrewWorkflow = ({
+const SimplyHebrewWorkflow = memo(({
   brandStory,
   brandIdentity,
   clientName = "SimplyHebrew"
 }: SimplyHebrewWorkflowProps) => {
   const introRef = useRef(null);
-  const isIntroInView = useInView(introRef, { once: true });
+  const isIntroInView = useInView(introRef, INTRO_INVIEW_OPTIONS);
 
   return (
     <div className="relative">
@@ -589,6 +612,8 @@ const SimplyHebrewWorkflow = ({
       </div>
     </div>
   );
-};
+});
+
+SimplyHebrewWorkflow.displayName = 'SimplyHebrewWorkflow';
 
 export default SimplyHebrewWorkflow;

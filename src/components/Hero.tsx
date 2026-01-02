@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useThrottleCallback } from "@/hooks/useThrottleCallback";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+
+// Spring configuration - defined outside component to prevent recreating on each render
+const SPRING_CONFIG = { stiffness: 150, damping: 15 } as const;
 import { ArrowLeft } from "lucide-react";
 import { HERO_TRANSITION_IMAGE } from "./Preloader";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
@@ -61,8 +64,8 @@ const Hero = () => {
   // Magnetic button effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 150, damping: 15 });
-  const springY = useSpring(mouseY, { stiffness: 150, damping: 15 });
+  const springX = useSpring(mouseX, SPRING_CONFIG);
+  const springY = useSpring(mouseY, SPRING_CONFIG);
 
   // Trigger animation after preloader
   useEffect(() => {
@@ -129,28 +132,32 @@ const Hero = () => {
     return () => window.removeEventListener("mousemove", throttledMouseMove);
   }, [throttledMouseMove]);
 
-  const scrollToContact = () => {
+  const scrollToContact = useCallback(() => {
     const element = document.querySelector("#contact");
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
-  };
+  }, []);
 
-  // Magnetic button handler
-  const handleButtonMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+  // Magnetic button handler - memoized to prevent unnecessary re-renders
+  const handleButtonMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     mouseX.set((e.clientX - centerX) * 0.3);
     mouseY.set((e.clientY - centerY) * 0.3);
-  };
+  }, [mouseX, mouseY]);
 
-  const handleButtonMouseLeave = () => {
+  const handleButtonMouseLeave = useCallback(() => {
     mouseX.set(0);
     mouseY.set(0);
     setIsHovered(false);
-  };
+  }, [mouseX, mouseY]);
+
+  const handleButtonMouseEnter = useCallback(() => {
+    setIsHovered(true);
+  }, []);
 
   return (
     <section
@@ -241,7 +248,7 @@ const Hero = () => {
             <motion.div
               style={{ x: springX, y: springY }}
               onMouseMove={handleButtonMouseMove}
-              onMouseEnter={() => setIsHovered(true)}
+              onMouseEnter={handleButtonMouseEnter}
               onMouseLeave={handleButtonMouseLeave}
               className="inline-block"
             >

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback, ReactNode, HTMLAttributes } from 'react';
-import { useThrottleCallback } from '../hooks/useThrottleCallback';
 
 interface MagnetProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -28,17 +27,31 @@ const Magnet: React.FC<MagnetProps> = ({
   const magnetRef = useRef<HTMLDivElement>(null);
   // Cache bounds to avoid calling getBoundingClientRect on every mousemove
   const boundsRef = useRef<DOMRect | null>(null);
+  // Track if component is mounted to prevent state updates after unmount
+  const isMountedRef = useRef<boolean>(true);
+  // Store props in refs to avoid recreating callbacks when props change
+  const paddingRef = useRef(padding);
+  const magnetStrengthRef = useRef(magnetStrength);
+  // Track throttle state
+  const lastRunRef = useRef<number>(0);
+  const throttleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep refs in sync with props
+  useEffect(() => {
+    paddingRef.current = padding;
+    magnetStrengthRef.current = magnetStrength;
+  }, [padding, magnetStrength]);
 
   // Update cached bounds on resize
   const updateBounds = useCallback(() => {
-    if (magnetRef.current) {
+    if (magnetRef.current && isMountedRef.current) {
       boundsRef.current = magnetRef.current.getBoundingClientRect();
     }
   }, []);
 
-  // Handle mouse movement with cached bounds
-  const handleMouseMoveCallback = useCallback((e: MouseEvent) => {
-    if (!magnetRef.current || !boundsRef.current) return;
+  // Handle mouse movement with cached bounds - stable reference using refs
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!magnetRef.current || !boundsRef.current || !isMountedRef.current) return;
 
     const { left, top, width, height } = boundsRef.current;
     const centerX = left + width / 2;
@@ -47,23 +60,52 @@ const Magnet: React.FC<MagnetProps> = ({
     const distX = Math.abs(centerX - e.clientX);
     const distY = Math.abs(centerY - e.clientY);
 
-    if (distX < width / 2 + padding && distY < height / 2 + padding) {
+    const currentPadding = paddingRef.current;
+    const currentMagnetStrength = magnetStrengthRef.current;
+
+    if (distX < width / 2 + currentPadding && distY < height / 2 + currentPadding) {
       setIsActive(true);
-      const offsetX = (e.clientX - centerX) / magnetStrength;
-      const offsetY = (e.clientY - centerY) / magnetStrength;
+      const offsetX = (e.clientX - centerX) / currentMagnetStrength;
+      const offsetY = (e.clientY - centerY) / currentMagnetStrength;
       setPosition({ x: offsetX, y: offsetY });
     } else {
       setIsActive(false);
       setPosition({ x: 0, y: 0 });
     }
-  }, [padding, magnetStrength]);
+  }, []);
 
-  // Throttle mousemove to ~60fps
-  const throttledMouseMove = useThrottleCallback(handleMouseMoveCallback, 16);
+  // Inline throttled handler to ensure proper cleanup
+  const throttledMouseMove = useCallback((e: MouseEvent) => {
+    const now = Date.now();
+    const delay = 16; // ~60fps
+
+    if (now - lastRunRef.current >= delay) {
+      lastRunRef.current = now;
+      handleMouseMove(e);
+    } else if (!throttleTimeoutRef.current) {
+      const remainingTime = delay - (now - lastRunRef.current);
+      throttleTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          lastRunRef.current = Date.now();
+          handleMouseMove(e);
+        }
+        throttleTimeoutRef.current = null;
+      }, remainingTime);
+    }
+  }, [handleMouseMove]);
+
+  // Set mounted ref on mount/unmount
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (disabled) {
       setPosition({ x: 0, y: 0 });
+      setIsActive(false);
       return;
     }
 
@@ -79,6 +121,12 @@ const Magnet: React.FC<MagnetProps> = ({
       window.removeEventListener('resize', updateBounds);
       window.removeEventListener('scroll', updateBounds);
       window.removeEventListener('mousemove', throttledMouseMove);
+
+      // Clear any pending throttle timeout
+      if (throttleTimeoutRef.current) {
+        clearTimeout(throttleTimeoutRef.current);
+        throttleTimeoutRef.current = null;
+      }
     };
   }, [disabled, updateBounds, throttledMouseMove]);
 

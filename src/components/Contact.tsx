@@ -2,6 +2,34 @@ import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { Phone, Mail, ArrowUpRight, Send, Rocket, Check, AlertCircle, ArrowLeft, ArrowRight, MessageCircle, Clock } from "lucide-react";
 import confetti from "canvas-confetti";
+import { submitContactForm, type FormData as SubmissionFormData } from "@/utils/formSubmission";
+
+// Utility for tracking timeouts for cleanup
+const useTimeoutCleanup = () => {
+  const timeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  const setTrackedTimeout = useCallback((callback: () => void, delay: number) => {
+    const timeoutId = setTimeout(() => {
+      callback();
+      timeoutsRef.current.delete(timeoutId);
+    }, delay);
+    timeoutsRef.current.add(timeoutId);
+    return timeoutId;
+  }, []);
+
+  const clearAllTimeouts = useCallback(() => {
+    timeoutsRef.current.forEach((id) => clearTimeout(id));
+    timeoutsRef.current.clear();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearAllTimeouts();
+    };
+  }, [clearAllTimeouts]);
+
+  return { setTrackedTimeout, clearAllTimeouts };
+};
 
 // Form types and config
 interface FormData {
@@ -45,6 +73,16 @@ const Contact = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setTrackedTimeout } = useTimeoutCleanup();
+  const isMountedRef = useRef(true);
+
+  // Track mount state for async operations
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Form state
   const [showStartScreen, setShowStartScreen] = useState(true);
@@ -123,40 +161,6 @@ const Contact = () => {
     }
   }, []);
 
-  // Handle next step
-  const handleNext = useCallback(() => {
-    const field = currentStepData.id;
-    const value = formData[field as keyof FormData];
-
-    if (currentStepData.required && !validateField(field, value)) {
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-      return;
-    }
-
-    if (field === "email" && value && !validateField(field, value)) {
-      setShake(true);
-      setTimeout(() => setShake(false), 500);
-      return;
-    }
-
-    setDirection("forward");
-    if (currentStep < totalSteps - 1) {
-      setCurrentStep((prev) => prev + 1);
-    } else {
-      handleSubmit();
-    }
-  }, [currentStep, currentStepData, formData, totalSteps, validateField]);
-
-  // Handle previous step
-  const handleBack = useCallback(() => {
-    if (currentStep > 0) {
-      setDirection("back");
-      setCurrentStep((prev) => prev - 1);
-      setError(null);
-    }
-  }, [currentStep]);
-
   // Handle input change
   const handleInputChange = useCallback((field: string, value: string) => {
     if (field === "phone") {
@@ -166,14 +170,33 @@ const Contact = () => {
     setError(null);
   }, []);
 
-  // Handle submit
+  // Handle submit (defined before handleNext which depends on it)
   const handleSubmit = useCallback(async () => {
+    if (!isMountedRef.current) return;
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Prepare form data for submission
+      const submissionData: SubmissionFormData = {
+        name: formData.name,
+        phone: formData.phone.replace(/\D/g, ''), // Send clean phone number
+        email: formData.email || undefined,
+        budget: formData.budget || undefined,
+        message: formData.message || undefined,
+        source: formData.source || undefined,
+      };
 
-      // Fire confetti
+      // Submit to Airtable and Monday.com
+      const result = await submitContactForm(submissionData);
+
+      // Check if still mounted before updating state
+      if (!isMountedRef.current) return;
+
+      if (!result.success) {
+        throw new Error(result.error || 'Submission failed');
+      }
+
+      // Fire confetti on success
       confetti({
         particleCount: 100,
         spread: 70,
@@ -183,11 +206,49 @@ const Contact = () => {
 
       setIsSuccess(true);
     } catch {
-      setError({ field: "submit", message: "שגיאה בשליחה, נסו שוב" });
+      if (isMountedRef.current) {
+        setError({ field: "submit", message: "שגיאה בשליחה, נסו שוב" });
+      }
     } finally {
-      setIsSubmitting(false);
+      if (isMountedRef.current) {
+        setIsSubmitting(false);
+      }
     }
-  }, []);
+  }, [formData]);
+
+  // Handle next step
+  const handleNext = useCallback(() => {
+    const field = currentStepData.id;
+    const value = formData[field as keyof FormData];
+
+    if (currentStepData.required && !validateField(field, value)) {
+      setShake(true);
+      setTrackedTimeout(() => setShake(false), 500);
+      return;
+    }
+
+    if (field === "email" && value && !validateField(field, value)) {
+      setShake(true);
+      setTrackedTimeout(() => setShake(false), 500);
+      return;
+    }
+
+    setDirection("forward");
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep((prev) => prev + 1);
+    } else {
+      handleSubmit();
+    }
+  }, [currentStep, currentStepData, formData, totalSteps, validateField, setTrackedTimeout, handleSubmit]);
+
+  // Handle previous step
+  const handleBack = useCallback(() => {
+    if (currentStep > 0) {
+      setDirection("back");
+      setCurrentStep((prev) => prev - 1);
+      setError(null);
+    }
+  }, [currentStep]);
 
   // Focus input on step change
   useEffect(() => {
@@ -240,7 +301,7 @@ const Contact = () => {
                 type="button"
                 onClick={() => {
                   handleInputChange("budget", option.value);
-                  setTimeout(handleNext, 200);
+                  setTrackedTimeout(handleNext, 200);
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -266,7 +327,7 @@ const Contact = () => {
                 type="button"
                 onClick={() => {
                   handleInputChange("source", option.value);
-                  setTimeout(handleNext, 200);
+                  setTrackedTimeout(handleNext, 200);
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -317,7 +378,7 @@ const Contact = () => {
   };
 
   return (
-    <footer id="contact" className="bg-[#FAFAFA] py-24 md:py-32 relative overflow-hidden">
+    <section id="contact" className="bg-[#FAFAFA] py-24 md:py-32 relative overflow-hidden">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.02]"
@@ -547,16 +608,16 @@ const Contact = () => {
             {/* Contact Cards */}
             <div className="space-y-4 mb-10">
               <motion.a
-                href="mailto:hello@nexo.agency"
+                href="mailto:sales@nexoagency.com"
                 whileHover={{ x: -10, scale: 1.02 }}
                 className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-[#e5e5e5] hover:border-primary/50 hover:shadow-lg transition-all"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                   <Mail className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-right">
                   <p className="text-[#6a6a6a] text-sm mb-1">אימייל</p>
-                  <p className="text-[#1a1a1a] text-lg font-bold">hello@nexo.agency</p>
+                  <p className="text-[#1a1a1a] text-lg font-bold">sales@nexoagency.com</p>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-[#c0c0c0] group-hover:text-primary transition-colors" />
               </motion.a>
@@ -569,9 +630,9 @@ const Contact = () => {
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                   <Phone className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-right">
                   <p className="text-[#6a6a6a] text-sm mb-1">טלפון</p>
-                  <p className="text-[#1a1a1a] text-lg font-bold" dir="ltr">050-123-4567</p>
+                  <p className="text-[#1a1a1a] text-lg font-bold">050-123-4567</p>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-[#c0c0c0] group-hover:text-primary transition-colors" />
               </motion.a>
@@ -586,7 +647,7 @@ const Contact = () => {
                 <div className="w-14 h-14 rounded-xl bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
                   <MessageCircle className="w-6 h-6 text-emerald-500 group-hover:text-white transition-colors" />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 text-right">
                   <p className="text-[#6a6a6a] text-sm mb-1">וואטסאפ</p>
                   <p className="text-[#1a1a1a] text-lg font-bold">שלחו הודעה מיידית</p>
                 </div>
@@ -595,33 +656,8 @@ const Contact = () => {
             </div>
           </motion.div>
         </div>
-
-
-        {/* Copyright */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-          className="mt-24 pt-8 border-t border-[#e5e5e5] flex flex-col md:flex-row justify-between items-center gap-4"
-        >
-          <div className="flex items-center gap-4">
-            <span className="text-2xl font-black text-[#1a1a1a]">NEXO</span>
-            <span className="text-[#c0c0c0]">|</span>
-            <p className="text-[#6a6a6a] text-sm">
-              © 2025 NEXO AGENCY. כל הזכויות שמורות.
-            </p>
-          </div>
-          <div className="flex gap-6 text-sm text-[#6a6a6a]">
-            <a href="#" className="hover:text-[#1a1a1a] transition-colors">
-              מדיניות פרטיות
-            </a>
-            <a href="#" className="hover:text-[#1a1a1a] transition-colors">
-              תנאי שימוש
-            </a>
-          </div>
-        </motion.div>
       </div>
-    </footer>
+    </section>
   );
 };
 

@@ -9,7 +9,7 @@ import { blogPosts } from "@/data/blogPosts";
 // Lazy load GridMotion - uses GSAP which adds to bundle size
 const GridMotion = lazy(() => import("./ui/GridMotion"));
 
-// Type for blog posts from centralized data
+// Type from centralized data
 type BlogPost = typeof blogPosts[number];
 
 // Compact Article Card - memoized to prevent re-renders
@@ -61,82 +61,28 @@ const ArticleCard = memo(({ post }: { post: BlogPost }) => (
 
 ArticleCard.displayName = 'ArticleCard';
 
-// Pre-generate dot colors to avoid random generation on each render
-const DOT_COLORS = Array.from({ length: 9 }, (_, i) => ({
-  color: i % 3 === 0 ? 'hsl(328, 100%, 54%)' : '#e5e5e5',
-  opacity: 0.5 + (i * 0.05),
-}));
-
-// Simple placeholder for non-article grid cells - memoized
-const GridPlaceholder = memo(({ variant }: { variant: 'gradient' | 'dots' | 'empty' }) => {
-  switch (variant) {
-    case 'gradient':
-      return (
-        <div className="w-full aspect-[4/3] rounded-xl bg-primary/[0.06]" />
-      );
-    case 'dots':
-      return (
-        <div className="w-full aspect-[4/3] rounded-xl bg-white/80 border border-[#e5e5e5]/50 p-4 grid grid-cols-3 gap-2 place-items-center">
-          {DOT_COLORS.map((dot, i) => (
-            <div
-              key={i}
-              className="w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: dot.color,
-                opacity: dot.opacity,
-              }}
-            />
-          ))}
-        </div>
-      );
-    case 'empty':
-    default:
-      return (
-        <div className="w-full aspect-[4/3] rounded-xl bg-white/40 border border-[#e5e5e5]/30" />
-      );
-  }
-});
-
-GridPlaceholder.displayName = 'GridPlaceholder';
-
 const BlogPreviewSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
-  // Grid items - using first 3 posts from centralized data
-  const gridItems = useMemo(() => [
-    <GridPlaceholder key="p1" variant="gradient" />,
-    <GridPlaceholder key="p2" variant="empty" />,
-    <ArticleCard key="a1" post={blogPosts[0]} />,
-    <GridPlaceholder key="p3" variant="dots" />,
-    <GridPlaceholder key="p4" variant="gradient" />,
-    <GridPlaceholder key="p5" variant="empty" />,
-    <GridPlaceholder key="p6" variant="gradient" />,
+  // Dynamically get posts and create 28 grid items for GridMotion effect
+  // Takes up to 12 unique posts and repeats them to fill all 28 slots
+  const gridItems = useMemo(() => {
+    const GRID_SLOTS = 28;
+    const MAX_UNIQUE_POSTS = 12;
 
-    <GridPlaceholder key="p7" variant="empty" />,
-    <GridPlaceholder key="p8" variant="gradient" />,
-    <GridPlaceholder key="p9" variant="dots" />,
-    <ArticleCard key="a2" post={blogPosts[1]} />,
-    <GridPlaceholder key="p10" variant="gradient" />,
-    <GridPlaceholder key="p11" variant="empty" />,
-    <GridPlaceholder key="p12" variant="dots" />,
+    // Get the latest posts (up to 12)
+    const posts = blogPosts.slice(0, Math.min(MAX_UNIQUE_POSTS, blogPosts.length));
 
-    <GridPlaceholder key="p13" variant="gradient" />,
-    <GridPlaceholder key="p14" variant="empty" />,
-    <GridPlaceholder key="p15" variant="gradient" />,
-    <ArticleCard key="a3" post={blogPosts[2]} />,
-    <GridPlaceholder key="p16" variant="dots" />,
-    <GridPlaceholder key="p17" variant="empty" />,
-    <GridPlaceholder key="p18" variant="gradient" />,
+    // Create 28 items by cycling through available posts
+    const items: React.ReactNode[] = [];
+    for (let i = 0; i < GRID_SLOTS; i++) {
+      const post = posts[i % posts.length];
+      items.push(<ArticleCard key={`grid-${i}-${post.slug}`} post={post} />);
+    }
 
-    <GridPlaceholder key="p19" variant="dots" />,
-    <GridPlaceholder key="p20" variant="gradient" />,
-    <GridPlaceholder key="p21" variant="empty" />,
-    <GridPlaceholder key="p22" variant="gradient" />,
-    <GridPlaceholder key="p23" variant="dots" />,
-    <GridPlaceholder key="p24" variant="empty" />,
-    <GridPlaceholder key="p25" variant="gradient" />,
-  ], []); // Empty deps - grid items never change
+    return items;
+  }, []); // blogPosts is static import, no deps needed
 
   return (
     <section
@@ -155,7 +101,7 @@ const BlogPreviewSection = () => {
         >
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
             חושבים{" "}
-            <span className="text-primary">
+            <span className="bg-gradient-to-l from-primary to-[#8330c2] bg-clip-text text-transparent">
               קדימה
             </span>
           </h2>

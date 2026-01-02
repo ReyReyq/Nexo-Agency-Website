@@ -1,8 +1,8 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from "framer-motion";
-import { useRef, useEffect, useState, useMemo } from "react";
-import { ArrowLeft, ArrowRight, ExternalLink, Clock, Calendar, Tag, ChevronLeft, ChevronRight } from "lucide-react";
-import { getCaseStudyBySlug, caseStudies } from "@/data/caseStudies";
+import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
+import { useRef, useEffect, useState, useMemo, useCallback, memo } from "react";
+import { ArrowLeft, ArrowRight, ExternalLink, Clock, Calendar, Tag, ChevronLeft } from "lucide-react";
+import { getCaseStudyBySlug } from "@/data/caseStudies";
 import GlassNavbar from "@/components/GlassNavbar";
 import CaseStudyWorkflow from "@/components/CaseStudyWorkflow";
 import SimplyHebrewWorkflow from "@/components/SimplyHebrewWorkflow";
@@ -13,78 +13,141 @@ import TypeformPopup from "@/components/TypeformPopup";
 import Silk from "@/components/ui/Silk";
 import { dispatchPreloaderComplete } from "@/lib/lenis";
 
-// Animated text reveal component
-const TextReveal = ({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) => {
+// Stable animation configurations to prevent re-creation on each render
+const textRevealTransitionBase = { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] };
+const textRevealInitial = { y: "100%" };
+const textRevealAnimate = { y: 0 };
+
+// Animated text reveal component - memoized to prevent unnecessary re-renders
+const TextReveal = memo(({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  const transition = useMemo(() => ({ ...textRevealTransitionBase, delay }), [delay]);
 
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
       <motion.div
-        initial={{ y: "100%" }}
-        animate={isInView ? { y: 0 } : {}}
-        transition={{ duration: 0.8, delay, ease: [0.25, 0.1, 0.25, 1] }}
+        initial={textRevealInitial}
+        animate={isInView ? textRevealAnimate : undefined}
+        transition={transition}
       >
         {children}
       </motion.div>
     </div>
   );
-};
+});
+TextReveal.displayName = 'TextReveal';
 
-// Magnetic button component
-const MagneticButton = ({ children, className = "", style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+// Stable spring transition for magnetic button
+const magneticSpringTransition = { type: "spring", stiffness: 150, damping: 15 };
+const defaultPosition = { x: 0, y: 0 };
+
+// Magnetic button component - memoized with stable callbacks
+const MagneticButton = memo(({ children, className = "", style = {} }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) => {
+  const [position, setPosition] = useState(defaultPosition);
   const ref = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const x = (e.clientX - rect.left - rect.width / 2) * 0.3;
     const y = (e.clientY - rect.top - rect.height / 2) * 0.3;
     setPosition({ x, y });
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
-  };
+  const handleMouseLeave = useCallback(() => {
+    setPosition(defaultPosition);
+  }, []);
+
+  const animateValue = useMemo(() => ({ x: position.x, y: position.y }), [position.x, position.y]);
 
   return (
     <motion.div
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15 }}
+      animate={animateValue}
+      transition={magneticSpringTransition}
       className={className}
       style={style}
     >
       {children}
     </motion.div>
   );
+});
+MagneticButton.displayName = 'MagneticButton';
+
+// Stable animation values for FloatingOrb
+const floatingOrbAnimate = {
+  y: [0, -30, 0],
+  x: [0, 15, 0],
+  scale: [1, 1.1, 1],
 };
 
-// Floating decorative element
-const FloatingOrb = ({ color, size = 200, delay = 0, className = "" }: { color: string; size?: number; delay?: number; className?: string }) => (
-  <motion.div
-    className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
-    style={{
-      width: size,
-      height: size,
-      background: `radial-gradient(circle, ${color}40 0%, transparent 70%)`,
-    }}
-    animate={{
-      y: [0, -30, 0],
-      x: [0, 15, 0],
-      scale: [1, 1.1, 1],
-    }}
-    transition={{
-      duration: 8,
-      delay,
-      repeat: Infinity,
-      ease: "easeInOut",
-    }}
-  />
-);
+// Floating decorative element - memoized
+const FloatingOrb = memo(({ color, size = 200, delay = 0, className = "" }: { color: string; size?: number; delay?: number; className?: string }) => {
+  const style = useMemo(() => ({
+    width: size,
+    height: size,
+    background: `radial-gradient(circle, ${color}40 0%, transparent 70%)`,
+  }), [color, size]);
+
+  const transition = useMemo(() => ({
+    duration: 8,
+    delay,
+    repeat: Infinity,
+    ease: "easeInOut",
+  }), [delay]);
+
+  return (
+    <motion.div
+      className={`absolute rounded-full blur-3xl pointer-events-none ${className}`}
+      style={style}
+      animate={floatingOrbAnimate}
+      transition={transition}
+    />
+  );
+});
+FloatingOrb.displayName = 'FloatingOrb';
+
+// Stable animation configurations for motion components
+const fadeInUpInitial = { opacity: 0, y: 20 };
+const fadeInUpAnimate = { opacity: 1, y: 0 };
+const fadeInInitial = { opacity: 0 };
+const fadeInAnimate = { opacity: 1 };
+const fadeInLeftInitial = { opacity: 0, x: -20 };
+const fadeInLeftAnimate = { opacity: 1, x: 0 };
+const slideUpInitial = { y: "100%" };
+const slideUpAnimate = { y: 0 };
+const fadeInUp30Initial = { opacity: 0, y: 30 };
+const fadeInUp30Animate = { opacity: 1, y: 0 };
+const scaleInInitial = { opacity: 0, scale: 0.9 };
+const scaleInAnimate = { opacity: 1, scale: 1 };
+const viewportOnce = { once: true };
+
+// Stable transition configurations
+const transition05 = { duration: 0.5 };
+const transition05Delay01 = { duration: 0.5, delay: 0.1 };
+const transition05Delay02 = { duration: 0.5, delay: 0.2 };
+const transition06 = { duration: 0.6 };
+const transition06Delay03 = { duration: 0.6, delay: 0.3 };
+const transition06Delay1 = { duration: 0.6, delay: 1 };
+const transition08Delay07 = { duration: 0.8, delay: 0.7 };
+const transitionDelay0 = { delay: 0 };
+const transitionDelay01 = { delay: 0.1 };
+const transitionDelay02 = { delay: 0.2 };
+const transitionDelay03 = { delay: 0.3 };
+const transitionDelay04Spring = { delay: 0.4, type: "spring", stiffness: 200 };
+const titleTransition = { duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] };
+
+// Stable style for silk overlay gradient
+const silkOverlayStyle = {
+  background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.7) 100%)'
+};
+
+// Spring config for scroll animations
+const springConfig = { stiffness: 100, damping: 30 };
 
 const CaseStudy = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -100,15 +163,21 @@ const CaseStudy = () => {
   });
 
   // Smooth spring animations
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  const smoothProgress = useSpring(scrollYProgress, springConfig);
   const heroImageY = useTransform(smoothProgress, [0, 1], ["0%", "40%"]);
   const heroImageScale = useTransform(smoothProgress, [0, 1], [1, 1.2]);
   const heroOpacity = useTransform(smoothProgress, [0, 0.5], [1, 0]);
   const heroTextY = useTransform(smoothProgress, [0, 1], ["0%", "20%"]);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [slug]);
+  // Stable callback for popup close
+  const handlePopupClose = useCallback(() => {
+    setIsPopupOpen(false);
+  }, []);
+
+  // Stable callback for popup open
+  const handlePopupOpen = useCallback(() => {
+    setIsPopupOpen(true);
+  }, []);
 
   // Ensure Lenis smooth scroll is activated (for direct navigation to case study)
   useEffect(() => {
@@ -117,7 +186,91 @@ const CaseStudy = () => {
     dispatchPreloaderComplete();
   }, []);
 
-  if (!caseStudy) {
+  // Memoize brandColors to prevent unnecessary recalculations
+  const brandColors = useMemo(() => caseStudy?.brandColors, [caseStudy?.brandColors]);
+
+  // Detect if background is dark for text color adjustments
+  const isDarkBackground = useMemo(() => {
+    if (!brandColors) return false;
+    const bg = brandColors.background;
+    const hex = bg.replace('#', '');
+    const r = parseInt(hex.slice(0, 2), 16) / 255;
+    const g = parseInt(hex.slice(2, 4), 16) / 255;
+    const b = parseInt(hex.slice(4, 6), 16) / 255;
+    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return luminance < 0.5;
+  }, [brandColors]);
+
+  // Dynamic text colors based on background brightness
+  const textColors = useMemo(() => {
+    if (!brandColors) return null;
+    return {
+      primary: isDarkBackground ? '#ffffff' : brandColors.primary,
+      secondary: isDarkBackground ? '#e2e8f0' : `${brandColors.primary}99`,
+      muted: isDarkBackground ? 'rgba(255,255,255,0.6)' : `${brandColors.primary}60`,
+      accent: brandColors.secondary,
+      cardBg: isDarkBackground ? 'rgba(255,255,255,0.08)' : `${brandColors.primary}08`,
+      cardBgAlt: isDarkBackground ? 'rgba(255,255,255,0.12)' : `${brandColors.secondary}15`,
+    };
+  }, [isDarkBackground, brandColors]);
+
+  // Memoized style objects to prevent re-creation on every render
+  const heroSectionStyle = useMemo(() =>
+    brandColors ? { backgroundColor: brandColors.primary } : undefined,
+    [brandColors]
+  );
+
+  const containerStyle = useMemo(() =>
+    brandColors ? { backgroundColor: brandColors.background } : undefined,
+    [brandColors]
+  );
+
+  const heroImageOverlayStyle = useMemo(() =>
+    brandColors ? { background: `linear-gradient(135deg, ${brandColors.primary}60 0%, ${brandColors.primary}95 100%)` } : undefined,
+    [brandColors]
+  );
+
+  const borderStyle = useMemo(() => ({
+    borderColor: isDarkBackground ? 'rgba(255,255,255,0.1)' : brandColors ? `${brandColors.primary}10` : undefined
+  }), [isDarkBackground, brandColors]);
+
+  const serviceTagStyle = useMemo(() => ({
+    backgroundColor: isDarkBackground ? 'rgba(255,255,255,0.15)' : brandColors ? `${brandColors.secondary}20` : undefined,
+    color: textColors?.primary
+  }), [isDarkBackground, brandColors, textColors]);
+
+  const websiteButtonStyle = useMemo(() =>
+    brandColors ? {
+      backgroundColor: brandColors.secondary,
+      color: isDarkBackground ? '#1a1a1a' : brandColors.primary
+    } : undefined,
+    [brandColors, isDarkBackground]
+  );
+
+  const overviewButtonStyle = useMemo(() =>
+    brandColors ? {
+      backgroundColor: isDarkBackground ? brandColors.secondary : brandColors.primary,
+      color: isDarkBackground ? '#ffffff' : brandColors.background
+    } : undefined,
+    [brandColors, isDarkBackground]
+  );
+
+  const titleStyle = useMemo(() =>
+    brandColors ? { color: isDarkBackground ? '#ffffff' : brandColors.background } : undefined,
+    [brandColors, isDarkBackground]
+  );
+
+  const taglineStyle = useMemo(() =>
+    brandColors ? { color: isDarkBackground ? 'rgba(255,255,255,0.9)' : `${brandColors.background}dd` } : undefined,
+    [brandColors, isDarkBackground]
+  );
+
+  const categoryStyle = useMemo(() =>
+    brandColors ? { color: brandColors.secondary } : undefined,
+    [brandColors]
+  );
+
+  if (!caseStudy || !brandColors || !textColors) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF9F6]">
         <h1 className="text-4xl font-black text-[#1a1a1a] mb-4">פרויקט לא נמצא</h1>
@@ -133,38 +286,15 @@ const CaseStudy = () => {
     );
   }
 
-  const { brandColors } = caseStudy;
-
-  // Detect if background is dark for text color adjustments
-  const isDarkBackground = useMemo(() => {
-    const bg = brandColors.background;
-    const hex = bg.replace('#', '');
-    const r = parseInt(hex.slice(0, 2), 16) / 255;
-    const g = parseInt(hex.slice(2, 4), 16) / 255;
-    const b = parseInt(hex.slice(4, 6), 16) / 255;
-    const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    return luminance < 0.5;
-  }, [brandColors.background]);
-
-  // Dynamic text colors based on background brightness
-  const textColors = useMemo(() => ({
-    primary: isDarkBackground ? '#ffffff' : brandColors.primary,
-    secondary: isDarkBackground ? '#e2e8f0' : `${brandColors.primary}99`,
-    muted: isDarkBackground ? 'rgba(255,255,255,0.6)' : `${brandColors.primary}60`,
-    accent: brandColors.secondary,
-    cardBg: isDarkBackground ? 'rgba(255,255,255,0.08)' : `${brandColors.primary}08`,
-    cardBgAlt: isDarkBackground ? 'rgba(255,255,255,0.12)' : `${brandColors.secondary}15`,
-  }), [isDarkBackground, brandColors]);
-
   return (
-    <div className="min-h-screen" style={{ backgroundColor: brandColors.background }}>
+    <div className="min-h-screen" style={containerStyle}>
       <GlassNavbar />
 
       {/* Hero Section */}
       <motion.section
         ref={heroRef}
         className="relative h-[100vh] overflow-hidden"
-        style={{ backgroundColor: brandColors.primary }}
+        style={heroSectionStyle}
       >
         {/* Silk Background for Teenvestsor */}
         {slug === 'teenvestsor' && (
@@ -179,9 +309,7 @@ const CaseStudy = () => {
             {/* Overlay gradient for better text readability */}
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(15, 23, 42, 0.7) 100%)'
-              }}
+              style={silkOverlayStyle}
             />
           </div>
         )}
@@ -207,9 +335,7 @@ const CaseStudy = () => {
             />
             <div
               className="absolute inset-0"
-              style={{
-                background: `linear-gradient(135deg, ${brandColors.primary}60 0%, ${brandColors.primary}95 100%)`
-              }}
+              style={heroImageOverlayStyle}
             />
           </motion.div>
         )}
@@ -222,20 +348,20 @@ const CaseStudy = () => {
         >
           <div className="container mx-auto px-6 md:px-12" dir="rtl">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              initial={fadeInInitial}
+              animate={fadeInAnimate}
+              transition={transition05}
             >
               {/* Category */}
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                initial={fadeInLeftInitial}
+                animate={fadeInLeftAnimate}
+                transition={transition06Delay03}
                 className="mb-6"
               >
                 <p
                   className="text-sm uppercase tracking-[0.3em] font-medium"
-                  style={{ color: brandColors.secondary }}
+                  style={categoryStyle}
                 >
                   {caseStudy.category}
                 </p>
@@ -244,11 +370,11 @@ const CaseStudy = () => {
               {/* Animated Title */}
               <div className="overflow-hidden">
                 <motion.h1
-                  initial={{ y: "100%" }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+                  initial={slideUpInitial}
+                  animate={slideUpAnimate}
+                  transition={titleTransition}
                   className="text-7xl md:text-9xl lg:text-[12rem] font-black leading-[0.85] mb-8 tracking-tight"
-                  style={{ color: isDarkBackground ? '#ffffff' : brandColors.background }}
+                  style={titleStyle}
                 >
                   {caseStudy.title}
                 </motion.h1>
@@ -256,11 +382,11 @@ const CaseStudy = () => {
 
               {/* Tagline with stagger */}
               <motion.p
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
+                initial={fadeInUp30Initial}
+                animate={fadeInUp30Animate}
+                transition={transition08Delay07}
                 className="text-xl md:text-2xl lg:text-3xl font-light max-w-2xl leading-relaxed"
-                style={{ color: isDarkBackground ? 'rgba(255,255,255,0.9)' : `${brandColors.background}dd` }}
+                style={taglineStyle}
               >
                 {caseStudy.tagline}
               </motion.p>
@@ -268,9 +394,9 @@ const CaseStudy = () => {
               {/* View Website Button */}
               {caseStudy.website && (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 1 }}
+                  initial={fadeInUpInitial}
+                  animate={fadeInUpAnimate}
+                  transition={transition06Delay1}
                   className="mt-10"
                 >
                   <MagneticButton>
@@ -279,10 +405,7 @@ const CaseStudy = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 group"
-                      style={{
-                        backgroundColor: brandColors.secondary,
-                        color: isDarkBackground ? '#1a1a1a' : brandColors.primary
-                      }}
+                      style={websiteButtonStyle}
                     >
                       <span>צפייה באתר החי</span>
                       <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
@@ -297,14 +420,14 @@ const CaseStudy = () => {
       </motion.section>
 
       {/* Project Meta */}
-      <section className="py-16 md:py-24 border-b" style={{ borderColor: isDarkBackground ? 'rgba(255,255,255,0.1)' : `${brandColors.primary}10` }}>
+      <section className="py-16 md:py-24 border-b" style={borderStyle}>
         <div className="container mx-auto px-6 md:px-12" dir="rtl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0 }}
+              initial={fadeInUpInitial}
+              whileInView={fadeInUpAnimate}
+              viewport={viewportOnce}
+              transition={transitionDelay0}
             >
               <p className="text-sm uppercase tracking-wider mb-2" style={{ color: textColors.muted }}>
                 לקוח
@@ -314,10 +437,10 @@ const CaseStudy = () => {
               </p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+              initial={fadeInUpInitial}
+              whileInView={fadeInUpAnimate}
+              viewport={viewportOnce}
+              transition={transitionDelay01}
             >
               <p className="text-sm uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: textColors.muted }}>
                 <Calendar className="w-4 h-4" /> שנה
@@ -327,10 +450,10 @@ const CaseStudy = () => {
               </p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
+              initial={fadeInUpInitial}
+              whileInView={fadeInUpAnimate}
+              viewport={viewportOnce}
+              transition={transitionDelay02}
             >
               <p className="text-sm uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: textColors.muted }}>
                 <Clock className="w-4 h-4" /> משך הפרויקט
@@ -340,10 +463,10 @@ const CaseStudy = () => {
               </p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
+              initial={fadeInUpInitial}
+              whileInView={fadeInUpAnimate}
+              viewport={viewportOnce}
+              transition={transitionDelay03}
             >
               <p className="text-sm uppercase tracking-wider mb-2 flex items-center gap-2" style={{ color: textColors.muted }}>
                 <Tag className="w-4 h-4" /> שירותים
@@ -353,10 +476,7 @@ const CaseStudy = () => {
                   <span
                     key={i}
                     className="text-sm px-3 py-1 rounded-full"
-                    style={{
-                      backgroundColor: isDarkBackground ? 'rgba(255,255,255,0.15)' : `${brandColors.secondary}20`,
-                      color: textColors.primary
-                    }}
+                    style={serviceTagStyle}
                   >
                     {service}
                   </span>
@@ -420,10 +540,10 @@ const CaseStudy = () => {
         <div className="container mx-auto px-6 md:px-12" dir="rtl">
           {/* Overview Title & Text */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            initial={fadeInUpInitial}
+            whileInView={fadeInUpAnimate}
+            viewport={viewportOnce}
+            transition={transition06}
             className="max-w-3xl mb-10"
           >
             <h2
@@ -443,10 +563,10 @@ const CaseStudy = () => {
           {/* Challenge & Solution - Side by Side */}
           <div className="grid md:grid-cols-2 gap-6">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
+              initial={fadeInUp30Initial}
+              whileInView={fadeInUp30Animate}
+              viewport={viewportOnce}
+              transition={transition05}
               className="p-6 md:p-8 rounded-2xl"
               style={{ backgroundColor: textColors.cardBg }}
             >
@@ -465,10 +585,10 @@ const CaseStudy = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              initial={fadeInUp30Initial}
+              whileInView={fadeInUp30Animate}
+              viewport={viewportOnce}
+              transition={transition05Delay01}
               className="p-6 md:p-8 rounded-2xl"
               style={{ backgroundColor: textColors.cardBgAlt }}
             >
@@ -490,10 +610,10 @@ const CaseStudy = () => {
           {/* View Website Button */}
           {caseStudy.website && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              initial={fadeInUpInitial}
+              whileInView={fadeInUpAnimate}
+              viewport={viewportOnce}
+              transition={transition05Delay02}
               className="mt-8 text-center"
             >
               <a
@@ -501,10 +621,7 @@ const CaseStudy = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all hover:gap-4"
-                style={{
-                  backgroundColor: isDarkBackground ? brandColors.secondary : brandColors.primary,
-                  color: isDarkBackground ? '#ffffff' : brandColors.background
-                }}
+                style={overviewButtonStyle}
               >
                 <span>לצפייה באתר החי</span>
                 <ExternalLink className="w-4 h-4" />
@@ -531,24 +648,24 @@ const CaseStudy = () => {
           </TextReveal>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
+            initial={fadeInUpInitial}
+            whileInView={fadeInUpAnimate}
+            viewport={viewportOnce}
+            transition={transitionDelay03}
             className="text-lg md:text-xl mb-10 max-w-xl mx-auto leading-relaxed text-foreground/70"
           >
             אנחנו כבר מתרגשים לשמוע את הסיפור שלכם ולהפוך אותו למשהו מיוחד
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
+            initial={scaleInInitial}
+            whileInView={scaleInAnimate}
+            viewport={viewportOnce}
+            transition={transitionDelay04Spring}
           >
             <MagneticButton>
               <button
-                onClick={() => setIsPopupOpen(true)}
+                onClick={handlePopupOpen}
                 className="inline-flex items-center gap-4 px-10 py-5 rounded-full font-bold text-lg transition-all group bg-primary text-white hover:bg-primary/90"
               >
                 <span>בואו נתחיל</span>
@@ -560,7 +677,7 @@ const CaseStudy = () => {
       </section>
 
       {/* Typeform Popup */}
-      <TypeformPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
+      <TypeformPopup isOpen={isPopupOpen} onClose={handlePopupClose} />
 
       {/* Project Navigation - Bottom */}
       <section className="bg-[#1a1a1a] text-white">
@@ -569,7 +686,7 @@ const CaseStudy = () => {
             {/* Next Project */}
             {caseStudy.nextProject ? (
               <Link
-                to={`/case-studies/${caseStudy.nextProject}`}
+                to={`/portfolio/${caseStudy.nextProject}`}
                 className="group relative py-16 md:py-24 px-8 md:px-12 border-b md:border-b-0 md:border-l border-white/10 transition-colors hover:bg-white/5"
               >
                 <div className="flex flex-col items-end text-right" dir="rtl">

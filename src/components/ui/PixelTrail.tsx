@@ -106,11 +106,27 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
   const viewport = useThree(s => s.viewport);
   const lastMousePos = useRef<{ x: number; y: number } | null>(null);
   const isVisible = useContext(VisibilityContext);
+  // Ref to track visibility in animation frame without stale closure
+  const isVisibleRef = useRef(isVisible);
+  isVisibleRef.current = isVisible;
 
   const dotMaterial = useMemo(() => new DotMaterial(), []);
 
+  // Cleanup: dispose material on unmount to prevent WebGL memory leak
+  useEffect(() => {
+    return () => {
+      dotMaterial.dispose();
+    };
+  }, [dotMaterial]);
+
+  // Reuse color object to avoid creating new Color on every render
+  const colorRef = useRef(new Color(pixelColor));
+  if (colorRef.current.getHexString() !== new Color(pixelColor).getHexString()) {
+    colorRef.current.set(pixelColor);
+  }
+
   // Update ALL uniforms directly - primitive props don't work for shader uniforms
-  dotMaterial.uniforms.pixelColor.value = new Color(pixelColor);
+  dotMaterial.uniforms.pixelColor.value = colorRef.current;
   dotMaterial.uniforms.gridSize.value = gridSize;
   dotMaterial.uniforms.resolution.value.set(size.width * viewport.dpr, size.height * viewport.dpr);
 
@@ -122,6 +138,19 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
     interpolate: interpolate || 0.1,
     ease: easingFunction || ((x: number) => x)
   }) as [Texture | null, (e: ThreeEvent<PointerEvent>) => void];
+
+  // Track trail texture for cleanup
+  const trailRef = useRef<Texture | null>(null);
+  trailRef.current = trail;
+
+  // Cleanup: dispose trail texture on unmount
+  useEffect(() => {
+    return () => {
+      if (trailRef.current) {
+        trailRef.current.dispose();
+      }
+    };
+  }, []);
 
   // Update trail texture and its settings
   if (trail) {
@@ -137,13 +166,16 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
   // Handle external mouse position updates (for when canvas has pointer-events: none)
   // Performance: only process when visible
   useEffect(() => {
-    if (!externalMouseRef || !isVisible) return;
+    if (!externalMouseRef) return;
 
     let animationFrameId: number;
+    let isRunning = true;
 
     const updateFromExternalMouse = () => {
-      // Performance: skip updates when not visible
-      if (!isVisible) {
+      if (!isRunning) return;
+
+      // Performance: skip updates when not visible (use ref to avoid stale closure)
+      if (!isVisibleRef.current) {
         animationFrameId = requestAnimationFrame(updateFromExternalMouse);
         return;
       }
@@ -171,9 +203,10 @@ function Scene({ gridSize, trailSize, maxAge, interpolate, easingFunction, pixel
     animationFrameId = requestAnimationFrame(updateFromExternalMouse);
 
     return () => {
+      isRunning = false;
       cancelAnimationFrame(animationFrameId);
     };
-  }, [externalMouseRef, onMove, isVisible]);
+  }, [externalMouseRef, onMove]);
 
   return (
     <mesh scale={[scale, scale, 1]} onPointerMove={externalMouseRef ? undefined : onMove}>
@@ -262,6 +295,8 @@ export default function PixelTrail({
       window.removeEventListener('scroll', updateRect);
       window.removeEventListener('resize', updateRect);
       targetElement.removeEventListener('mousemove', handleMouseMove);
+      // Clear cached rect and mouse position on cleanup
+      containerRectRef.current = null;
     };
   }, [containerRef, isVisible]);
 

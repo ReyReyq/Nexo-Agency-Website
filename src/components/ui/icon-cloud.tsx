@@ -81,6 +81,9 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     const items = icons || images || []
     imagesLoadedRef.current = new Array(items.length).fill(false)
 
+    // Track Image objects for cleanup to prevent memory leaks
+    const imageObjects: HTMLImageElement[] = []
+
     const newIconCanvases = items.map((item, index) => {
       const offscreen = document.createElement("canvas")
       offscreen.width = 40
@@ -91,6 +94,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
         if (images) {
           // Handle image URLs directly
           const img = new Image()
+          imageObjects.push(img) // Track for cleanup
           img.crossOrigin = "anonymous"
           img.src = items[index] as string
           img.onload = () => {
@@ -115,6 +119,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
           offCtx.scale(0.4, 0.4)
           const svgString = renderToString(item as React.ReactElement)
           const img = new Image()
+          imageObjects.push(img) // Track for cleanup
           img.src = "data:image/svg+xml;base64," + btoa(svgString)
           img.onload = () => {
             // Check if component is still mounted before updating
@@ -130,6 +135,29 @@ export function IconCloud({ icons, images }: IconCloudProps) {
     })
 
     iconCanvasesRef.current = newIconCanvases
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Cancel any pending image loads by clearing src
+      imageObjects.forEach((img) => {
+        img.onload = null
+        img.onerror = null
+        img.src = ""
+      })
+
+      // Clear offscreen canvases to release memory
+      iconCanvasesRef.current.forEach((canvas) => {
+        const ctx = canvas.getContext("2d")
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+        }
+        // Reset canvas dimensions to release bitmap memory
+        canvas.width = 0
+        canvas.height = 0
+      })
+      iconCanvasesRef.current = []
+      imagesLoadedRef.current = []
+    }
   }, [icons, images])
 
   // Generate initial icon positions on a sphere
@@ -355,6 +383,11 @@ export function IconCloud({ icons, images }: IconCloudProps) {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
         animationFrameRef.current = 0
+      }
+
+      // Clear the main canvas to release memory
+      if (canvas && ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
       }
     }
   }, [icons, images, iconPositions, isDragging, mousePos, targetRotation, isVisible])

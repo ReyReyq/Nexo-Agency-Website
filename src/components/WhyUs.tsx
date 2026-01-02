@@ -1,5 +1,5 @@
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import Scene3D from "./Scene3D";
 import { Check, Award, Users, Lightbulb } from "lucide-react";
 
@@ -21,6 +21,16 @@ const WhyUs = () => {
   });
 
   const sceneY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
+  // Memoize inline style objects to prevent unnecessary re-renders
+  const gridBackgroundStyle = useMemo(() => ({
+    backgroundImage: "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
+    backgroundSize: "50px 50px"
+  }), []);
+
+  const visionBackgroundStyle = useMemo(() => ({
+    backgroundImage: `url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80&fm=webp&fit=crop')`,
+  }), []);
 
   return (
     <section
@@ -114,10 +124,7 @@ const WhyUs = () => {
         >
           {/* Subtle Grid Background */}
           <div className="absolute inset-0 opacity-[0.03]">
-            <div className="absolute inset-0" style={{ 
-              backgroundImage: "linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)",
-              backgroundSize: "50px 50px" 
-            }} />
+            <div className="absolute inset-0" style={gridBackgroundStyle} />
           </div>
           <Scene3D />
         </motion.div>
@@ -131,9 +138,7 @@ const WhyUs = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80&fm=webp&fit=crop')`,
-          }}
+          style={visionBackgroundStyle}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-hero-bg/70 to-hero-bg/40" />
         </motion.div>

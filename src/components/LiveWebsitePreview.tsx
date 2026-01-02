@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { ExternalLink, Monitor, Smartphone, Tablet, Loader2 } from 'lucide-react';
 
@@ -17,26 +17,23 @@ interface LiveWebsitePreviewProps {
 
 type DeviceType = 'desktop' | 'tablet' | 'mobile';
 
-const deviceConfigs = {
-  desktop: { width: '100%', height: '500px', aspectRatio: '16/10' },
-  tablet: { width: '768px', height: '600px', aspectRatio: '4/3' },
-  mobile: { width: '375px', height: '667px', aspectRatio: '9/16' },
-};
-
 export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePreviewProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [device, setDevice] = useState<DeviceType>('desktop');
   const [isVisible, setIsVisible] = useState(false);
   const [showIframe, setShowIframe] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const isMountedRef = useRef(true);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   // Lazy loading with Intersection Observer
   useEffect(() => {
+    const currentContainer = containerRef.current;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry.isIntersecting && isMountedRef.current) {
           setIsVisible(true);
           observer.disconnect();
         }
@@ -44,18 +41,62 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
       { threshold: 0.1, rootMargin: '100px' }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+    if (currentContainer) {
+      observer.observe(currentContainer);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
-  const config = deviceConfigs[device];
-  const displayUrl = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  // Cleanup iframe when component unmounts or when iframe should be hidden
+  useEffect(() => {
+    isMountedRef.current = true;
 
-  // Detect if background is dark to adjust text/button colors
-  const isDarkBackground = (() => {
+    return () => {
+      isMountedRef.current = false;
+      // Cleanup iframe to prevent memory leaks
+      if (iframeRef.current) {
+        // Stop iframe loading and clear its source
+        iframeRef.current.src = 'about:blank';
+        iframeRef.current.remove();
+      }
+    };
+  }, []);
+
+  // Reset loaded state when iframe is hidden
+  useEffect(() => {
+    if (!showIframe) {
+      setIsLoaded(false);
+      // Clean up iframe when hidden
+      if (iframeRef.current) {
+        iframeRef.current.src = 'about:blank';
+      }
+    }
+  }, [showIframe]);
+
+  // Memoized handlers to prevent unnecessary re-renders
+  const handleDeviceChange = useCallback((newDevice: DeviceType) => {
+    setDevice(newDevice);
+  }, []);
+
+  const handleShowIframe = useCallback(() => {
+    setShowIframe(true);
+  }, []);
+
+  const handleIframeLoad = useCallback(() => {
+    if (isMountedRef.current) {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  const displayUrl = useMemo(() =>
+    url.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+  [url]);
+
+  // Memoize dark background detection to prevent recalculation on every render
+  const isDarkBackground = useMemo(() => {
     const bg = brandColors?.background || '#FAF9F6';
     // Convert hex to RGB and calculate relative luminance
     const hex = bg.replace('#', '');
@@ -64,7 +105,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
     const b = parseInt(hex.slice(4, 6), 16) / 255;
     const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     return luminance < 0.5;
-  })();
+  }, [brandColors?.background]);
 
   return (
     <section
@@ -133,7 +174,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                 תצוגה:
               </span>
               <button
-                onClick={() => setDevice('desktop')}
+                onClick={() => handleDeviceChange('desktop')}
                 className="p-2.5 rounded-lg transition-all"
                 style={{
                   backgroundColor: device === 'desktop'
@@ -149,7 +190,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                 <Monitor className="w-5 h-5" />
               </button>
               <button
-                onClick={() => setDevice('tablet')}
+                onClick={() => handleDeviceChange('tablet')}
                 className="p-2.5 rounded-lg transition-all"
                 style={{
                   backgroundColor: device === 'tablet'
@@ -165,7 +206,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                 <Tablet className="w-5 h-5" />
               </button>
               <button
-                onClick={() => setDevice('mobile')}
+                onClick={() => handleDeviceChange('mobile')}
                 className="p-2.5 rounded-lg transition-all"
                 style={{
                   backgroundColor: device === 'mobile'
@@ -271,11 +312,13 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                       )}
 
                       <iframe
+                        ref={iframeRef}
                         src={url}
                         className="w-full h-full border-0"
-                        onLoad={() => setIsLoaded(true)}
+                        onLoad={handleIframeLoad}
                         loading="lazy"
                         title={title || 'Website Preview'}
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
                         style={{
                           opacity: isLoaded ? 1 : 0,
                           transition: 'opacity 0.3s ease',
@@ -287,7 +330,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                     /* Click to load overlay */
                     <div
                       className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 cursor-pointer group"
-                      onClick={() => setShowIframe(true)}
+                      onClick={handleShowIframe}
                     >
                       <div className="flex flex-col items-center gap-4 text-center px-6">
                         <motion.div

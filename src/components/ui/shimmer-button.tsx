@@ -1,4 +1,4 @@
-import React, { ComponentPropsWithoutRef, CSSProperties } from "react"
+import React, { ComponentPropsWithoutRef, CSSProperties, useMemo } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -29,18 +29,22 @@ export const ShimmerButton = React.forwardRef<
     },
     ref
   ) => {
+    // Performance: Memoize style object to prevent recreation on every render
+    const buttonStyle = useMemo<CSSProperties>(
+      () => ({
+        "--spread": "90deg",
+        "--shimmer-color": shimmerColor,
+        "--radius": borderRadius,
+        "--speed": shimmerDuration,
+        "--cut": shimmerSize,
+        "--bg": background,
+      } as CSSProperties),
+      [shimmerColor, borderRadius, shimmerDuration, shimmerSize, background]
+    )
+
     return (
       <button
-        style={
-          {
-            "--spread": "90deg",
-            "--shimmer-color": shimmerColor,
-            "--radius": borderRadius,
-            "--speed": shimmerDuration,
-            "--cut": shimmerSize,
-            "--bg": background,
-          } as CSSProperties
-        }
+        style={buttonStyle}
         className={cn(
           "group relative z-0 flex cursor-pointer items-center justify-center overflow-hidden [border-radius:var(--radius)] border border-white/10 px-6 py-3 whitespace-nowrap text-white [background:var(--bg)]",
           "transform-gpu transition-transform duration-300 ease-in-out active:translate-y-px",
@@ -55,7 +59,10 @@ export const ShimmerButton = React.forwardRef<
             "-z-30 blur-[2px]",
             "[container-type:size] absolute inset-0 overflow-visible"
           )}
-          style={{ transform: "translateZ(0)" }} // GPU layer for blur
+          style={{
+            transform: "translateZ(0)", // GPU layer for blur
+            contain: "layout style", // Performance: Isolate layout calculations
+          }}
         >
           {/* spark */}
           <div
@@ -78,8 +85,8 @@ export const ShimmerButton = React.forwardRef<
 
             "rounded-2xl px-4 py-1.5 text-sm font-medium shadow-[inset_0_-8px_10px_#ffffff1f]",
 
-            // transition
-            "transform-gpu transition-all duration-300 ease-in-out",
+            // transition - Performance: Only transition box-shadow, not all properties
+            "transform-gpu transition-shadow duration-300 ease-in-out",
 
             // on hover
             "group-hover:shadow-[inset_0_-6px_10px_#ffffff3f]",

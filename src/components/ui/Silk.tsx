@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property */
-import React, { forwardRef, useMemo, useRef, useLayoutEffect } from 'react';
+import React, { forwardRef, useMemo, useRef, useLayoutEffect, useEffect } from 'react';
 import { Canvas, useFrame, useThree, RootState } from '@react-three/fiber';
-import { Color, Mesh, ShaderMaterial } from 'three';
+import { Color, Mesh, ShaderMaterial, PlaneGeometry } from 'three';
 import { IUniform } from 'three';
 
 type NormalizedRGB = [number, number, number];
@@ -91,6 +91,8 @@ interface SilkPlaneProps {
 
 const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms }, ref) {
   const { viewport } = useThree();
+  const geometryRef = useRef<PlaneGeometry | null>(null);
+  const materialRef = useRef<ShaderMaterial | null>(null);
 
   useLayoutEffect(() => {
     const mesh = ref as React.MutableRefObject<Mesh | null>;
@@ -98,6 +100,22 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
       mesh.current.scale.set(viewport.width, viewport.height, 1);
     }
   }, [ref, viewport]);
+
+  // Cleanup Three.js resources on unmount
+  useEffect(() => {
+    return () => {
+      // Dispose geometry
+      if (geometryRef.current) {
+        geometryRef.current.dispose();
+        geometryRef.current = null;
+      }
+      // Dispose material and its shader programs
+      if (materialRef.current) {
+        materialRef.current.dispose();
+        materialRef.current = null;
+      }
+    };
+  }, []);
 
   useFrame((_state: RootState, delta: number) => {
     const mesh = ref as React.MutableRefObject<Mesh | null>;
@@ -111,8 +129,8 @@ const SilkPlane = forwardRef<Mesh, SilkPlaneProps>(function SilkPlane({ uniforms
 
   return (
     <mesh ref={ref}>
-      <planeGeometry args={[1, 1, 1, 1]} />
-      <shaderMaterial uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} />
+      <planeGeometry ref={geometryRef} args={[1, 1, 1, 1]} />
+      <shaderMaterial ref={materialRef} uniforms={uniforms} vertexShader={vertexShader} fragmentShader={fragmentShader} />
     </mesh>
   );
 });
@@ -128,18 +146,40 @@ export interface SilkProps {
 
 const Silk: React.FC<SilkProps> = ({ speed = 5, scale = 1, color = '#7B7481', noiseIntensity = 1.5, rotation = 0 }) => {
   const meshRef = useRef<Mesh>(null);
+  const uniformsRef = useRef<SilkUniforms | null>(null);
 
-  const uniforms = useMemo<SilkUniforms>(
-    () => ({
+  const uniforms = useMemo<SilkUniforms>(() => {
+    // Create new uniforms
+    const newUniforms: SilkUniforms = {
       uSpeed: { value: speed },
       uScale: { value: scale },
       uNoiseIntensity: { value: noiseIntensity },
       uColor: { value: new Color(...hexToNormalizedRGB(color)) },
       uRotation: { value: rotation },
       uTime: { value: 0 }
-    }),
-    [speed, scale, noiseIntensity, color, rotation]
-  );
+    };
+    uniformsRef.current = newUniforms;
+    return newUniforms;
+  }, [speed, scale, noiseIntensity, color, rotation]);
+
+  // Cleanup mesh resources on unmount
+  useEffect(() => {
+    return () => {
+      const mesh = meshRef.current;
+      if (mesh) {
+        // Dispose geometry if exists
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+        // Dispose material if exists
+        if (mesh.material) {
+          const material = mesh.material as ShaderMaterial;
+          material.dispose();
+        }
+      }
+      uniformsRef.current = null;
+    };
+  }, []);
 
   return (
     <Canvas dpr={[1, 2]} frameloop="always">

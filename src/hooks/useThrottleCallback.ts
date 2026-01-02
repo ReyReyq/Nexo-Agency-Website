@@ -5,9 +5,14 @@ export function useThrottleCallback<T extends (...args: any[]) => void>(
   delay: number = 16 // ~60fps
 ): T {
   const lastRunRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Store callback in ref to avoid stale closures and unnecessary effect reruns
+  const callbackRef = useRef<T>(callback);
 
-  // Cleanup timeout on unmount or when dependencies change
+  // Update callback ref on every render (no effect needed)
+  callbackRef.current = callback;
+
+  // Cleanup timeout on unmount only
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -15,7 +20,7 @@ export function useThrottleCallback<T extends (...args: any[]) => void>(
         timeoutRef.current = null;
       }
     };
-  }, [callback, delay]);
+  }, []); // Empty deps - only cleanup on unmount
 
   return useCallback(
     (...args: Parameters<T>) => {
@@ -23,16 +28,17 @@ export function useThrottleCallback<T extends (...args: any[]) => void>(
 
       if (now - lastRunRef.current >= delay) {
         lastRunRef.current = now;
-        callback(...args);
+        callbackRef.current(...args);
       } else if (!timeoutRef.current) {
+        const remaining = delay - (now - lastRunRef.current);
         timeoutRef.current = setTimeout(() => {
           lastRunRef.current = Date.now();
-          callback(...args);
+          callbackRef.current(...args);
           timeoutRef.current = null;
-        }, delay - (now - lastRunRef.current));
+        }, remaining);
       }
     },
-    [callback, delay]
+    [delay] // Only depend on delay, callback is accessed via ref
   ) as T;
 }
 

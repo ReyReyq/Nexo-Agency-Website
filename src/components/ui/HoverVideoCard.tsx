@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import HoverVideoPlayer from "react-hover-video-player";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -53,7 +53,7 @@ interface LoadingSkeletonProps {
   isInView?: boolean;
 }
 
-const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ aspectRatio, isInView = true }) => (
+const LoadingSkeleton: React.FC<LoadingSkeletonProps> = React.memo(({ aspectRatio, isInView = true }) => (
   <div
     className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 animate-pulse"
     style={{ aspectRatio }}
@@ -78,7 +78,9 @@ const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ aspectRatio, isInView
       />
     </div>
   </div>
-);
+));
+
+LoadingSkeleton.displayName = "LoadingSkeleton";
 
 interface PosterOverlayProps {
   posterSrc: string;
@@ -86,7 +88,7 @@ interface PosterOverlayProps {
   showPlayIcon: boolean;
 }
 
-const PosterOverlay: React.FC<PosterOverlayProps> = ({
+const PosterOverlay: React.FC<PosterOverlayProps> = React.memo(({
   posterSrc,
   title,
   showPlayIcon,
@@ -122,7 +124,9 @@ const PosterOverlay: React.FC<PosterOverlayProps> = ({
       </div>
     )}
   </div>
-);
+));
+
+PosterOverlay.displayName = "PosterOverlay";
 
 interface InfoOverlayProps {
   title: string;
@@ -132,7 +136,7 @@ interface InfoOverlayProps {
   isHovered: boolean;
 }
 
-const InfoOverlay: React.FC<InfoOverlayProps> = ({
+const InfoOverlay: React.FC<InfoOverlayProps> = React.memo(({
   title,
   subtitle,
   tags,
@@ -245,7 +249,9 @@ const InfoOverlay: React.FC<InfoOverlayProps> = ({
       </motion.div>
     )}
   </AnimatePresence>
-);
+));
+
+InfoOverlay.displayName = "InfoOverlay";
 
 // ============================================================================
 // Main Component
@@ -266,24 +272,44 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({
   overlayTransitionDuration = 400,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [hasBeenInView, setHasBeenInView] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { margin: "100px" });
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
 
-  const aspectRatioMap = {
+  // Use useInView with "once" behavior to stop observing after first view
+  // This prevents unnecessary IntersectionObserver callbacks
+  const isInView = useInView(containerRef, {
+    margin: "100px",
+    once: false // We need continuous observation for loading skeleton
+  });
+
+  // Track if component has ever been in view for lazy loading video
+  useEffect(() => {
+    if (isInView && !hasBeenInView) {
+      setHasBeenInView(true);
+    }
+  }, [isInView, hasBeenInView]);
+
+  // Memoize aspect ratio map to prevent recreation on each render
+  const aspectRatioMap = useMemo(() => ({
     "16/9": "16/9",
     "4/3": "4/3",
     "1/1": "1/1",
     "9/16": "9/16",
-  };
+  }), []);
 
-  const handleClick = () => {
+  // Memoize click handler to prevent unnecessary re-renders
+  const handleClick = useCallback(() => {
     if (onClick) {
       onClick();
     } else if (link) {
       window.open(link, "_blank", "noopener,noreferrer");
     }
-  };
+  }, [onClick, link]);
+
+  // Memoize hover handlers to prevent unnecessary re-renders
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
   return (
     <motion.div
@@ -298,8 +324,8 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({
       style={{
         aspectRatio: aspectRatioMap[aspectRatio],
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -321,36 +347,45 @@ const HoverVideoCard: React.FC<HoverVideoCardProps> = ({
         transition={{ duration: 0.3 }}
       />
 
-      {/* Video Player */}
-      <HoverVideoPlayer
-        videoSrc={videoSrc}
-        muted
-        loop
-        restartOnPaused
-        playbackStartDelay={playbackStartDelay}
-        overlayTransitionDuration={overlayTransitionDuration}
-        preload="metadata"
-        unloadVideoOnPaused={false}
-        hoverTarget={containerRef}
-        videoClassName="w-full h-full object-cover"
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-        pausedOverlay={
-          <PosterOverlay
-            posterSrc={posterSrc}
-            title={title}
-            showPlayIcon={showPlayIcon}
+      {/* Video Player - Only render when component has been in view (lazy loading) */}
+      {hasBeenInView ? (
+        <div ref={videoPlayerRef}>
+          <HoverVideoPlayer
+            videoSrc={videoSrc}
+            muted
+            loop
+            restartOnPaused
+            playbackStartDelay={playbackStartDelay}
+            overlayTransitionDuration={overlayTransitionDuration}
+            preload="metadata"
+            unloadVideoOnPaused={!isInView} // Unload video when scrolled out of view to save memory
+            hoverTarget={containerRef}
+            videoClassName="w-full h-full object-cover"
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            pausedOverlay={
+              <PosterOverlay
+                posterSrc={posterSrc}
+                title={title}
+                showPlayIcon={showPlayIcon}
+              />
+            }
+            loadingOverlay={
+              <LoadingSkeleton aspectRatio={aspectRatioMap[aspectRatio]} isInView={isInView} />
+            }
+            loadingStateTimeout={200}
           />
-        }
-        loadingOverlay={
-          <LoadingSkeleton aspectRatio={aspectRatioMap[aspectRatio]} isInView={isInView} />
-        }
-        loadingStateTimeout={200}
-        onLoadStart={() => setIsLoading(true)}
-        onLoadedData={() => setIsLoading(false)}
-      />
+        </div>
+      ) : (
+        /* Show poster overlay until video is lazy loaded */
+        <PosterOverlay
+          posterSrc={posterSrc}
+          title={title}
+          showPlayIcon={showPlayIcon}
+        />
+      )}
 
       {/* Info Overlay */}
       <InfoOverlay

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, useInView, useSpring } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, useCallback } from "react";
 
 // Type definitions
 interface BrandIdentityColor {
@@ -246,6 +246,16 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
   const numberY = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
   const smoothNumberY = useSpring(numberY, { stiffness: 80, damping: 25 });
 
+  // Memoize duplicated image arrays to avoid recreation on every render
+  const duplicatedImages = useMemo(
+    () => [...aiModels.images, ...aiModels.images, ...aiModels.images, ...aiModels.images],
+    [aiModels.images]
+  );
+  const duplicatedImagesReversed = useMemo(
+    () => [...duplicatedImages].reverse(),
+    [duplicatedImages]
+  );
+
   return (
     <section
       ref={sectionRef}
@@ -375,7 +385,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                 }}
               >
                 {/* Duplicate images for seamless loop */}
-                {[...aiModels.images, ...aiModels.images, ...aiModels.images, ...aiModels.images].map((image, index) => (
+                {duplicatedImages.map((image, index) => (
                   <motion.div
                     key={index}
                     className="relative overflow-hidden rounded-xl flex-shrink-0 group"
@@ -409,7 +419,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                 }}
               >
                 {/* Duplicate images for seamless loop - reversed order */}
-                {[...aiModels.images, ...aiModels.images, ...aiModels.images, ...aiModels.images].reverse().map((image, index) => (
+                {duplicatedImagesReversed.map((image, index) => (
                   <motion.div
                     key={index}
                     className="relative overflow-hidden rounded-xl flex-shrink-0 group"
@@ -673,22 +683,22 @@ const WebsitePreviewSection = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isScrollActive, setIsScrollActive] = useState(false);
 
-  // Handle click to activate scroll mode
-  const handleActivateScroll = () => {
+  // Handle click to activate scroll mode - memoized to prevent recreation
+  const handleActivateScroll = useCallback(() => {
     setIsScrollActive(true);
     // Focus the scroll container
     if (scrollContainerRef.current) {
       scrollContainerRef.current.focus();
     }
-  };
+  }, []);
 
-  // Handle mouse leave to deactivate scroll mode
-  const handleDeactivateScroll = () => {
+  // Handle mouse leave to deactivate scroll mode - memoized to prevent recreation
+  const handleDeactivateScroll = useCallback(() => {
     setIsScrollActive(false);
-  };
+  }, []);
 
-  // Prevent main page scroll when scrolling inside the preview
-  const handleWheel = (e: React.WheelEvent) => {
+  // Prevent main page scroll when scrolling inside the preview - memoized with isScrollActive dependency
+  const handleWheel = useCallback((e: React.WheelEvent) => {
     if (isScrollActive && scrollContainerRef.current) {
       e.stopPropagation();
       const container = scrollContainerRef.current;
@@ -701,7 +711,7 @@ const WebsitePreviewSection = () => {
         container.scrollTop += e.deltaY;
       }
     }
-  };
+  }, [isScrollActive]);
 
   return (
     <section

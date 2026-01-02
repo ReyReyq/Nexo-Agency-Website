@@ -1,80 +1,80 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, useCallback } from "react";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
-import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
+import { caseStudies } from "@/data/caseStudies";
 
-// Project images: 800px for card display, WebP format
-const projects = [
-  {
-    id: "techflow",
-    title: "TechFlow",
-    category: "אתר + מיתוג",
-    description: "מיתוג מלא ופלטפורמה דיגיטלית לסטארט-אפ טכנולוגי",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fm=webp&fit=crop",
-    results: ["340% עלייה בהמרות", "2M משתמשים חדשים", "גיוס סבב A"],
-    tags: ["מיתוג", "פיתוח", "אסטרטגיה"],
-  },
-  {
-    id: "cloudnine",
-    title: "CloudNine",
-    category: "חנות אונליין",
-    description: "חנות E-commerce מותאמת אישית עם חוויית משתמש יוצאת דופן",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80&fm=webp&fit=crop",
-    results: ["500% עלייה במכירות", "NPS של 92", "זמן טעינה 0.8s"],
-    tags: ["E-commerce", "UX/UI", "פיתוח"],
-  },
-  {
-    id: "growthlabs",
-    title: "GrowthLabs",
-    category: "AI + אוטומציה",
-    description: "מערכת AI מתקדמת לניתוח נתונים והמלצות אוטומטיות",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
-    results: ["20 שעות חיסכון שבועי", "98% דיוק", "ROI של 800%"],
-    tags: ["AI", "אוטומציה", "אנליטיקס"],
-  },
-  {
-    id: "startphub",
-    title: "StartupHub",
-    category: "מיתוג מלא",
-    description: "זהות מותגית חדשה למרכז יזמות מוביל",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80&fm=webp&fit=crop",
-    results: ["200% עלייה בפניות", "15 שותפויות חדשות", "פרס עיצוב"],
-    tags: ["מיתוג", "עיצוב", "אסטרטגיה"],
-  },
-  {
-    id: "fintech",
-    title: "FinSecure",
-    category: "אפליקציית פינטק",
-    description: "אפליקציה מאובטחת לניהול השקעות ותיקים פיננסיים",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&fm=webp&fit=crop",
-    results: ["1M הורדות", "4.9 דירוג", "SOC2 מוסמך"],
-    tags: ["אפליקציה", "פינטק", "אבטחה"],
-  },
-  {
-    id: "ecolife",
-    title: "EcoLife",
-    category: "קמפיין דיגיטלי",
-    description: "קמפיין שיווקי רב-ערוצי למותג קיימות",
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80&fm=webp&fit=crop",
-    results: ["10M חשיפות", "250K עוקבים חדשים", "פרס קריאייטיב"],
-    tags: ["שיווק", "קמפיין", "סושיאל"],
-  },
-];
+// Memoized animation variants to prevent recreating objects on each render
+const heroInitial = { opacity: 0, y: 60 } as const;
+const heroAnimate = { opacity: 1, y: 0 } as const;
+const heroTransition = { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as const;
+const lineInitial = { width: 0 } as const;
+const lineAnimate = { width: 80 } as const;
+const lineTransition = { duration: 0.6 } as const;
+const projectInitial = { opacity: 0, y: 60 } as const;
+const projectAnimate = { opacity: 1, y: 0 } as const;
+const ctaInitial = { opacity: 0, y: 40 } as const;
+const ctaAnimate = { opacity: 1, y: 0 } as const;
+const viewportOnce = { once: true } as const;
 
-const categories = ["הכל", "מיתוג", "פיתוח", "AI", "שיווק", "E-commerce"];
+// Map case studies to portfolio format with proper category tags
+const projects = caseStudies.map(cs => ({
+  id: cs.id,
+  slug: cs.slug,
+  title: cs.title,
+  category: cs.category,
+  description: cs.overview.slice(0, 120) + "...",
+  image: cs.heroImage,
+  results: cs.results.slice(0, 3).map(r => `${r.value} ${r.label}`),
+  tags: getCategoryTags(cs.category),
+}));
+
+// Helper function to get tags based on category
+function getCategoryTags(category: string): string[] {
+  const tagMap: Record<string, string[]> = {
+    "EdTech": ["מיתוג", "פיתוח", "אסטרטגיה"],
+    "E-Commerce": ["E-commerce", "UX/UI", "פיתוח"],
+    "Web App": ["פיתוח", "אסטרטגיה", "UX/UI"],
+    "Mobile App": ["אפליקציה", "פיתוח", "UX/UI"],
+  };
+  return tagMap[category] || ["מיתוג", "פיתוח"];
+}
+
+const categories = ["הכל", "מיתוג", "פיתוח", "AI", "שיווק", "E-commerce"] as const;
+
+// Stable viewport config for useInView
+const inViewConfig = { once: true } as const;
 
 const Portfolio = () => {
   const heroRef = useRef(null);
-  const isHeroInView = useInView(heroRef, { once: true });
+  const isHeroInView = useInView(heroRef, inViewConfig);
   const [activeCategory, setActiveCategory] = useState("הכל");
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
 
-  const filteredProjects = activeCategory === "הכל" 
-    ? projects 
-    : projects.filter(p => p.tags.some(tag => tag.includes(activeCategory) || activeCategory.includes(tag)));
+  // Memoize filtered projects to avoid recalculation on every render
+  const filteredProjects = useMemo(() => {
+    if (activeCategory === "הכל") return projects;
+    return projects.filter(p =>
+      p.tags.some(tag => tag.includes(activeCategory) || activeCategory.includes(tag))
+    );
+  }, [activeCategory]);
+
+  // Memoize hover handlers to prevent creating new functions on each render
+  const handleProjectHover = useCallback((projectId: string) => {
+    setHoveredProject(projectId);
+  }, []);
+
+  const handleProjectLeave = useCallback(() => {
+    setHoveredProject(null);
+  }, []);
+
+  // Memoize category click handler
+  const handleCategoryClick = useCallback((category: string) => {
+    setActiveCategory(category);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -86,15 +86,15 @@ const Portfolio = () => {
         <div className="container mx-auto px-6">
           <motion.div
             ref={heroRef}
-            initial={{ opacity: 0, y: 60 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            initial={heroInitial}
+            animate={isHeroInView ? heroAnimate : undefined}
+            transition={heroTransition}
             className="max-w-4xl"
           >
             <motion.div
-              initial={{ width: 0 }}
-              animate={isHeroInView ? { width: 80 } : {}}
-              transition={{ duration: 0.6 }}
+              initial={lineInitial}
+              animate={isHeroInView ? lineAnimate : undefined}
+              transition={lineTransition}
               className="h-1 bg-primary mb-8"
             />
             
@@ -118,7 +118,7 @@ const Portfolio = () => {
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => handleCategoryClick(cat)}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                   activeCategory === cat
                     ? "bg-primary text-primary-foreground"
@@ -139,15 +139,15 @@ const Portfolio = () => {
             {filteredProjects.map((project, index) => (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                initial={projectInitial}
+                whileInView={projectAnimate}
+                viewport={viewportOnce}
                 transition={{ delay: index * 0.1 }}
-                onMouseEnter={() => setHoveredProject(project.id)}
-                onMouseLeave={() => setHoveredProject(null)}
+                onMouseEnter={() => handleProjectHover(project.id)}
+                onMouseLeave={handleProjectLeave}
                 className="group cursor-pointer"
               >
-                <Link to={`/portfolio/${project.id}`}>
+                <Link to={`/portfolio/${project.slug}`}>
                   {/* Image */}
                   <div className="relative aspect-[16/10] rounded-2xl overflow-hidden mb-6">
                     <motion.img
@@ -223,9 +223,9 @@ const Portfolio = () => {
       <section className="py-24 md:py-32 bg-hero-bg">
         <div className="container mx-auto px-6 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial={ctaInitial}
+            whileInView={ctaAnimate}
+            viewport={viewportOnce}
             className="max-w-3xl mx-auto"
           >
             <h2 className="text-4xl md:text-6xl font-black text-hero-fg mb-6">
@@ -237,7 +237,7 @@ const Portfolio = () => {
               מוכנים להצטרף לרשימת ההצלחות שלנו?
             </p>
             <Link
-              to="/contact"
+              to="/contact#contact-form"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
             >
               בואו נדבר
@@ -247,7 +247,7 @@ const Portfolio = () => {
         </div>
       </section>
 
-      <Contact />
+      <Footer />
     </div>
   );
 };

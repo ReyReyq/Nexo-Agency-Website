@@ -390,29 +390,6 @@ const CaseStudy = () => {
               >
                 {caseStudy.tagline}
               </motion.p>
-
-              {/* View Website Button */}
-              {caseStudy.website && (
-                <motion.div
-                  initial={fadeInUpInitial}
-                  animate={fadeInUpAnimate}
-                  transition={transition06Delay1}
-                  className="mt-10"
-                >
-                  <MagneticButton>
-                    <a
-                      href={caseStudy.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 group"
-                      style={websiteButtonStyle}
-                    >
-                      <span>צפייה באתר החי</span>
-                      <ExternalLink className="w-4 h-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </a>
-                  </MagneticButton>
-                </motion.div>
-              )}
             </motion.div>
           </div>
         </motion.div>
@@ -606,28 +583,6 @@ const CaseStudy = () => {
               </p>
             </motion.div>
           </div>
-
-          {/* View Website Button */}
-          {caseStudy.website && (
-            <motion.div
-              initial={fadeInUpInitial}
-              whileInView={fadeInUpAnimate}
-              viewport={viewportOnce}
-              transition={transition05Delay02}
-              className="mt-8 text-center"
-            >
-              <a
-                href={caseStudy.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all hover:gap-4"
-                style={overviewButtonStyle}
-              >
-                <span>לצפייה באתר החי</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </motion.div>
-          )}
         </div>
       </section>
 

@@ -157,15 +157,6 @@ const Portfolio = () => {
                         {project.title}
                       </h3>
                       <p className="text-muted-foreground mb-4">{project.description}</p>
-                      
-                      {/* Results */}
-                      <div className="flex flex-wrap gap-2">
-                        {project.results.map((result, i) => (
-                          <span key={i} className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                            {result}
-                          </span>
-                        ))}
-                      </div>
                     </div>
 
                     <motion.div

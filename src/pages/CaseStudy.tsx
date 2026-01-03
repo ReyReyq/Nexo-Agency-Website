@@ -373,7 +373,7 @@ const CaseStudy = () => {
                   initial={slideUpInitial}
                   animate={slideUpAnimate}
                   transition={titleTransition}
-                  className="text-7xl md:text-9xl lg:text-[12rem] font-black leading-[0.85] mb-8 tracking-tight"
+                  className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-[0.85] mb-8 tracking-tight"
                   style={titleStyle}
                 >
                   {caseStudy.title}

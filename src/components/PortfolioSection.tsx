@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, memo } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowLeft, ExternalLink, Palette, Sparkles, ShoppingBag, TrendingUp } from "lucide-react";
+import { ArrowLeft, ExternalLink, Sparkles, ShoppingBag, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -49,16 +49,6 @@ const projects = [
   },
 ];
 
-// Placeholder for visual balance - defined outside component to prevent recreation
-const placeholder = {
-  id: 4,
-  title: "פרויקט חדש",
-  subtitle: "בקרוב",
-  description: "עיצוב ופיתוח",
-  Icon: Palette,
-  color: "from-amber-500/10 to-yellow-500/10",
-} as const;
-
 // Animation variants - defined outside to prevent recreation on each render
 const fadeInUp = {
   initial: { opacity: 0, y: 40 },
@@ -74,32 +64,6 @@ const scaleIn = {
   initial: { scaleX: 0 },
   animate: { scaleX: 1 },
 } as const;
-
-// Memoized placeholder card component
-const PlaceholderCard = memo(function PlaceholderCard({ isInView, delay }: { isInView: boolean; delay: number }) {
-  return (
-    <motion.div
-      initial={fadeInUp.initial}
-      animate={isInView ? fadeInUp.animate : {}}
-      transition={{ duration: 0.6, delay }}
-      className={cn(
-        "relative col-span-1 row-span-1 rounded-3xl overflow-hidden",
-        "bg-gradient-to-br",
-        placeholder.color,
-        "border border-dashed border-[#e0e0e0]",
-        "flex flex-col items-center justify-center text-center p-6"
-      )}
-    >
-      <placeholder.Icon className="w-10 h-10 text-[#a0a0a0] mb-4" />
-      <h4 className="text-lg font-bold text-[#6a6a6a] mb-1" dir="rtl">
-        {placeholder.title}
-      </h4>
-      <p className="text-sm text-[#a0a0a0]" dir="rtl">
-        {placeholder.subtitle}
-      </p>
-    </motion.div>
-  );
-});
 
 const PortfolioSection = memo(function PortfolioSection() {
   const headerRef = useRef<HTMLDivElement>(null);
@@ -295,14 +259,14 @@ const PortfolioSection = memo(function PortfolioSection() {
             </div>
           </motion.a>
 
-          {/* TeenVestor - Small Card */}
+          {/* TeenVestor - Medium Card (same as Sioné) */}
           <motion.a
             href={memoizedProjects[2].link}
             initial={fadeInUp.initial}
             animate={isGridInView ? fadeInUp.animate : {}}
             transition={{ duration: 0.6, delay: 0.3 }}
             className={cn(
-              "group relative col-span-1 row-span-1 rounded-3xl overflow-hidden",
+              "group relative col-span-1 md:col-span-2 row-span-1 rounded-3xl overflow-hidden",
               "bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)]",
               "hover:shadow-[0_0_0_1px_rgba(0,0,0,0.05),0_4px_8px_rgba(0,0,0,0.08),0_24px_48px_rgba(0,0,0,0.08)]",
               "transition-all duration-500"
@@ -316,32 +280,44 @@ const PortfolioSection = memo(function PortfolioSection() {
                 className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
-                width={400}
+                width={600}
                 height={320}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             </div>
 
             {/* Category Badge */}
-            <div className="absolute top-4 right-4 z-10">
-              <span className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+            <div className="absolute top-5 right-5 z-10">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
                 {memoizedProjects[2].category}
               </span>
             </div>
 
             {/* Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-5 z-10" dir="rtl">
-              <h3 className="text-lg font-black text-white leading-tight mb-1">
-                {memoizedProjects[2].title}
-              </h3>
-              <p className="text-white/70 text-xs">
-                {memoizedProjects[2].subtitle}
-              </p>
+            <div className="absolute bottom-0 left-0 right-0 p-6 z-10" dir="rtl">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black text-white leading-tight mb-1">
+                    {memoizedProjects[2].title}
+                  </h3>
+                  <p className="text-white/70 text-sm">
+                    {memoizedProjects[2].subtitle}
+                  </p>
+                </div>
+
+                {/* Arrow Button */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileHover={{ scale: 1.1 }}
+                  className="opacity-0 group-hover:opacity-100 transition-all duration-300 flex-shrink-0"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+                    <ArrowLeft className="w-4 h-4 text-white" />
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </motion.a>
-
-          {/* Placeholder Card */}
-          <PlaceholderCard isInView={isGridInView} delay={0.4} />
         </div>
 
         {/* View All Portfolio Button */}

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
 
-// Website showcase images for marquee
+// Website showcase images for marquee - equally distributed (18 each)
 const websiteImages = {
   row1: [
     "/images/websites-pictures/Gemini Generated Image (1).png",
@@ -19,8 +19,6 @@ const websiteImages = {
     "/images/websites-pictures/Gemini Generated Image (7).png",
     "/images/websites-pictures/Gemini Generated Image (8).png",
     "/images/websites-pictures/Gemini Generated Image.png",
-  ],
-  row2: [
     "/images/websites-pictures/Gemini_Generated_Image_ubgf3rubgf3rubgf.png",
     "/images/websites-pictures/Gemini_Generated_Image_1rnbic1rnbic1rnb.png",
     "/images/websites-pictures/Gemini_Generated_Image_q4yb80q4yb80q4yb.png",
@@ -30,6 +28,8 @@ const websiteImages = {
     "/images/websites-pictures/Google Gemini Generated Image.png",
     "/images/websites-pictures/Google Gemini Image (1).png",
     "/images/websites-pictures/Google Gemini Image (2).png",
+  ],
+  row2: [
     "/images/websites-pictures/Google Gemini Image (3).png",
     "/images/websites-pictures/Google Gemini Image (4).png",
     "/images/websites-pictures/Google Gemini Image (5).png",
@@ -45,7 +45,6 @@ const websiteImages = {
     "/images/websites-pictures/Google Gemini Image (15).png",
     "/images/websites-pictures/Google Gemini Image (16).png",
     "/images/websites-pictures/Google Gemini Image.png",
-    "/images/websites-pictures/Gemini Generated Image (1).png",
     "/images/websites-pictures/Gemini Generated Image (3).png",
     "/images/websites-pictures/Gemini Generated Image (5).png",
     "/images/websites-pictures/Gemini Generated Image (7).png",
@@ -390,7 +389,7 @@ const PortfolioSection = memo(function PortfolioSection() {
       <div className="mt-16 md:mt-24 overflow-hidden">
         {/* First Marquee Row - Left to Right */}
         <div className="mb-6">
-          <Marquee className="[--duration:10s] [--gap:1.5rem]">
+          <Marquee className="[--duration:20s] [--gap:1.5rem]">
             {websiteImages.row1.map((src, index) => (
               <div
                 key={index}
@@ -409,7 +408,7 @@ const PortfolioSection = memo(function PortfolioSection() {
         </div>
 
         {/* Second Marquee Row - Right to Left */}
-        <Marquee className="[--duration:30s] [--gap:1.5rem]" reverse>
+        <Marquee className="[--duration:20s] [--gap:1.5rem]" reverse>
           {websiteImages.row2.map((src, index) => (
             <div
               key={index}

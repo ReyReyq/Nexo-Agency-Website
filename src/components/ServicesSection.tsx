@@ -94,7 +94,7 @@ const ServicesSection = () => {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.15] mb-6 text-[#1a1a1a]"
               >
-                אנחנו בונים לכם את המכונה
+                אנחנו בונים לכם את התשתית
                 <br />
                 שתביא את הלקוחות הבאים
               </motion.h2>

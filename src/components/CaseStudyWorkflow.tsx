@@ -233,6 +233,246 @@ interface AIPhotographySectionProps {
   aiModels: AIModelsData;
 }
 
+// Mobile-only: AI Photography TEXT Section (Step 04a)
+const AIPhotographyTextSection = ({ aiModels }: AIPhotographySectionProps) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  // Parallax effect for background number
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const numberY = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
+  const smoothNumberY = useSpring(numberY, { stiffness: 80, damping: 25 });
+
+  return (
+    <section
+      ref={sectionRef}
+      className="min-h-screen py-28 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden"
+    >
+      {/* HUGE Background Number */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+        style={{ y: smoothNumberY }}
+      >
+        <span
+          className="font-display font-black text-[50vh] leading-none text-foreground"
+          style={{ opacity: 0.025 }}
+        >
+          04
+        </span>
+      </motion.div>
+
+      <div ref={ref} className="container mx-auto px-6 relative z-10" dir="rtl">
+        {/* Step Label */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={isInView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="mb-8"
+        >
+          <span className="text-[10px] uppercase tracking-[0.3em] font-medium text-primary">
+            השלב הרביעי
+          </span>
+        </motion.div>
+
+        {/* Title */}
+        <div className="overflow-hidden mb-6">
+          <motion.h3
+            initial={{ y: "100%" }}
+            animate={isInView ? { y: 0 } : {}}
+            transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+            className="text-5xl md:text-7xl font-display font-black leading-[0.85] tracking-[-0.02em]"
+          >
+            צילומי AI
+          </motion.h3>
+        </div>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-2xl font-semibold mb-10 text-primary"
+        >
+          גישה חדשנית להפקת תוכן
+        </motion.p>
+
+        {/* Description */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mb-8"
+        >
+          <p className="text-lg font-heebo leading-relaxed text-foreground/90">
+            {aiModels.description}
+          </p>
+        </motion.div>
+
+        {/* Benefits */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-primary/70 mb-4">
+            היתרונות
+          </p>
+          <ul className="space-y-4">
+            {[
+              "חיסכון משמעותי בעלויות צילום סטודיו",
+              "זמן הפקה מהיר יותר - מרעיון לתוצר תוך שעות",
+              "גמישות יצירתית ללא הגבלות לוקיישן",
+              "עקביות מושלמת באסתטיקה לאורך כל המותג",
+            ].map((benefit, i) => (
+              <motion.li
+                key={i}
+                initial={{ opacity: 0, x: 20 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.5 + i * 0.08 }}
+                className="flex items-start gap-4 group"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0 group-hover:scale-150 transition-transform" />
+                <span className="text-base font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
+                  {benefit}
+                </span>
+              </motion.li>
+            ))}
+          </ul>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+// Mobile-only: AI Photography IMAGES Section (Step 04b)
+const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => {
+  // Memoize duplicated image arrays to avoid recreation on every render
+  const duplicatedImages = useMemo(
+    () => [...aiModels.images, ...aiModels.images, ...aiModels.images, ...aiModels.images],
+    [aiModels.images]
+  );
+  const duplicatedImagesReversed = useMemo(
+    () => [...duplicatedImages].reverse(),
+    [duplicatedImages]
+  );
+
+  // Parallax effect for background number
+  const sectionRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const numberY = useTransform(scrollYProgress, [0, 1], ["15%", "-15%"]);
+  const smoothNumberY = useSpring(numberY, { stiffness: 80, damping: 25 });
+
+  return (
+    <section
+      ref={sectionRef}
+      className="min-h-screen py-20 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden flex items-center justify-center"
+    >
+      {/* HUGE Background Number */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center pointer-events-none select-none"
+        style={{ y: smoothNumberY }}
+      >
+        <span
+          className="font-display font-black text-[50vh] leading-none text-foreground"
+          style={{ opacity: 0.025 }}
+        >
+          04
+        </span>
+      </motion.div>
+
+      {/* Vertical Marquee Images */}
+      <div className="relative h-[70vh] w-full">
+        {/* Gradient Overlays */}
+        <div
+          className="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, #FAF9F6, transparent)' }}
+        />
+        <div
+          className="absolute inset-x-0 bottom-0 h-20 z-10 pointer-events-none"
+          style={{ background: 'linear-gradient(to top, #FAF9F6, transparent)' }}
+        />
+
+        {/* Marquee Container */}
+        <div className="flex gap-4 h-full justify-center overflow-hidden">
+          {/* First Column - Moving Up */}
+          <motion.div
+            className="flex flex-col gap-4"
+            animate={{ y: [0, -500] }}
+            transition={{
+              y: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 18,
+                ease: "linear",
+              },
+            }}
+          >
+            {duplicatedImages.map((image, index) => (
+              <motion.div
+                key={index}
+                className="relative overflow-hidden rounded-xl flex-shrink-0 group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-40 h-52 object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'linear-gradient(to top, rgba(26,26,26,0.6), transparent)' }}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Second Column - Moving Down */}
+          <motion.div
+            className="flex flex-col gap-4"
+            animate={{ y: [-500, 0] }}
+            transition={{
+              y: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 22,
+                ease: "linear",
+              },
+            }}
+          >
+            {duplicatedImagesReversed.map((image, index) => (
+              <motion.div
+                key={index}
+                className="relative overflow-hidden rounded-xl flex-shrink-0 group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-40 h-52 object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: 'linear-gradient(to top, rgba(26,26,26,0.6), transparent)' }}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Desktop-only: Full AI Photography Section with text and images side by side
 const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
@@ -259,7 +499,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-28 md:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden"
+      className="min-h-screen py-28 md:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden hidden lg:block"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -267,17 +507,17 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
         style={{ y: smoothNumberY }}
       >
         <span
-          className="font-display font-black text-[50vh] md:text-[65vh] lg:text-[80vh] leading-none text-foreground"
+          className="font-display font-black text-[65vh] lg:text-[80vh] leading-none text-foreground"
           style={{ opacity: 0.025 }}
         >
           04
         </span>
       </motion.div>
 
-      <div ref={ref} className="container mx-auto px-6 md:px-12 relative z-10" dir="rtl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div ref={ref} className="container mx-auto px-12 relative z-10" dir="rtl">
+        <div className="grid grid-cols-2 gap-20 items-center">
           {/* Text Content - Right side (RTL) */}
-          <div className="order-1 lg:order-1">
+          <div>
             {/* Step Label */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
@@ -296,7 +536,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                 initial={{ y: "100%" }}
                 animate={isInView ? { y: 0 } : {}}
                 transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-                className="text-5xl md:text-7xl lg:text-8xl font-display font-black leading-[0.85] tracking-[-0.02em]"
+                className="text-7xl lg:text-8xl font-display font-black leading-[0.85] tracking-[-0.02em]"
               >
                 צילומי AI
               </motion.h3>
@@ -307,7 +547,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-2xl md:text-3xl font-semibold mb-10 text-primary"
+              className="text-3xl font-semibold mb-10 text-primary"
             >
               גישה חדשנית להפקת תוכן
             </motion.p>
@@ -319,7 +559,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mb-8"
             >
-              <p className="text-lg md:text-xl font-heebo leading-relaxed text-foreground/90">
+              <p className="text-xl font-heebo leading-relaxed text-foreground/90">
                 {aiModels.description}
               </p>
             </motion.div>
@@ -348,7 +588,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                     className="flex items-start gap-4 group"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0 group-hover:scale-150 transition-transform" />
-                    <span className="text-base md:text-lg font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
+                    <span className="text-lg font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
                       {benefit}
                     </span>
                   </motion.li>
@@ -358,7 +598,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
           </div>
 
           {/* Vertical Marquee Images - Left side (RTL) */}
-          <div className="order-2 lg:order-2 relative h-[450px] md:h-[550px]">
+          <div className="relative h-[550px]">
             {/* Gradient Overlays */}
             <div
               className="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none"
@@ -370,10 +610,10 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
             />
 
             {/* Marquee Container */}
-            <div className="flex gap-4 md:gap-5 h-full justify-center overflow-hidden">
+            <div className="flex gap-5 h-full justify-center overflow-hidden">
               {/* First Column - Moving Up */}
               <motion.div
-                className="flex flex-col gap-4 md:gap-5"
+                className="flex flex-col gap-5"
                 animate={{ y: [0, -500] }}
                 transition={{
                   y: {
@@ -384,7 +624,6 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                   },
                 }}
               >
-                {/* Duplicate images for seamless loop */}
                 {duplicatedImages.map((image, index) => (
                   <motion.div
                     key={index}
@@ -395,7 +634,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                     <img
                       src={image.src}
                       alt={image.alt}
-                      className="w-44 md:w-52 h-56 md:h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-52 h-64 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div
                       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -407,7 +646,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
 
               {/* Second Column - Moving Down */}
               <motion.div
-                className="flex flex-col gap-4 md:gap-5"
+                className="flex flex-col gap-5"
                 animate={{ y: [-500, 0] }}
                 transition={{
                   y: {
@@ -418,7 +657,6 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                   },
                 }}
               >
-                {/* Duplicate images for seamless loop - reversed order */}
                 {duplicatedImagesReversed.map((image, index) => (
                   <motion.div
                     key={index}
@@ -429,7 +667,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                     <img
                       src={image.src}
                       alt={image.alt}
-                      className="w-44 md:w-52 h-56 md:h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-52 h-64 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div
                       className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -1008,8 +1246,20 @@ const CaseStudyWorkflow = ({
       </div>
 
       {/* ========== STEP 4: צילומי AI (AI Photography) ========== */}
+      {/* Mobile: Split into two separate slides (text first, then images) */}
       {aiModels && (
-        <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 40 }}>
+        <div className="sticky top-0 bg-[#FAF9F6] lg:hidden" style={{ zIndex: 40 }}>
+          <AIPhotographyTextSection aiModels={aiModels} />
+        </div>
+      )}
+      {aiModels && (
+        <div className="sticky top-0 bg-[#FAF9F6] lg:hidden" style={{ zIndex: 41 }}>
+          <AIPhotographyImagesSection aiModels={aiModels} />
+        </div>
+      )}
+      {/* Desktop: Keep as one combined section */}
+      {aiModels && (
+        <div className="sticky top-0 bg-[#FAF9F6] hidden lg:block" style={{ zIndex: 40 }}>
           <AIPhotographySection aiModels={aiModels} />
         </div>
       )}

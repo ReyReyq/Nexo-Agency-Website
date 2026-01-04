@@ -283,17 +283,17 @@ SubServicesSection.displayName = 'SubServicesSection';
 
 // Service images for bento cards
 const serviceImages: Record<string, string> = {
-  "web-development": "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=80",
-  "ecommerce": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
-  "branding": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80",
-  "ai-automation": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
-  "digital-marketing": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
-  "seo": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80",
-  "social-media": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80",
-  "ai-images": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&q=80",
-  "strategy": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
-  "app-development": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
-  "custom-development": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+  "web-development": "/images/services/web-development.jpg",
+  "ecommerce": "/images/services/ecommerce.jpg",
+  "branding": "/images/services/branding-design.jpg",
+  "ai-automation": "/images/services/ai-automation.jpg",
+  "digital-marketing": "/images/services/digital-marketing.jpg",
+  "seo": "/images/services/seo-optimization.jpg",
+  "social-media": "/images/services/social-media-marketing.jpg",
+  "ai-images": "/images/services/ai-images.jpg",
+  "strategy": "/images/services/business-strategy.jpg",
+  "app-development": "/images/services/app-development.jpg",
+  "custom-development": "/images/services/custom-development.jpg",
 };
 
 // Bento card sizes for 3 cards layout
@@ -563,7 +563,7 @@ const ServiceDetail = () => {
 
       {/* How it Works - Process Section with scroll-driven animation */}
       <Suspense fallback={<SectionLoader />}>
-        <ProcessSection />
+        <ProcessSection serviceId={service.slug} />
       </Suspense>
 
       {/* FAQ Section - Common questions (same as homepage) */}

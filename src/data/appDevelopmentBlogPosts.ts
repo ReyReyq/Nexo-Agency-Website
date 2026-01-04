@@ -359,7 +359,7 @@ export const appDevelopmentBlogPosts: BlogPost[] = [
     `,
     category: "פיתוח אפליקציות",
     readTime: 18,
-    image: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&q=80&fm=webp&fit=crop",
+    image: "/images/services/app-development.jpg",
     slug: "app-development-guide-business-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

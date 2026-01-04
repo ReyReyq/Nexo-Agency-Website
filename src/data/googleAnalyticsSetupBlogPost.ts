@@ -702,9 +702,10 @@ gtag('event', 'generate_lead', {
 
 <!-- CTA Box -->
 <div class="cta-box" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: white; border-radius: 16px; padding: 32px; margin: 40px 0; text-align: center;">
-  <h3 style="color: white; font-size: 1.5rem; margin-bottom: 16px;">צריכים עזרה בהגדרת GA4 או ניתוח הנתונים?</h3>
-  <p style="font-size: 1.1rem; margin-bottom: 24px; opacity: 0.95;">צוות המומחים של NEXO מתמחה בהטמעת Google Analytics 4, הגדרת מעקב המרות וניתוח נתונים לקבלת החלטות עסקיות. אנחנו נדאג שתקבלו את כל המידע שאתם צריכים כדי להצליח.</p>
-  <a href="/contact" style="display: inline-block; background: white; color: #0284c7; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;">בואו נדבר על האנליטיקס שלכם &larr;</a>
+  <h3 style="color: white; font-size: 1.5rem; margin-bottom: 16px;">מתעניינים בהגדרת אנליטיקס לעסק?</h3>
+  <p style="font-size: 1.1rem; margin-bottom: 24px; opacity: 0.95;">ב-NEXO אנחנו מתמחים בהטמעת Google Analytics 4 ו<a href="/services/digital-marketing" style="color: white; text-decoration: underline;">שיווק דיגיטלי</a>.</p>
+  <a href="/contact" style="display: inline-block; background: white; color: #0284c7; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;">נשמע מעניין? &larr;</a>
+  <p style="font-size: 0.9rem; margin-top: 16px; opacity: 0.8;">בואו נדבר</p>
 </div>
 
 <!-- FAQ Section with Schema.org -->

@@ -562,15 +562,18 @@ export const uxUiDesignBlogPost: BlogPost = {
 
       <p>אם התשובה לאחת השאלות האלה היא "לא" או "לא בטוח" - זה הזמן לפעול.</p>
 
-      <div class="article-cta">
-        <h3>רוצים לשפר את חוויית המשתמש באתר שלכם?</h3>
-        <p>ב-NEXO אנחנו מתמחים בעיצוב UX/UI שמביא תוצאות עסקיות. ניתוח חינם של האתר הקיים + המלצות לשיפור.</p>
-        <p><a href="/contact" class="cta-button">בואו נדבר על האתר שלכם</a></p>
-      </div>
+      <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
+        <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים לדעת איך עיצוב UX/UI יכול לשפר את האתר שלכם?</h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/web-design" style="color: #ec4899;">עיצוב ובניית אתרים</a> עם דגש על חוויית משתמש.</p>
+        <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+          נשמע מעניין? ←
+        </a>
+        <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
+      </section>
     `,
   category: "מיתוג ועיצוב",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/blog/ux-ui-mistakes-guide.webp",
   slug: "ux-ui-design-guide-2025",
   date: "1 בינואר 2025",
   lastUpdated: "1 בינואר 2025",

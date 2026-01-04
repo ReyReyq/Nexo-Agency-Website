@@ -591,7 +591,7 @@ export function LaunchNotifications({ className }: LaunchNotificationsProps) {
   return (
     <div
       className={cn(
-        "relative flex h-[350px] w-full flex-col overflow-hidden rounded-2xl bg-transparent p-4",
+        "relative flex h-[280px] sm:h-[320px] md:h-[350px] w-full flex-col overflow-hidden rounded-2xl bg-transparent p-4",
         className,
       )}
       dir="rtl"

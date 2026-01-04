@@ -266,7 +266,7 @@ export const aiAutomationBlogPosts: BlogPost[] = [
     `,
     category: "AI ואוטומציה",
     readTime: 12,
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80&fm=webp&fit=crop",
+    image: "/images/blog/data-analytics-dashboard.webp",
     slug: "ai-automation-business-roi-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

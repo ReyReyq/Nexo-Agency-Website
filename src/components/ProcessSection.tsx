@@ -1,6 +1,6 @@
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { useRef, useState, useMemo, memo } from "react";
-import { processSteps, processLabels } from "@/data/processSteps";
+import { processSteps as defaultProcessSteps, processLabels as defaultProcessLabels, type ProcessStep } from "@/data/processSteps";
 import ProcessStepVisual from "./ProcessStepVisual";
 
 // Animation variants for content transitions - defined outside component to prevent recreation
@@ -10,9 +10,12 @@ const contentVariants = {
   exit: { opacity: 0, y: -30, filter: "blur(8px)" },
 };
 
+// Type alias for process steps
+type AnyProcessStep = ProcessStep;
+
 // Memoized Step Indicator component
 interface StepIndicatorProps {
-  step: typeof processSteps[0];
+  step: AnyProcessStep;
   index: number;
   activeStep: number;
   isLast: boolean;
@@ -30,7 +33,7 @@ const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorPr
       transition={{ duration: 0.2 }}
     >
       <div
-        className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
+        className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
           isActive
             ? "bg-primary border-primary"
             : isPast
@@ -39,14 +42,14 @@ const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorPr
         }`}
       >
         <step.icon
-          className={`w-5 h-5 transition-colors duration-200 ${
+          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 transition-colors duration-200 ${
             isActiveOrPast ? "text-white" : "text-[#1a1a1a]/40"
           }`}
         />
       </div>
       {!isLast && (
         <div
-          className={`absolute top-1/2 -translate-y-1/2 right-full w-2 h-0.5 transition-colors duration-200 ${
+          className={`absolute top-1/2 -translate-y-1/2 right-full w-1.5 sm:w-2 h-0.5 transition-colors duration-200 ${
             isPast ? "bg-primary" : "bg-[#1a1a1a]/10"
           }`}
         />
@@ -57,10 +60,23 @@ const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorPr
 
 StepIndicator.displayName = 'StepIndicator';
 
-const ProcessSection = memo(() => {
+// Component props
+interface ProcessSectionProps {
+  serviceId?: string; // Kept for backwards compatibility, currently unused
+}
+
+const ProcessSection = memo((_props: ProcessSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const lastStepChangeTime = useRef(0);
+
+  // Use default process steps (service-specific steps removed due to data corruption)
+  const { processSteps, processLabels } = useMemo(() => {
+    return {
+      processSteps: defaultProcessSteps,
+      processLabels: defaultProcessLabels
+    };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -103,7 +119,7 @@ const ProcessSection = memo(() => {
       dir="rtl"
     >
       {/* Sticky Container */}
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center">
+      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center lg:items-center">
         {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -113,13 +129,15 @@ const ProcessSection = memo(() => {
           }}
         />
 
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
+        {/* Mobile: Full height flex container for vertical distribution */}
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 h-full lg:h-auto flex flex-col lg:block pt-28 pb-4 lg:pt-0 lg:pb-0">
+          {/* Mobile: Use flex-col with proper distribution */}
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-20 lg:items-center max-w-6xl mx-auto flex-1 lg:flex-none">
 
-            {/* Left Side - Step Content */}
-            <div className="order-2 lg:order-1">
+            {/* Left Side - Step Content (Text first on mobile) */}
+            <div className="order-1 lg:order-1 flex-shrink-0">
               {/* Step indicators - uses memoized StepIndicator component */}
-              <div className="flex gap-2 mb-8">
+              <div className="flex gap-1.5 sm:gap-2 lg:gap-2 mb-4 sm:mb-6 lg:mb-8">
                 {processSteps.map((step, index) => (
                   <StepIndicator
                     key={step.number}
@@ -132,7 +150,7 @@ const ProcessSection = memo(() => {
               </div>
 
               {/* Main Content - AnimatePresence handles transitions */}
-              <div className="relative min-h-[300px]">
+              <div className="relative min-h-[140px] sm:min-h-[180px] lg:min-h-[300px]">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeStep}
@@ -145,29 +163,29 @@ const ProcessSection = memo(() => {
                       ease: [0.25, 0.1, 0.25, 1]
                     }}
                   >
-                    <span className="inline-block text-[#1a1a1a] text-xs md:text-sm font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-4">
+                    <span className="inline-block text-[#1a1a1a] text-xs md:text-sm font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-3 lg:mb-4">
                       {processLabels.stepPrefix} {currentStep.number} {processLabels.stepSuffix}
                     </span>
 
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-3">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-2 lg:mb-3">
                       <span style={{ color: currentStep.color.primary }}>
                         {currentStep.title}
                       </span>
                     </h2>
 
-                    <h3 className="text-[#2d2d2d] text-lg md:text-xl font-semibold mb-5">
+                    <h3 className="text-[#2d2d2d] text-base sm:text-lg md:text-xl font-semibold mb-3 lg:mb-5">
                       {currentStep.subtitle}
                     </h3>
 
                     {/* Summary */}
-                    <p className="text-[#1a1a1a] text-base md:text-lg font-semibold mb-4">
+                    <p className="text-[#1a1a1a] text-sm md:text-lg font-semibold mb-3 lg:mb-4">
                       {currentStep.description.summary}
                     </p>
                     {/* Bullet Points */}
-                    <ul className="space-y-2 text-[#3d3d3d] text-base md:text-lg leading-[1.7] max-w-lg">
+                    <ul className="space-y-1.5 lg:space-y-2 text-[#3d3d3d] text-sm md:text-lg leading-relaxed lg:leading-[1.7] max-w-lg">
                       {currentStep.description.items.map((item, i) => (
-                        <li key={i} className="flex gap-3">
-                          <span className="text-primary font-bold mt-1">•</span>
+                        <li key={i} className="flex gap-2 sm:gap-3">
+                          <span className="text-primary font-bold mt-0.5 sm:mt-1">•</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -176,8 +194,8 @@ const ProcessSection = memo(() => {
                 </AnimatePresence>
               </div>
 
-              {/* Enhanced Progress bar with glow */}
-              <div className="mt-8">
+              {/* Enhanced Progress bar - Desktop only (inside content) */}
+              <div className="mt-8 hidden lg:block">
                 {/* Track */}
                 <div className="h-2 bg-[#1a1a1a]/10 rounded-full overflow-visible relative">
                   {/* Solid color fill with subtle glow */}
@@ -203,14 +221,40 @@ const ProcessSection = memo(() => {
               </div>
             </div>
 
-            {/* Right Side - Visual */}
-            <div className="order-1 lg:order-2 flex justify-center">
-              <div className="relative w-72 h-72 md:w-96 md:h-96">
+            {/* Right Side - Visual (Below text on mobile) */}
+            <div className="order-2 lg:order-2 flex justify-center items-center flex-1 lg:flex-none">
+              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-96 lg:h-96">
                 <ProcessStepVisual
                   activeStep={activeStep}
                   stepNumber={currentStep.number}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Mobile Progress Bar - At bottom */}
+          <div className="pt-2 lg:hidden flex-shrink-0">
+            {/* Track */}
+            <div className="h-1.5 sm:h-2 bg-[#1a1a1a]/10 rounded-full overflow-visible relative">
+              {/* Solid color fill */}
+              <motion.div
+                className="h-full rounded-full absolute inset-y-0 right-0"
+                style={{
+                  backgroundColor: currentStep.color.primary,
+                }}
+                animate={{
+                  width: `${((activeStep + 1) / processSteps.length) * 100}%`,
+                }}
+                transition={{
+                  width: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+                }}
+              />
+            </div>
+
+            {/* Labels */}
+            <div className="flex justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-[#404040] font-medium">
+              <span>{processLabels.startLabel}</span>
+              <span>{processLabels.endLabel}</span>
             </div>
           </div>
         </div>

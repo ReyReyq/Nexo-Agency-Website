@@ -564,20 +564,15 @@ export const logoDesignPricingBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מוכנים ללוגו שיבדל את העסק שלכם?</h2>
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מחפשים לוגו שיבדל את העסק שלכם?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/branding/logo-design" style="color: #ec4899;">עיצוב לוגו ומיתוג מקצועי</a> לעסקים ישראליים.<br/>תהליך מובנה, תקשורת שקופה, ותוצאות שמדברות בעד עצמן.</p>
-
-  <div style="color: rgba(255,255,255,0.9); font-size: 1rem; margin-bottom: 24px;">
-    <p style="margin: 8px 0;"><strong>חבילת סטארט:</strong> לוגו מקצועי + כרטיס ביקור מ-1,249 ש"ח</p>
-    <p style="margin: 8px 0;"><strong>חבילת מותג:</strong> זהות ויזואלית מלאה מ-2,000 ש"ח</p>
-  </div>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/branding/logo-design" style="color: #ec4899;">עיצוב לוגו ומיתוג מקצועי</a> לעסקים ישראליים.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לשיחת ייעוץ חינם
+    רוצים לדעת עוד? ←
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">15 דקות | בלי התחייבות | הצעת מחיר מותאמת</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="sources">
@@ -593,7 +588,7 @@ export const logoDesignPricingBlogPost: BlogPost = {
   `,
   category: "מיתוג ועיצוב",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/branding-design.jpg",
   slug: "logo-design-pricing-process-tips",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

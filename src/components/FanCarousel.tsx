@@ -60,7 +60,7 @@ const CarouselCard = memo(({
     >
       {/* Card - Clean, editorial design */}
       <div
-        className={`w-[280px] h-[360px] rounded-2xl overflow-hidden transform-gpu ${
+        className={`w-[240px] h-[320px] sm:w-[280px] sm:h-[360px] rounded-2xl overflow-hidden transform-gpu ${
           isActive ? "shadow-2xl" : "shadow-lg"
         }`}
         style={{
@@ -188,7 +188,7 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
   );
 
   return (
-    <div className="relative w-full h-[440px] flex items-center justify-center select-none">
+    <div className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center select-none">
       {/* Drag container */}
       <motion.div
         ref={containerRef}

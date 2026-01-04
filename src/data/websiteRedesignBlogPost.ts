@@ -616,15 +616,13 @@ export const websiteRedesignBlogPost: BlogPost = {
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
   <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">האתר שלכם צריך רענון?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/services/web-development" style="color: #ec4899;">NEXO</a> אנחנו מתמחים בעיצוב מחדש של אתרים שמשפר תוצאות בלי לפגוע ב-SEO.<br/>נעזור לכם להפוך את האתר הישן לנכס דיגיטלי שמביא תוצאות.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">קבלו אבחון חינם לאתר שלכם - בלי התחייבות</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/services/web-development" style="color: #ec4899;">NEXO</a> אנחנו מתמחים בעיצוב מחדש של אתרים שמשפר תוצאות בלי לפגוע ב-SEO.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לקבלת אבחון חינם לאתר ←
+    רוצים לדעת עוד?
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">אבחון מהיר | המלצות מותאמות | ללא התחייבות</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="related-reading">
@@ -651,7 +649,7 @@ export const websiteRedesignBlogPost: BlogPost = {
   `,
   category: "פיתוח אתרים",
   readTime: 15,
-  image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/services/web-development.jpg",
   slug: "website-redesign-guide-2025",
   date: "1 בינואר 2025",
   lastUpdated: "1 בינואר 2025",

@@ -701,17 +701,15 @@ export const emailMarketingBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים להפוך את האימייל מרקטינג למכונת מכירות?</h2>
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים לשפר את האימייל מרקטינג שלכם?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/digital-marketing" style="color: #ec4899;">שיווק דיגיטלי</a> ובניית מערכות אימייל מרקטינג שמביאות תוצאות.<br/>מבניית רשימה ועד אוטומציות מכירה - אנחנו יודעים מה עובד.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">רוצים לדעת איך לשפר את האימייל מרקטינג שלכם?</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/digital-marketing" style="color: #ec4899;">שיווק דיגיטלי</a> ובניית מערכות אימייל מרקטינג.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לתיאום ייעוץ חינם ←
+    נשמע מעניין? ←
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">ניתוח אסטרטגיה חינם | ללא התחייבות | תוכנית פעולה תוך 48 שעות</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="related-reading">
@@ -738,7 +736,7 @@ export const emailMarketingBlogPost: BlogPost = {
   `,
   category: "שיווק דיגיטלי",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/services/digital-marketing.jpg",
   slug: "email-marketing-guide-business-2025",
   date: "1 בינואר 2025",
   lastUpdated: "1 בינואר 2025",

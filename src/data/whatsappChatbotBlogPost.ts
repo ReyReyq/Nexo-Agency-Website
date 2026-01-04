@@ -460,15 +460,13 @@ export const whatsappChatbotBlogPost: BlogPost = {
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
   <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מוכנים לבנות צ'אטבוט שעובד?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו בונים <a href="/services/ai-automation/chatbots" style="color: #ec4899;">צ'אטבוטים חכמים לוואטסאפ</a> שמותאמים לעסק שלכם.<br/>לא פתרונות מדף - אלא מערכות שמביאות תוצאות.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">רוצים לראות איך בוט יכול לעבוד בעסק שלכם?</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו בונים <a href="/services/ai-automation/chatbots" style="color: #ec4899;">צ'אטבוטים חכמים לוואטסאפ</a> שמותאמים לעסק שלכם.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לתיאום הדגמה חינם
+    רוצים לדעת עוד?
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">30 דקות - נראה לכם בדיוק מה אפשר לעשות</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="sources">
@@ -485,7 +483,7 @@ export const whatsappChatbotBlogPost: BlogPost = {
   `,
   category: "AI ואוטומציה",
   readTime: 15,
-  image: "https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/ai-automation.jpg",
   slug: "whatsapp-chatbot-guide-business-2025",
   date: "1 בינואר 2025",
   lastUpdated: "1 בינואר 2025",

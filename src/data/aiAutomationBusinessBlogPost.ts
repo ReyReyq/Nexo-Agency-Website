@@ -733,17 +733,15 @@ export const aiAutomationBusinessBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מוכנים להתחיל לחסוך זמן וכסף?</h2>
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מתעניינים באוטומציה עסקית?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים בבניית <a href="/services/ai-automation" style="color: #ec4899;">מערכות אוטומציה חכמות</a> לעסקים ישראליים.<br/>לא מוכרים כלים - בונים פתרונות שמביאים תוצאות.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">רוצים לגלות איפה אוטומציה יכולה לעזור לעסק שלכם?</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים בבניית <a href="/services/ai-automation" style="color: #ec4899;">מערכות אוטומציה חכמות</a> לעסקים ישראליים.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לתיאום שיחת ייעוץ חינם
+    רוצים לדעת עוד? ←
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">20 דקות - נמפה את התהליכים שמבזבזים לכם את הזמן</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="sources">
@@ -761,7 +759,7 @@ export const aiAutomationBusinessBlogPost: BlogPost = {
   `,
   category: "AI ואוטומציה",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/services/ai-automation.jpg",
   slug: "ai-automation-business-guide",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

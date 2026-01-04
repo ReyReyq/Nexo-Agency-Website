@@ -550,15 +550,21 @@ export const localSeoBlogPost: BlogPost = {
 
     <p>תוך שבועיים כבר תראו שיפור. תוך חודשיים תתחילו לקבל שיחות מלקוחות חדשים שמצאו אתכם בגוגל.</p>
 
-    <div class="article-cta">
-      <h3>רוצים לדלג על עקומת הלמידה?</h3>
-      <p>ב-NEXO אנחנו מתמחים בקידום מקומי לעסקים בישראל. נגדיר לכם את ה-GBP בצורה מושלמת, נבנה אסטרטגיית ביקורות ונעזור לכם לשלוט בחיפושים המקומיים.</p>
-      <p><a href="/contact" class="cta-button">קבעו שיחת ייעוץ חינם</a></p>
-    </div>
+    <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
+      <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים להופיע ראשונים בחיפושים המקומיים?</h2>
+
+      <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/digital-marketing" style="color: #ec4899;">קידום מקומי</a> לעסקים בישראל.</p>
+
+      <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+        נשמע מעניין? ←
+      </a>
+
+      <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
+    </section>
   `,
   category: "קידום אתרים (SEO)",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/seo-optimization.jpg",
   slug: "local-seo-guide-israel-2025",
   date: "1 בינואר 2025",
   lastUpdated: "1 בינואר 2025",

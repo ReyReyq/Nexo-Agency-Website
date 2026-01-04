@@ -54,6 +54,51 @@ const MarqueeButton = ({
   );
 };
 
+// Mobile version of MarqueeButton - smaller but same animation
+const MarqueeButtonMobile = ({
+  children,
+  onClick,
+  isPastHero
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  isPastHero: boolean;
+}) => {
+  const text = children as string;
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      className={`relative h-9 w-28 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 ${
+        isPastHero
+          ? "bg-[#1a1a1a] text-white hover:bg-[#2a2a2a]"
+          : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+      }`}
+    >
+      {/* Gradient fades for smooth edges */}
+      <div className="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-inherit to-transparent z-10 pointer-events-none"
+           style={{ background: isPastHero ? 'linear-gradient(to right, #1a1a1a, transparent)' : 'linear-gradient(to right, rgba(255,255,255,0.2), transparent)' }} />
+      <div className="absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-inherit to-transparent z-10 pointer-events-none"
+           style={{ background: isPastHero ? 'linear-gradient(to left, #1a1a1a, transparent)' : 'linear-gradient(to left, rgba(255,255,255,0.2), transparent)' }} />
+
+      {/* Marquee container with CSS animation for truly seamless loop */}
+      <div className="absolute inset-0 flex items-center">
+        <div className="flex items-center whitespace-nowrap animate-marquee-scroll">
+          {/* Duplicate content 4 times for seamless infinite loop */}
+          {[...Array(4)].map((_, i) => (
+            <span key={i} className="flex items-center">
+              <span className="px-2">{text}</span>
+              <span className="text-white/60 px-1">•</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </motion.button>
+  );
+};
+
 const GlassNavbar = () => {
   const [hovered, setHovered] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -207,8 +252,17 @@ const GlassNavbar = () => {
               צרו קשר עכשיו
             </MarqueeButton>
           </motion.div>
-          {/* Mobile spacer for left column */}
-          <div className="lg:hidden" />
+          {/* Mobile CTA Button - Same marquee style as desktop, just smaller */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="lg:hidden flex items-center z-10 justify-self-start"
+          >
+            <MarqueeButtonMobile onClick={handleOpenPopup} isPastHero={isPastHero}>
+              צרו קשר
+            </MarqueeButtonMobile>
+          </motion.div>
 
           {/* Center - Logo */}
           <Logo isPastHero={isPastHero} />

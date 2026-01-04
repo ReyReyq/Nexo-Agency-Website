@@ -197,7 +197,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
   return (
     <section
       className="relative overflow-hidden bg-black"
-      style={{ minHeight: '700px', height: '100vh', maxHeight: '900px' }}
+      style={{ minHeight: 'min(700px, 100svh)', height: '100svh', maxHeight: '900px' }}
     >
       {/* Ballpit Background Effect - Service-specific colors */}
       <div className="absolute inset-0">
@@ -1079,9 +1079,8 @@ const WhyChooseUsSection = memo(({ subService, parentService }: WhyChooseUsSecti
         </motion.div>
 
         {/* Benefits Cards - Modern Numbered Design */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
           {subService.whyChooseUs.benefits.map((benefit, index) => {
-            const BenefitIcon = getIcon(benefit.icon);
             return (
               <motion.div
                 key={index}
@@ -1101,20 +1100,15 @@ const WhyChooseUsSection = memo(({ subService, parentService }: WhyChooseUsSecti
                   />
 
                   {/* Number badge */}
-                  <div className="relative flex items-start gap-4 mb-5">
+                  <div className="relative mb-5">
                     <div
-                      className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold text-white shadow-lg"
+                      className="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold text-white shadow-lg"
                       style={{
                         backgroundColor: parentService.accentColor,
                         boxShadow: `0 4px 14px -2px ${parentService.accentColor}40`
                       }}
                     >
                       {String(index + 1).padStart(2, '0')}
-                    </div>
-
-                    {/* Icon */}
-                    <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-neutral-100 flex items-center justify-center group-hover:bg-neutral-50 transition-colors duration-300">
-                      <BenefitIcon className="w-6 h-6 text-neutral-700" />
                     </div>
                   </div>
 

@@ -7,15 +7,15 @@ interface PreloaderProps {
 }
 
 // Hero image that we transition into - MUST match Hero.tsx first image exactly
-export const HERO_TRANSITION_IMAGE = "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=90&fm=jpg&fit=crop";
+export const HERO_TRANSITION_IMAGE = "/images/hero/team-collaboration.webp";
 
 // Preloader images - middle one (index 2) will become hero background
 const preloaderPhotos = [
-  { src: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&q=90&fm=jpg&fit=crop', alt: 'Road trip' },
-  { src: 'https://images.unsplash.com/photo-1553949345-eb786bb3f7ba?w=1920&q=90&fm=jpg&fit=crop', alt: 'Purple neon' },
+  { src: '/images/gallery/minimal-gradient-sunset.jpg', alt: 'Gradient sunset' },
+  { src: '/images/gallery/abstract-gradient-purple.jpg', alt: 'Purple gradient' },
   { src: HERO_TRANSITION_IMAGE, alt: 'Team collaboration' }, // MAIN - matches Hero first image
-  { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=90&fm=jpg&fit=crop', alt: 'Mountain' },
-  { src: 'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=1920&q=90&fm=jpg&fit=crop', alt: 'Path' },
+  { src: '/images/gallery/architecture-modern-building.jpg', alt: 'Modern building' },
+  { src: '/images/gallery/workspace-modern-office.jpg', alt: 'Modern office' },
 ];
 
 const Preloader = ({ onComplete }: PreloaderProps) => {

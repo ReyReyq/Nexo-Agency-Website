@@ -403,9 +403,14 @@ interface FeaturedMarqueeCardProps {
   bgColor: string;
 }
 
-// Golden ratio: 1.618 - Card dimensions: 260px width x 160px height
+// Golden ratio: 1.618 - Responsive card dimensions using CSS clamp
+// Scales from 200px to 260px based on viewport
+const CARD_WIDTH_STYLE = "min(260px, max(200px, 50vw - 40px))";
+const CARD_HEIGHT_STYLE = "min(160px, max(124px, 30vw))";
+
+// Static values for calculations (largest size)
 const CARD_WIDTH = 260;
-const CARD_HEIGHT = 160; // 260 / 1.618 ≈ 160
+const CARD_HEIGHT = 160;
 
 const FeaturedMarqueeCard = memo(({ stat, accentColor, bgColor }: FeaturedMarqueeCardProps) => {
   const Icon = stat.icon;
@@ -418,8 +423,8 @@ const FeaturedMarqueeCard = memo(({ stat, accentColor, bgColor }: FeaturedMarque
       )}
       style={{
         borderColor: accentColor,
-        width: `${CARD_WIDTH}px`,
-        height: `${CARD_HEIGHT}px`,
+        width: CARD_WIDTH_STYLE,
+        height: CARD_HEIGHT_STYLE,
       }}
     >
       {/* Background gradient */}
@@ -496,8 +501,8 @@ const BenefitCardComponent = memo(({ benefit, accentColor, bgColor }: BenefitCar
         "transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
       )}
       style={{
-        width: `${CARD_WIDTH}px`,
-        height: `${CARD_HEIGHT}px`,
+        width: CARD_WIDTH_STYLE,
+        height: CARD_HEIGHT_STYLE,
       }}
     >
       {/* Background gradient on hover */}

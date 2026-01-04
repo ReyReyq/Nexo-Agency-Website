@@ -422,7 +422,7 @@ export const seoBlogPosts: BlogPost[] = [
     `,
     category: "קידום אתרים (SEO)",
     readTime: 15,
-    image: "https://images.unsplash.com/photo-1562577309-4932fdd64cd1?w=800&q=80&fm=webp&fit=crop",
+    image: "/images/services/seo-optimization.jpg",
     slug: "seo-guide-israel-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

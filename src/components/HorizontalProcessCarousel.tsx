@@ -26,7 +26,7 @@ const StepCard = ({ step, accentColor }: StepCardProps) => {
     <motion.div
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group relative h-[350px] w-[400px] flex-shrink-0 overflow-hidden rounded-2xl"
+      className="group relative h-[280px] w-[280px] sm:h-[320px] sm:w-[340px] md:h-[350px] md:w-[400px] flex-shrink-0 overflow-hidden rounded-2xl"
     >
       {/* Glass effect background */}
       <div className="absolute inset-0 bg-white/80 backdrop-blur-xl" />
@@ -41,22 +41,22 @@ const StepCard = ({ step, accentColor }: StepCardProps) => {
       <div className="absolute inset-0 rounded-2xl shadow-lg shadow-neutral-900/5" />
 
       {/* Content */}
-      <div className="relative z-10 flex h-full flex-col p-8">
+      <div className="relative z-10 flex h-full flex-col p-5 sm:p-6 md:p-8">
         {/* Step number badge */}
         <div
-          className="mb-6 flex h-16 w-16 items-center justify-center rounded-xl text-2xl font-bold text-white shadow-lg transition-transform duration-300 group-hover:scale-110"
+          className="mb-4 sm:mb-6 flex h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 items-center justify-center rounded-xl text-xl sm:text-2xl font-bold text-white shadow-lg transition-transform duration-300 group-hover:scale-110"
           style={{ backgroundColor: accentColor }}
         >
           {step.number}
         </div>
 
         {/* Title */}
-        <h3 className="mb-4 text-2xl font-bold text-neutral-900">
+        <h3 className="mb-3 sm:mb-4 text-xl sm:text-2xl font-bold text-neutral-900">
           {step.title}
         </h3>
 
         {/* Description */}
-        <p className="text-lg leading-relaxed text-neutral-600">
+        <p className="text-base sm:text-lg leading-relaxed text-neutral-600">
           {step.description}
         </p>
 

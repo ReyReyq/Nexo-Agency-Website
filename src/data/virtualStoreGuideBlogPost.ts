@@ -657,15 +657,12 @@ export const virtualStoreGuideBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים להקים חנות וירטואלית מקצועית?</h2>
-
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/ecommerce" style="color: #ec4899;">הקמת חנויות אונליין</a> לעסקים ישראליים.<br/>מהתכנון ועד ההשקה - נלווה אתכם בכל שלב.</p>
-
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">חושבים על חנות אונליין?</h2>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/ecommerce" style="color: #ec4899;">הקמת חנויות אונליין</a> לעסקים ישראליים.</p>
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לייעוץ חינם ללא התחייבות
+    רוצים לדעת עוד? ←
   </a>
-
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">20 דקות שיחה - נבין את הצרכים - נבנה לכם הצעה מותאמת</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="sources">
@@ -683,7 +680,7 @@ export const virtualStoreGuideBlogPost: BlogPost = {
   `,
   category: "איקומרס",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/ecommerce.jpg",
   slug: "virtual-store-complete-guide-2025",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

@@ -421,9 +421,9 @@ const Contact = () => {
             initial={{ opacity: 0, x: -40 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="order-2 lg:order-2"
+            className="order-1 lg:order-2"
           >
-            <div className="bg-white rounded-3xl shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)] p-8 md:p-12 min-h-[500px] flex flex-col justify-center">
+            <div className="bg-white rounded-3xl shadow-[0_0_0_1px_rgba(0,0,0,0.03),0_2px_4px_rgba(0,0,0,0.05),0_12px_24px_rgba(0,0,0,0.05)] p-6 sm:p-8 md:p-12 min-h-[400px] md:min-h-[500px] flex flex-col justify-center">
               {isSuccess ? (
                 // Success State
                 <motion.div
@@ -591,7 +591,7 @@ const Contact = () => {
             initial={{ opacity: 0, x: 40 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
             transition={{ duration: 0.7, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="order-1 lg:order-1"
+            className="order-2 lg:order-1"
             dir="rtl"
           >
             {/* Intro text */}

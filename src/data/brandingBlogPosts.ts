@@ -498,7 +498,7 @@ export const brandingBlogPosts: BlogPost[] = [
     `,
     category: "מיתוג ועיצוב",
     readTime: 15,
-    image: "https://images.unsplash.com/photo-1626785774625-ddcddc3445e9?w=800&q=80&fm=webp&fit=crop",
+    image: "/images/services/branding-design.jpg",
     slug: "logo-design-cost-israel-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

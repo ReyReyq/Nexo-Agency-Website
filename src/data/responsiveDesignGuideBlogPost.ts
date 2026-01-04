@@ -670,18 +670,21 @@ export const responsiveDesignGuideBlogPost: BlogPost = {
 
   <p>אם האתר שלכם לא רספונסיבי, כל יום שעובר הוא יום של לקוחות אבודים, דירוג נמוך יותר, והמרות שנשארות על השולחן. זה הזמן לפעול.</p>
 
-  <div class="cta-box" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1)); padding: 30px; border-radius: 12px; margin-top: 30px; text-align: center;">
-    <h3>רוצים לבדוק אם האתר שלכם באמת רספונסיבי?</h3>
-    <p>צוות NEXO מתמחה בבניית אתרים רספונסיביים מותאמים מושלם לכל מכשיר. נשמח לבצע עבורכם בדיקה חינמית ולהציע פתרון מותאם - ללא התחייבות.</p>
-    <a href="/contact" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 15px;">לבדיקת רספונסיביות חינם</a>
-  </div>
+<section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">האתר שלכם לא מותאם למובייל?</h2>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/" style="color: #ec4899; text-decoration: underline;">NEXO</a> אנחנו בונים אתרים רספונסיביים.</p>
+  <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+    רוצים לדעת עוד? ←
+  </a>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
+</section>
 </section>
 
 </article>
   `,
   category: "פיתוח אתרים",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1555421689-491a97ff2040?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/web-development.jpg",
   slug: "responsive-design-guide",
   date: "2 בינואר 2025",
   author: {

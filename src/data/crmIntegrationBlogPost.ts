@@ -819,17 +819,15 @@ export const crmIntegrationBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">צריכים עזרה בהטמעת CRM לעסק?</h2>
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מתעניינים בהטמעת מערכת CRM?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/ai-automation" style="color: #ec4899;">אוטומציה עסקית</a> והטמעת מערכות CRM לעסקים ישראליים.<br/>אנחנו עוזרים לכם לבחור את המערכת הנכונה, להטמיע אותה בצורה מושלמת, ולהפיק ממנה את המקסימום.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">רוצים לדעת איזה CRM מתאים לעסק שלכם?</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/ai-automation" style="color: #ec4899;">אוטומציה עסקית</a> והטמעת מערכות CRM לעסקים ישראליים.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לתיאום ייעוץ חינם
+    נשמע מעניין? ←
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">30 דקות ייעוץ ללא התחייבות - נבין את הצרכים ונמליץ על הפתרון המתאים</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="related-reading">
@@ -855,7 +853,7 @@ export const crmIntegrationBlogPost: BlogPost = {
   `,
   category: "AI ואוטומציה",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/services/business-strategy.jpg",
   slug: "crm-integration-guide",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

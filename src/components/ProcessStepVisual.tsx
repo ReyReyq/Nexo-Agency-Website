@@ -81,7 +81,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-72 h-72 md:w-[380px] md:h-[380px] -translate-x-20 md:-translate-x-32"
+            className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-[380px] md:h-[380px] -translate-x-12 sm:-translate-x-16 md:-translate-x-32"
           >
             <Suspense fallback={<ComponentLoader />}>
               <FallingText
@@ -103,7 +103,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-80 h-64 md:w-[420px] md:h-[300px] flex items-center justify-center"
+            className="relative z-10 w-48 h-40 sm:w-56 sm:h-48 md:w-[420px] md:h-[300px] flex items-center justify-center"
           >
             <Suspense fallback={<ComponentLoader />}>
               <TrueFocus
@@ -126,7 +126,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-80 h-80 md:w-[420px] md:h-[420px]"
+            className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-[420px] md:h-[420px]"
           >
             <Suspense fallback={<ComponentLoader />}>
               <ASCIIText
@@ -147,7 +147,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10"
+            className="relative z-10 flex items-center justify-center scale-[0.48] sm:scale-[0.56] md:scale-[0.72] lg:scale-100 origin-center"
           >
             <Suspense fallback={<ComponentLoader />}>
               <IconCloud images={devToolImages} />
@@ -161,7 +161,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-80 md:w-[340px]"
+            className="relative z-10 w-48 sm:w-56 md:w-[340px]"
           >
             <Suspense fallback={<ComponentLoader />}>
               <LaunchNotifications />
@@ -198,9 +198,9 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
         )}
       </AnimatePresence>
 
-      {/* Step number badge - simple, no complex animations */}
+      {/* Step number badge - hidden on mobile, visible on md+ */}
       <motion.div
-        className="absolute -bottom-2 -right-2 md:-bottom-4 md:-right-4 w-14 h-14 md:w-16 md:h-16 rounded-xl bg-white border-2 border-primary/20 flex items-center justify-center shadow-md z-20"
+        className="absolute -bottom-4 -right-4 w-16 h-16 rounded-xl bg-white border-2 border-primary/20 hidden md:flex items-center justify-center shadow-md z-20"
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       >

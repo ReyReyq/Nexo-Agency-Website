@@ -1,30 +1,55 @@
-import { useEffect, useRef, useMemo, useCallback, FC, ReactNode } from 'react';
+import { useEffect, useRef, useMemo, useCallback, FC, ReactNode, useState } from 'react';
 import { gsap } from 'gsap';
 
 interface GridMotionProps {
   items?: (string | ReactNode)[];
   gradientColor?: string;
+  mobileRows?: number;
+  mobileItemsPerRow?: number;
 }
 
 const TOTAL_ITEMS = 28;
 const NUM_ROWS = 4;
 const ITEMS_PER_ROW = 7;
+const MOBILE_BREAKPOINT = 768;
 
 const GridMotion: FC<GridMotionProps> = ({
   items = [],
-  gradientColor = 'rgba(250, 249, 246, 0.8)'
+  gradientColor = 'rgba(250, 249, 246, 0.8)',
+  mobileRows = 2,
+  mobileItemsPerRow = 4
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mouseXRef = useRef<number>(typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
 
+  // Track mobile state for responsive row count
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
+  );
+
+  // Calculate current grid dimensions based on screen size
+  const numRows = isMobile ? mobileRows : NUM_ROWS;
+  const itemsPerRow = isMobile ? mobileItemsPerRow : ITEMS_PER_ROW;
+
+  // Handle window resize for responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Memoize combined items to prevent recreation on every render
   const combinedItems = useMemo(() => {
+    const totalNeeded = numRows * itemsPerRow;
     if (items.length > 0) {
-      return items.slice(0, TOTAL_ITEMS);
+      return items.slice(0, totalNeeded);
     }
-    return Array.from({ length: TOTAL_ITEMS }, (_, index) => `Item ${index + 1}`);
-  }, [items]);
+    return Array.from({ length: totalNeeded }, (_, index) => `Item ${index + 1}`);
+  }, [items, numRows, itemsPerRow]);
 
   // Memoize ref callback to prevent new function creation on every render
   const setRowRef = useCallback((el: HTMLDivElement | null, index: number) => {
@@ -37,6 +62,12 @@ const GridMotion: FC<GridMotionProps> = ({
 
     const handleMouseMove = (e: MouseEvent): void => {
       mouseXRef.current = e.clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent): void => {
+      if (e.touches.length > 0) {
+        mouseXRef.current = e.touches[0].clientX;
+      }
     };
 
     const updateMotion = (): void => {
@@ -61,10 +92,12 @@ const GridMotion: FC<GridMotionProps> = ({
 
     const removeAnimationLoop = gsap.ticker.add(updateMotion);
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
-      // Remove event listener
+      // Remove event listeners
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
 
       // Remove ticker callback
       removeAnimationLoop();
@@ -90,16 +123,16 @@ const GridMotion: FC<GridMotionProps> = ({
         }}
       >
         {/* Grid container - uses CSS grid for consistent cell sizing */}
-        <div className="flex-none relative w-[200vw] flex flex-col gap-4 rotate-[-12deg] origin-center z-[2]">
-          {Array.from({ length: NUM_ROWS }, (_, rowIndex) => (
+        <div className={`flex-none relative w-[200vw] flex flex-col gap-4 md:gap-4 rotate-[-12deg] origin-center z-[2] ${isMobile ? 'gap-6' : ''}`}>
+          {Array.from({ length: numRows }, (_, rowIndex) => (
             <div
               key={rowIndex}
-              className="grid grid-cols-7 gap-4"
+              className={isMobile ? 'grid grid-cols-4 gap-6' : 'grid grid-cols-7 gap-4'}
               style={{ willChange: 'transform, filter' }}
               ref={(el) => setRowRef(el, rowIndex)}
             >
-              {Array.from({ length: ITEMS_PER_ROW }, (_, itemIndex) => {
-                const content = combinedItems[rowIndex * ITEMS_PER_ROW + itemIndex];
+              {Array.from({ length: itemsPerRow }, (_, itemIndex) => {
+                const content = combinedItems[rowIndex * itemsPerRow + itemIndex];
                 return (
                   // Each cell fills its grid space
                   <div key={itemIndex} className="w-full">

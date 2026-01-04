@@ -138,7 +138,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "AI & טכנולוגיה",
     readTime: 8,
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&q=80&fm=webp&fit=crop",
+    image: "/images/blog/ai-technology-abstract.webp",
     slug: "ai-business-2024",
     date: "15 ינואר 2024",
     featured: true,
@@ -190,7 +190,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "עיצוב",
     readTime: 5,
-    image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&q=80&fm=webp&fit=crop",
+    image: "/images/services/branding-design.jpg",
     slug: "design-trends-2025",
     date: "20 ינואר 2024",
     author: {
@@ -240,7 +240,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "מיתוג",
     readTime: 5,
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/blog/google-ads-marketing.webp",
     slug: "branding-mistakes",
     date: "10 ינואר 2024",
     author: {
@@ -297,7 +297,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "המרות",
     readTime: 6,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/services/digital-marketing.jpg",
     slug: "website-conversion",
     date: "5 ינואר 2024",
     author: {
@@ -352,7 +352,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "טרנדים",
     readTime: 7,
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/blog/data-analytics-dashboard.webp",
     slug: "digital-trends-2024",
     date: "1 ינואר 2024",
     author: {
@@ -412,7 +412,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "UX/UI",
     readTime: 9,
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/services/seo-optimization.jpg",
     slug: "ux-psychology",
     date: "25 דצמבר 2023",
     author: {
@@ -484,7 +484,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "E-commerce",
     readTime: 6,
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/services/custom-development.jpg",
     slug: "ecommerce-growth",
     date: "20 דצמבר 2023",
     author: {
@@ -556,7 +556,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "פיתוח",
     readTime: 3,
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80&fm=webp&fit=crop",
+    image: "/images/blog/ai-technology-abstract.webp",
     slug: "ai-development",
     date: "18 דצמבר 2023",
     author: {
@@ -640,7 +640,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "שיווק",
     readTime: 4,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&q=80&fm=webp&fit=crop",
+    image: "/images/services/digital-marketing.jpg",
     slug: "digital-marketing-guide",
     date: "15 דצמבר 2023",
     author: {
@@ -728,7 +728,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "UX",
     readTime: 6,
-    image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&q=80&fm=webp&fit=crop",
+    image: "/images/gallery/hands-design-work.jpg",
     slug: "advanced-ux-design",
     date: "10 דצמבר 2023",
     author: {
@@ -819,7 +819,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "SEO",
     readTime: 5,
-    image: "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=400&q=80&fm=webp&fit=crop",
+    image: "/images/services/seo-optimization.jpg",
     slug: "seo-strategies-2025",
     date: "5 דצמבר 2023",
     author: {
@@ -908,7 +908,7 @@ const inlineBlogPosts: BlogPost[] = [
     `,
     category: "מיתוג",
     readTime: 4,
-    image: "https://images.unsplash.com/photo-1493421419110-74f4e85ba126?w=400&q=80&fm=webp&fit=crop",
+    image: "/images/services/branding-design.jpg",
     slug: "digital-branding",
     date: "1 דצמבר 2023",
     author: {

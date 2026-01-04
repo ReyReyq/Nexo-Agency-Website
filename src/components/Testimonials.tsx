@@ -21,34 +21,33 @@ const testimonialVariants = {
   }),
 };
 
-// Avatar images optimized to 150px with WebP format for small file sizes
-// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
+// Avatar images - using local optimized images for better performance
 const testimonials = [
   {
     name: "דנה כהן",
     role: "מנכ״לית, TechFlow",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&q=80&fm=webp&fit=crop",
+    image: "/images/gallery/editorial-woman-smile.jpg",
     content: "NEXO שינו לנו את הפנים של העסק. האתר החדש הכפיל את כמות הפניות תוך חודשיים. הצוות מקצועי, יצירתי ותמיד זמין. ממליצה בחום!",
     rating: 5,
   },
   {
     name: "יוסי לוי",
     role: "בעלים, CloudNine",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&q=80&fm=webp&fit=crop",
+    image: "/images/gallery/portrait-professional-man.jpg",
     content: "עבדנו עם הרבה סוכנויות, אבל NEXO זה משהו אחר לגמרי. הם לא רק בנו לנו אתר - הם הבינו את העסק שלנו ויצרו חוויה שמוכרת.",
     rating: 5,
   },
   {
     name: "מיכל אברהם",
     role: "סמנכ״לית שיווק, GrowthLabs",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&q=80&fm=webp&fit=crop",
+    image: "/images/gallery/editorial-woman-laughing.jpg",
     content: "הפתרון של ה-AI שהם פיתחו לנו חסך לנו 20 שעות עבודה בשבוע. השירות יוצא דופן והתוצאות מדברות בעד עצמן.",
     rating: 5,
   },
   {
     name: "אבי שמעון",
     role: "מייסד, StartupHub",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&q=80&fm=webp&fit=crop",
+    image: "/images/gallery/portrait-business-man.jpg",
     content: "המיתוג שקיבלנו מ-NEXO הפך אותנו ממותג סטארט-אפ קטן למותג שנראה כמו חברה גדולה. עבודה מקצועית ברמה הגבוהה ביותר.",
     rating: 5,
   },
@@ -159,7 +158,7 @@ const Testimonials = () => {
 
         {/* Testimonials Carousel */}
         <div className="relative max-w-4xl mx-auto">
-          <div className="relative min-h-[400px] flex items-center justify-center">
+          <div className="relative min-h-[320px] sm:min-h-[360px] md:min-h-[400px] flex items-center justify-center">
             <AnimatePresence custom={direction} mode="wait">
               <motion.div
                 key={current}

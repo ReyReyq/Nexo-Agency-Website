@@ -582,15 +582,18 @@ export const commonSeoMistakesBlogPost: BlogPost = {
 
     <p>אל תנסו לתקן הכל בבת אחת. התחילו עם הטעויות הכי קריטיות באתר שלכם, תקנו אותן, ועברו לבאות בתור. SEO הוא מרתון, לא ספרינט.</p>
 
-    <div class="article-cta" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem; border-radius: 12px; color: white; margin: 2rem 0;">
-      <h3 style="color: white; margin-top: 0;">לא בטוחים אילו טעויות יש באתר שלכם?</h3>
-      <p style="color: rgba(255,255,255,0.9);">ב-NEXO אנחנו מציעים ניתוח SEO מקיף וחינמי שמזהה את כל הבעיות באתר שלכם - ומראה בדיוק איך לתקן אותן. אחרי עשרות אתרים שטיפלנו בהם, אנחנו יודעים לזהות מהר מה מונע מכם להגיע לעמוד הראשון.</p>
-      <p><a href="/contact" class="cta-button" style="background: white; color: #764ba2; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">קבלו ניתוח SEO חינם</a></p>
-    </div>
+<section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים לשפר את הדירוג של האתר?</h2>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/seo" style="color: #ec4899;">קידום אתרים</a> לעסקים ישראליים.</p>
+  <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+    נשמע מעניין? ←
+  </a>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
+</section>
   `,
   category: "קידום אתרים (SEO)",
   readTime: 22,
-  image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/digital-marketing.jpg",
   slug: "common-seo-mistakes",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

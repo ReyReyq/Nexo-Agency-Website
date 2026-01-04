@@ -13,19 +13,28 @@ interface BlogCarouselSectionProps {
   subtitle?: string;
 }
 
-const CARD_WIDTH = 340;
+const CARD_WIDTH_SM = 280;
+const CARD_WIDTH_MD = 320;
+const CARD_WIDTH_LG = 340;
 const MARGIN = 16;
-const CARD_SIZE = CARD_WIDTH + MARGIN;
+
+// Helper to get card width based on screen size
+const getCardWidth = () => {
+  if (typeof window === 'undefined') return CARD_WIDTH_LG;
+  if (window.innerWidth < 480) return CARD_WIDTH_SM;
+  if (window.innerWidth < 768) return CARD_WIDTH_MD;
+  return CARD_WIDTH_LG;
+};
 
 // Memoized blog card component
-const BlogCard = memo(({ post }: { post: BlogPost }) => {
+const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
       className="relative shrink-0 cursor-pointer"
       style={{
-        width: CARD_WIDTH,
+        width: cardWidth,
         marginLeft: MARGIN,
       }}
       onMouseEnter={() => setIsHovered(true)}
@@ -97,6 +106,18 @@ const BlogCarouselSection = ({
   subtitle = "מאמרים, טיפים ותובנות מעולם הדיגיטל שיעזרו לכם להצליח"
 }: BlogCarouselSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [cardWidth, setCardWidth] = useState(getCardWidth);
+
+  // Handle responsive card width
+  useEffect(() => {
+    const handleResize = () => {
+      setCardWidth(getCardWidth());
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const CARD_SIZE = cardWidth + MARGIN;
 
   // Filter posts by categories if provided, otherwise show all
   const posts = useMemo(() => {
@@ -122,7 +143,7 @@ const BlogCarouselSection = ({
   }, [totalPosts]);
 
   // Calculate offset - use the actual index for smooth animation
-  const offset = -(currentIndex * CARD_SIZE);
+  const offset = useMemo(() => -(currentIndex * CARD_SIZE), [currentIndex, CARD_SIZE]);
 
   // Handle seamless loop reset after animation completes
   const handleTransitionEnd = useCallback(() => {
@@ -222,6 +243,7 @@ const BlogCarouselSection = ({
               <BlogCard
                 key={`${post.id}-${index}`}
                 post={post}
+                cardWidth={cardWidth}
               />
             ))}
           </motion.div>

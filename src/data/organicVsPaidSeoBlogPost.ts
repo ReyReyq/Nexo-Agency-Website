@@ -432,16 +432,17 @@ export const organicVsPaidSeoBlogPost: BlogPost = {
 
       <p>הכי חשוב: אל תשים את כל הביצים בסל אחד. עסקים שמסתמכים רק על ממומן נמצאים בסיכון. עסקים שמחכים רק לאורגני מפספסים הזדמנויות. הצלחה אמיתית בדיגיטל מגיעה מאיזון חכם בין השניים.</p>
 
-      <div class="article-cta">
-        <h3>לא בטוח מאיפה להתחיל?</h3>
-        <p>ב-NEXO אנחנו מתמחים גם בקידום אורגני וגם בקידום ממומן. נעזור לך לבנות אסטרטגיה מותאמת אישית שמביאה תוצאות - גם מיידיות וגם ארוכות טווח.</p>
-        <p><a href="/contact" class="cta-button">קבע שיחת ייעוץ חינם</a></p>
-      </div>
+      <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
+        <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מתלבטים איזו אסטרטגיה מתאימה לעסק שלכם?</h2>
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/" style="color: #ec4899;">NEXO</a> אנחנו מתמחים בקידום אתרים ושיווק דיגיטלי.</p>
+        <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">נשמע מעניין? ←</a>
+        <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
+      </section>
     </article>
   `,
   category: "קידום אתרים (SEO)",
   readTime: 15,
-  image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/digital-marketing.jpg",
   slug: "organic-vs-paid-seo-guide-2025",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

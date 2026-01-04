@@ -492,7 +492,7 @@ export const socialMediaBlogPosts: BlogPost[] = [
     `,
     category: "שיווק דיגיטלי",
     readTime: 18,
-    image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&q=80&fm=webp&fit=crop",
+    image: "/images/services/social-media-marketing.jpg",
     slug: "instagram-marketing-guide-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

@@ -29,7 +29,7 @@ const WhyUs = () => {
   }), []);
 
   const visionBackgroundStyle = useMemo(() => ({
-    backgroundImage: `url('https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80&fm=webp&fit=crop')`,
+    backgroundImage: `url('/images/gallery/team-office-meeting.jpg')`,
   }), []);
 
   return (

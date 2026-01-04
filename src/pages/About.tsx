@@ -1,113 +1,130 @@
-import { motion, useInView } from "framer-motion";
-import { useRef, useMemo, memo } from "react";
-import { Target, Trophy, Heart, Zap, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
+import { useMemo, memo } from "react";
+import { Lightbulb, Eye, Heart, Sparkles, Ear, Users, RefreshCw, TrendingUp, Rocket, Target, Building2, BarChart3, ArrowLeft, Zap, Gauge, Fingerprint, Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
 import Footer from "@/components/Footer";
+import ShuffleHero from "@/components/ShuffleHero";
+import StaggerValues from "@/components/ui/StaggerValues";
 
-// Memoized animation configs to prevent recreating objects on each render
+// Memoized animation configs
 const VIEWPORT_ONCE = { once: true } as const;
-const HERO_TRANSITION = { duration: 0.8, ease: [0.16, 1, 0.3, 1] } as const;
-const LINE_TRANSITION = { duration: 0.6 } as const;
 const FADE_UP_INITIAL = { opacity: 0, y: 40 } as const;
 const FADE_UP_ANIMATE = { opacity: 1, y: 0 } as const;
-const FADE_LEFT_INITIAL = { opacity: 0, x: -40 } as const;
-const FADE_LEFT_ANIMATE = { opacity: 1, x: 0 } as const;
-const HERO_INITIAL = { opacity: 0, y: 60 } as const;
 
-const milestones = [
-  { year: "2005", title: "הקמת NEXO", desc: "התחלנו כסטודיו קטן עם חזון גדול" },
-  { year: "2010", title: "100 לקוחות", desc: "הגענו לאבן דרך משמעותית ראשונה" },
-  { year: "2015", title: "הרחבה בינלאומית", desc: "פתחנו פרויקטים מעבר לים" },
-  { year: "2020", title: "מחלקת AI", desc: "השקנו יחידה ייעודית לבינה מלאכותית" },
-  { year: "2024", title: "500+ פרויקטים", desc: "ממשיכים להוביל את השוק" },
-];
-
-// Team member images: 400px for portrait cards, WebP format
-// TODO: Consider converting external Unsplash URLs to local optimized images for better performance
-const team = [
-  {
-    name: "דניאל כהן",
-    role: "מנכ״ל ומייסד",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80&fm=webp&fit=crop",
-    bio: "20+ שנות ניסיון בתעשייה"
-  },
-  {
-    name: "מיכל לוי",
-    role: "סמנכ״לית קריאייטיב",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80&fm=webp&fit=crop",
-    bio: "מובילה את החזון העיצובי"
-  },
-  {
-    name: "יונתן שפירא",
-    role: "מנהל טכנולוגיות",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80&fm=webp&fit=crop",
-    bio: "מוביל חדשנות טכנולוגית"
-  },
-  {
-    name: "נועה אברהם",
-    role: "מנהלת אסטרטגיה",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80&fm=webp&fit=crop",
-    bio: "מתרגמת חזון לתוצאות"
-  },
-];
-
+// Values data
 const values = [
-  { 
-    icon: Target, 
-    title: "מצוינות ללא פשרות", 
-    desc: "אנחנו לא מסתפקים ב״מספיק טוב״. כל פרויקט מקבל את המיטב שלנו, ללא קשר לגודל או לתקציב." 
+  {
+    title: "תמיד צעד קדימה",
+    desc: "אנחנו לא מחכים שהעתיד יגיע - אנחנו בונים אותו. בכל פרויקט, אנחנו שואלים את עצמנו: מה יהיה רלוונטי גם בעוד שנתיים?"
   },
-  { 
-    icon: Heart, 
-    title: "שותפות אמיתית", 
-    desc: "אנחנו לא ספקים - אנחנו שותפים. ההצלחה שלכם היא ההצלחה שלנו, והכישלון שלכם הוא הכישלון שלנו." 
+  {
+    title: "קלפים פתוחים",
+    desc: "אין אצלנו הפתעות בחשבונית ואין שפה שרק מפתחים מבינים. אנחנו משתפים אתכם בכל החלטה ומסבירים כל בחירה."
   },
-  { 
-    icon: Zap, 
-    title: "חדשנות מתמדת", 
-    desc: "העולם הדיגיטלי משתנה בכל יום. אנחנו תמיד צעד אחד קדימה, לומדים טכנולוגיות חדשות ומייישמים גישות פורצות דרך." 
+  {
+    title: "הפרויקט שלכם, הלב שלנו",
+    desc: "אנחנו לא ספקים - אנחנו שותפים. ההצלחה שלכם היא ההצלחה שלנו, ולכן אנחנו משקיעים בפרויקט כאילו הוא שלנו."
   },
-  { 
-    icon: Trophy, 
-    title: "תוצאות מדידות", 
-    desc: "יפה זה לא מספיק. אנחנו מודדים הצלחה בצמיחה, בהמרות ובROI. המספרים מדברים בעד עצמם." 
+  {
+    title: "פשוט עובד",
+    desc: "אפשר לדבר על חדשנות, אבל בסוף מה שחשוב זה תוצאות. אנחנו אובססיביים לפרטים הקטנים שעושים את ההבדל."
+  },
+  {
+    title: "בזמן, לא במילים",
+    desc: "דדליינים הם לא המלצה - הם הבטחה. כשאנחנו אומרים תאריך, אנחנו מתכוונים לזה. הזמן שלכם שווה כסף."
+  },
+  {
+    title: "מספרים, לא סיפורים",
+    desc: "אנחנו לא מאמינים ב\"הרגשה\" - אנחנו מאמינים בדאטה. כל החלטה נבחנת, כל שינוי נמדד, כל תוצאה מוכחת."
+  },
+  {
+    title: "אין העתק הדבק",
+    desc: "תבניות זה לעצלנים. כל פרויקט מתחיל מדף חלק, כי העסק שלכם הוא לא כמו כולם."
+  },
+  {
+    title: "רעב להוכיח",
+    desc: "אנחנו לא מסתמכים על הפרויקט הקודם - אנחנו רעבים להוכיח את עצמנו בכל פרויקט מחדש."
   },
 ];
 
-// Memoized milestone item to prevent unnecessary re-renders
-const MilestoneItem = memo(({ milestone, index }: { milestone: typeof milestones[0]; index: number }) => {
+// Process principles data
+const principles = [
+  {
+    icon: Ear,
+    title: "הקשבה לפני הכל",
+    desc: "לפני שאנחנו מתחילים לעצב או לפתח, אנחנו מקשיבים. מבינים את העסק שלכם מבפנים, את האתגרים, את החלומות. רק מתוך הבנה עמוקה נולדים פתרונות אמיתיים."
+  },
+  {
+    icon: Users,
+    title: "שותפות אמיתית",
+    desc: "אתם לא לקוחות, אתם שותפים. בכל שלב של הדרך אנחנו חושבים יחד, מקבלים החלטות יחד, וחוגגים הצלחות יחד. השקיפות המלאה שלנו היא לא סיסמה - היא הדרך שבה אנחנו עובדים."
+  },
+  {
+    icon: RefreshCw,
+    title: "גמישות יצירתית",
+    desc: "התוכניות הכי טובות יודעות להשתנות. אנחנו מתאימים את עצמנו לכל פנייה בדרך, לכל תובנה חדשה, לכל הזדמנות שצצה. הגמישות שלנו היא הכוח שלכם."
+  },
+  {
+    icon: TrendingUp,
+    title: "תוצאות שמדברות",
+    desc: "בסוף היום, מה שחשוב זה מה שקורה אצלכם בעסק. אנחנו מודדים הצלחה לא בשעות עבודה, אלא בצמיחה שלכם, בלידים שמגיעים, בלקוחות שחוזרים."
+  },
+];
+
+// Ideal client profiles
+const clientProfiles = [
+  {
+    icon: Rocket,
+    title: "אתם מרגישים שהעסק שלכם שווה יותר",
+    desc: "יש לכם תחושת בטן שאתם יכולים להגיע רחוק יותר. שהפוטנציאל שלכם גדול מהמציאות הנוכחית. אנחנו פה כדי לעזור לכם לממש את מה שאתם כבר יודעים בפנים."
+  },
+  {
+    icon: Target,
+    title: "אתם רוצים שותף, לא רק ספק",
+    desc: "נמאס לכם מלהרגיש לבד במסע הזה. אתם מחפשים מישהו שבאמת יבין את החזון שלכם, יתלהב איתכם, וילווה אתכם צעד אחרי צעד."
+  },
+  {
+    icon: Building2,
+    title: "אתם מוכנים לשינוי",
+    desc: "משהו בפנים אומר לכם שהגיע הזמן. אולי זה תחושה שאפשר יותר, אולי זו הרגשה שאתם יכולים להציג את עצמכם טוב יותר. אנחנו פה לעזור לכם לעשות את הצעד."
+  },
+  {
+    icon: BarChart3,
+    title: "אתם מאמינים שאפשר אחרת",
+    desc: "יש בכם דחף לחדש, לשפר, להתקדם. אתם לא מקבלים את המציאות כמובנת מאליה. אנחנו מתחברים לאנרגיה הזו ויודעים איך להפוך אותה לתוצאות."
+  },
+];
+
+
+// Memoized principle card
+const PrincipleCard = memo(({ principle, index }: { principle: typeof principles[0]; index: number }) => {
   const transition = useMemo(() => ({ delay: index * 0.1 }), [index]);
+  const IconComponent = principle.icon;
 
   return (
     <motion.div
-      initial={FADE_LEFT_INITIAL}
-      whileInView={FADE_LEFT_ANIMATE}
+      initial={FADE_UP_INITIAL}
+      whileInView={FADE_UP_ANIMATE}
       viewport={VIEWPORT_ONCE}
       transition={transition}
-      className="relative flex gap-8 mb-12"
+      className="glass rounded-2xl p-8"
     >
-      {/* Dot */}
-      <div className="w-16 flex-shrink-0 flex items-center justify-center">
-        <div className="w-4 h-4 rounded-full bg-primary" />
+      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6">
+        <IconComponent className="w-7 h-7 text-primary" />
       </div>
-
-      {/* Content */}
-      <div className="flex-1 glass rounded-2xl p-6 md:p-8">
-        <span className="text-primary font-bold text-lg">{milestone.year}</span>
-        <h3 className="text-2xl font-bold text-foreground mt-2">{milestone.title}</h3>
-        <p className="text-muted-foreground mt-2">{milestone.desc}</p>
-      </div>
+      <h3 className="text-xl font-bold text-foreground mb-3">{principle.title}</h3>
+      <p className="text-muted-foreground leading-relaxed">{principle.desc}</p>
     </motion.div>
   );
 });
-MilestoneItem.displayName = 'MilestoneItem';
+PrincipleCard.displayName = 'PrincipleCard';
 
-// Memoized value card to prevent unnecessary re-renders
-const ValueCard = memo(({ value, index }: { value: typeof values[0]; index: number }) => {
+// Memoized client profile card
+const ClientProfileCard = memo(({ profile, index }: { profile: typeof clientProfiles[0]; index: number }) => {
   const transition = useMemo(() => ({ delay: index * 0.1 }), [index]);
-  const IconComponent = value.icon;
+  const IconComponent = profile.icon;
 
   return (
     <motion.div
@@ -120,119 +137,101 @@ const ValueCard = memo(({ value, index }: { value: typeof values[0]; index: numb
       <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-6">
         <IconComponent className="w-7 h-7 text-primary" />
       </div>
-      <h3 className="text-2xl font-bold text-hero-fg mb-3">{value.title}</h3>
-      <p className="text-hero-fg/70 leading-relaxed">{value.desc}</p>
+      <h3 className="text-xl font-bold text-hero-fg mb-3">{profile.title}</h3>
+      <p className="text-hero-fg/70 leading-relaxed">{profile.desc}</p>
     </motion.div>
   );
 });
-ValueCard.displayName = 'ValueCard';
+ClientProfileCard.displayName = 'ClientProfileCard';
 
-// Memoized team member card to prevent unnecessary re-renders
-const TeamMemberCard = memo(({ member, index }: { member: typeof team[0]; index: number }) => {
-  const transition = useMemo(() => ({ delay: index * 0.1 }), [index]);
-
-  return (
-    <motion.div
-      initial={FADE_UP_INITIAL}
-      whileInView={FADE_UP_ANIMATE}
-      viewport={VIEWPORT_ONCE}
-      transition={transition}
-      className="group"
-    >
-      <div className="aspect-[3/4] rounded-2xl overflow-hidden mb-4">
-        <img
-          src={member.image}
-          alt={member.name}
-          loading="lazy"
-          decoding="async"
-          width={400}
-          height={533}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-      </div>
-      <h3 className="text-xl font-bold text-foreground">{member.name}</h3>
-      <p className="text-primary font-medium">{member.role}</p>
-      <p className="text-muted-foreground text-sm mt-1">{member.bio}</p>
-    </motion.div>
-  );
-});
-TeamMemberCard.displayName = 'TeamMemberCard';
-
-// Static animate values for hero
-const HERO_ANIMATE = { opacity: 1, y: 0 };
-const HERO_EMPTY = {};
-const LINE_INITIAL = { width: 0 };
-const LINE_ANIMATE = { width: 80 };
 
 const About = () => {
-  const heroRef = useRef(null);
-  const isHeroInView = useInView(heroRef, VIEWPORT_ONCE);
-
-  // Memoize animate values to prevent object recreation
-  const heroAnimateValue = isHeroInView ? HERO_ANIMATE : HERO_EMPTY;
-  const lineAnimateValue = isHeroInView ? LINE_ANIMATE : HERO_EMPTY;
-
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
       <CustomCursor />
       <GlassNavbar />
 
-      {/* Hero */}
-      <section className="min-h-screen flex items-center bg-hero-bg pt-20">
-        <div className="container mx-auto px-6">
-          <motion.div
-            ref={heroRef}
-            initial={HERO_INITIAL}
-            animate={heroAnimateValue}
-            transition={HERO_TRANSITION}
-            className="max-w-4xl"
-          >
-            <motion.div
-              initial={LINE_INITIAL}
-              animate={lineAnimateValue}
-              transition={LINE_TRANSITION}
-              className="h-1 bg-primary mb-8"
-            />
-            
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-8">
-              הסיפור
-              <br />
-              <span className="text-gradient">שלנו.</span>
-            </h1>
-            
-            <p className="text-hero-fg/70 text-xl md:text-2xl leading-relaxed max-w-2xl">
-              כבר שני עשורים אנחנו מובילים את המהפכה הדיגיטלית בישראל. 
-              בנינו מאות מותגים, השקנו אלפי פרויקטים, ושינינו את הדרך שבה עסקים חושבים על דיגיטל.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+      {/* Hero with Shuffle Grid */}
+      <ShuffleHero />
 
-      {/* Timeline */}
+      {/* Origin Story - למה הקמנו את NEXO */}
       <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-6">
-          <motion.h2
-            initial={FADE_UP_INITIAL}
-            whileInView={FADE_UP_ANIMATE}
-            viewport={VIEWPORT_ONCE}
-            className="text-4xl md:text-6xl font-black text-foreground mb-16"
-          >
-            אבני הדרך שלנו
-          </motion.h2>
+          <div className="max-w-4xl mx-auto">
+            <motion.h2
+              initial={FADE_UP_INITIAL}
+              whileInView={FADE_UP_ANIMATE}
+              viewport={VIEWPORT_ONCE}
+              className="text-4xl md:text-6xl font-black text-foreground mb-12"
+            >
+              למה הקמנו את NEXO
+            </motion.h2>
 
-          <div className="relative">
-            {/* Timeline Line */}
-            <div className="absolute right-8 top-0 bottom-0 w-px bg-border" />
+            <motion.div
+              initial={FADE_UP_INITIAL}
+              whileInView={FADE_UP_ANIMATE}
+              viewport={VIEWPORT_ONCE}
+              transition={{ delay: 0.1 }}
+              className="space-y-6 text-lg md:text-xl text-muted-foreground leading-relaxed"
+            >
+              <p className="text-foreground font-medium text-xl md:text-2xl">
+                כי ראינו יותר מדי עסקים מצליחים שנתקעו עם נוכחות דיגיטלית מהעשור הקודם.
+              </p>
 
-            {milestones.map((milestone, index) => (
-              <MilestoneItem key={milestone.year} milestone={milestone} index={index} />
-            ))}
+              <p>
+                אתרים שנראים כמו 2010. מערכות שמצריכות עבודה ידנית על כל פעולה.
+                תקציבי שיווק שנשרפים בלי לדעת מה עובד ומה לא.
+              </p>
+
+              <p>
+                ראינו שוב ושוב אותו סיפור: בעל עסק משקיע את כל הלב במוצר או בשירות שלו,
+                אבל הנוכחות הדיגיטלית שלו פשוט לא משקפת את האיכות האמיתית.
+                הוא מגיע לפגישה עם סוכנות, מקבל אתר "סטנדרטי", ואחרי חצי שנה תוהה למה הטלפון לא מצלצל.
+              </p>
+
+              <p className="text-foreground font-bold text-xl">
+                זה לא יכול להמשיך ככה.
+              </p>
+
+              <p>
+                הקמנו את NEXO כי האמנו שמגיע לכל עסק ישראלי נוכחות דיגיטלית שעובדת בשבילו - לא נגדו.
+                לא עוד אתרים שנבנים ונשכחים. לא עוד "זה מה יש" ו"ככה כולם עושים".
+              </p>
+
+              <p className="text-foreground font-medium text-xl md:text-2xl">
+                אנחנו כאן כדי לבנות את הדור הבא של הדיגיטל הישראלי.
+                <span className="text-primary"> אתרים שממירים, מותגים שזוכרים, ואסטרטגיה שמייצרת תוצאות אמיתיות.</span>
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Values */}
+      {/* Values - הערכים שלנו */}
       <section className="py-24 md:py-32 bg-hero-bg">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial={FADE_UP_INITIAL}
+            whileInView={FADE_UP_ANIMATE}
+            viewport={VIEWPORT_ONCE}
+            className="max-w-3xl mb-8 text-center mx-auto"
+          >
+            <h2 className="text-4xl md:text-6xl font-black text-hero-fg mb-6">
+              הערכים שלנו
+            </h2>
+            <p className="text-hero-fg/70 text-lg md:text-xl leading-relaxed">
+              אלה העקרונות שמנחים אותנו בכל פרויקט - המצפן שמוביל את הדרך שלנו.
+              <br />
+              <span className="text-hero-fg font-medium">לא סיסמאות על הקיר, אלא הדרך שבה אנחנו באמת עובדים.</span>
+            </p>
+          </motion.div>
+
+          <StaggerValues values={values} />
+        </div>
+      </section>
+
+      {/* How We Work - איך אנחנו עובדים */}
+      <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-6">
           <motion.div
             initial={FADE_UP_INITIAL}
@@ -240,53 +239,130 @@ const About = () => {
             viewport={VIEWPORT_ONCE}
             className="max-w-3xl mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-black text-hero-fg mb-6">
-              הערכים שמנחים אותנו
+            <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+              איך אנחנו עובדים
             </h2>
-            <p className="text-hero-fg/70 text-lg">
-              ארבעה עקרונות שמובילים כל החלטה, כל פרויקט וכל אינטראקציה עם לקוחותינו.
+            <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
+              כל פרויקט הוא מסע משותף. אנחנו לא מאמינים בתבניות קבועות או בתהליכים נוקשים - אנחנו מאמינים בכם.
+              בגישה שמתאימה את עצמה לצרכים שלכם, לקצב שלכם, ולחזון שלכם. זו לא עבודה מולכם, זו עבודה איתכם.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {values.map((value, index) => (
-              <ValueCard key={value.title} value={value} index={index} />
+            {principles.map((principle, index) => (
+              <PrincipleCard key={principle.title} principle={principle} index={index} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Team */}
+      {/* Founders Message - דבר המייסדים */}
+      <section className="py-24 md:py-32 bg-background">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <motion.h2
+              initial={FADE_UP_INITIAL}
+              whileInView={FADE_UP_ANIMATE}
+              viewport={VIEWPORT_ONCE}
+              className="text-4xl md:text-6xl font-black text-foreground mb-12"
+            >
+              דבר המייסדים
+            </motion.h2>
+
+            <motion.div
+              initial={FADE_UP_INITIAL}
+              whileInView={FADE_UP_ANIMATE}
+              viewport={VIEWPORT_ONCE}
+              transition={{ delay: 0.1 }}
+              className="bg-hero-bg rounded-3xl p-8 md:p-12"
+            >
+              <div className="space-y-6 text-lg md:text-xl text-hero-fg/80 leading-relaxed">
+                <p className="text-hero-fg font-bold text-2xl md:text-3xl">
+                  אנחנו לא פה כדי לבנות לכם אתר נוסף.
+                </p>
+
+                <p>
+                  אנחנו פה כדי לשנות את הדרך שבה העסק שלכם מתקשר עם העולם הדיגיטלי.
+                  כי בואו נודה באמת - רוב האתרים שנבנים היום? הם עדיין מתפקדים כאילו אנחנו ב-2010.
+                  סליידרים מיושנים, חוויות משתמש שגורמות לאנשים לברוח, וקוד שמכביד על כל דבר.
+                  זה לא מה שהעסק שלכם צריך, וזה בטח לא מה שהלקוחות שלכם מצפים לו.
+                </p>
+
+                <p className="text-hero-fg font-medium text-xl md:text-2xl">
+                  שאלו את עצמכם: האם הנוכחות הדיגיטלית שלכם באמת משקפת את הרמה שבה אתם פועלים?
+                  או שהיא פשוט "מספיק טובה"?
+                </p>
+
+                <p>
+                  אנחנו מאמינים ששקיפות מלאה היא לא סיסמה - היא הבסיס לכל שיתוף פעולה אמיתי.
+                  בכל פרויקט אנחנו שותפים מלאים, לא ספקים שמעלימים פרטים.
+                  כשאתם עובדים איתנו, אתם יודעים בדיוק מה קורה, למה, ומה התוצאות שאפשר לצפות להן.
+                  בלי הפתעות, בלי שפה מקצועית שנועדה לבלבל.
+                </p>
+
+                <p>
+                  אם אתם עסק שמסתפק ב"מספיק טוב" - כנראה שאנחנו לא המקום בשבילכם.
+                  אבל אם אתם מחפשים שותף שיעזור לכם להוביל, לחדש, ולהפוך את הנוכחות הדיגיטלית שלכם
+                  ליתרון תחרותי אמיתי - <span className="text-primary">בואו נדבר.</span> אנחנו פה בשבילכם.
+                </p>
+
+                <div className="pt-8 border-t border-hero-fg/10">
+                  <p className="text-hero-fg font-bold text-xl">בהצלחה,</p>
+                  <p className="text-primary font-bold text-xl">צוות NEXO</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ideal Clients - מרגישים שזה הזמן? */}
       <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-6">
           <motion.div
             initial={FADE_UP_INITIAL}
             whileInView={FADE_UP_ANIMATE}
             viewport={VIEWPORT_ONCE}
-            className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+            className="max-w-3xl mb-16"
           >
-            <div>
-              <h2 className="text-4xl md:text-6xl font-black text-foreground">
-                הצוות שלנו
-              </h2>
-              <p className="text-muted-foreground text-lg mt-4 max-w-xl">
-                אנשים מוכשרים שמאחורי כל פרויקט מוצלח. צוות מגוון של מומחים בתחומם.
-              </p>
-            </div>
-            <Link
-              to="/contact#contact-form"
-              className="inline-flex items-center gap-2 text-lg font-medium text-foreground hover:text-primary transition-colors"
-            >
-              הצטרפו לצוות
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
+            <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+              מרגישים שזה הזמן?
+            </h2>
+            <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
+              אנחנו מאמינים שכל עסק יכול לצמוח.
+              <br />
+              <span className="text-foreground font-medium">
+                השאלה היא רק אם אתם מוכנים לעשות את הצעד - ואנחנו פה ללוות אתכם.
+              </span>
+            </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <TeamMemberCard key={member.name} member={member} index={index} />
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {clientProfiles.map((profile, index) => (
+              <ClientProfileCard key={profile.title} profile={profile} index={index} />
             ))}
           </div>
+
+          <motion.div
+            initial={FADE_UP_INITIAL}
+            whileInView={FADE_UP_ANIMATE}
+            viewport={VIEWPORT_ONCE}
+            className="bg-hero-bg rounded-3xl p-8 md:p-12 text-center"
+          >
+            <p className="text-2xl md:text-3xl font-bold text-hero-fg mb-4">
+              אם קראתם את זה והרגשתם שמדברים עליכם - כנראה שאנחנו צריכים לדבר.
+            </p>
+            <p className="text-hero-fg/70 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+              לא שיחת מכירות, לא פגישת הדגמה - פשוט שיחה כנה על העסק שלכם ואיך אפשר לקחת אותו קדימה.
+            </p>
+            <Link
+              to="/contact#contact-form"
+              className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-primary/90 transition-colors"
+            >
+              בואו נדבר
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 

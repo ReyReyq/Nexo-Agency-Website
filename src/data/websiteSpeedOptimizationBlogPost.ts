@@ -841,15 +841,13 @@ export const websiteSpeedOptimizationBlogPost: BlogPost = {
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
   <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">האתר שלכם צריך האצה?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/services/web-development" style="color: #ec4899;">NEXO</a> אנחנו מתמחים באופטימיזציית מהירות לאתרים.<br/>נבדוק את האתר שלכם, נזהה את הבעיות, וניישם את הפתרונות שיביאו תוצאות.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">קבלו בדיקת מהירות חינם + המלצות לשיפור</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/services/web-development" style="color: #ec4899;">NEXO</a> אנחנו מתמחים באופטימיזציית מהירות לאתרים.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לבדיקת מהירות חינם
+    נשמע מעניין?
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בדיקה מקצועית | המלצות מותאמות | ללא התחייבות</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="related-reading">
@@ -877,7 +875,7 @@ export const websiteSpeedOptimizationBlogPost: BlogPost = {
   `,
   category: "פיתוח אתרים",
   readTime: 20,
-  image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/services/digital-marketing.jpg",
   slug: "website-speed-optimization-guide",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

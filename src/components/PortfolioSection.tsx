@@ -5,6 +5,52 @@ import { motion, useInView } from "framer-motion";
 import { ArrowLeft, ExternalLink, Sparkles, ShoppingBag, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Marquee } from "@/components/ui/marquee";
+
+// Website showcase images for marquee
+const websiteImages = {
+  row1: [
+    "/images/websites-pictures/Gemini Generated Image (1).png",
+    "/images/websites-pictures/Gemini Generated Image (2).png",
+    "/images/websites-pictures/Gemini Generated Image (3).png",
+    "/images/websites-pictures/Gemini Generated Image (4).png",
+    "/images/websites-pictures/Gemini Generated Image (5).png",
+    "/images/websites-pictures/Gemini Generated Image (6).png",
+    "/images/websites-pictures/Gemini Generated Image (7).png",
+    "/images/websites-pictures/Gemini Generated Image (8).png",
+    "/images/websites-pictures/Gemini Generated Image.png",
+  ],
+  row2: [
+    "/images/websites-pictures/Gemini_Generated_Image_ubgf3rubgf3rubgf.png",
+    "/images/websites-pictures/Gemini_Generated_Image_1rnbic1rnbic1rnb.png",
+    "/images/websites-pictures/Gemini_Generated_Image_q4yb80q4yb80q4yb.png",
+    "/images/websites-pictures/Gemini_Generated_Image_rr1pmlrr1pmlrr1p.png",
+    "/images/websites-pictures/Gemini_Generated_Image_jvgltxjvgltxjvgl.png",
+    "/images/websites-pictures/Gemini_Generated_Image_ld0r21ld0r21ld0r.png",
+    "/images/websites-pictures/Google Gemini Generated Image.png",
+    "/images/websites-pictures/Google Gemini Image (1).png",
+    "/images/websites-pictures/Google Gemini Image (2).png",
+    "/images/websites-pictures/Google Gemini Image (3).png",
+    "/images/websites-pictures/Google Gemini Image (4).png",
+    "/images/websites-pictures/Google Gemini Image (5).png",
+    "/images/websites-pictures/Google Gemini Image (6).png",
+    "/images/websites-pictures/Google Gemini Image (7).png",
+    "/images/websites-pictures/Google Gemini Image (8).png",
+    "/images/websites-pictures/Google Gemini Image (9).png",
+    "/images/websites-pictures/Google Gemini Image (10).png",
+    "/images/websites-pictures/Google Gemini Image (11).png",
+    "/images/websites-pictures/Google Gemini Image (12).png",
+    "/images/websites-pictures/Google Gemini Image (13).png",
+    "/images/websites-pictures/Google Gemini Image (14).png",
+    "/images/websites-pictures/Google Gemini Image (15).png",
+    "/images/websites-pictures/Google Gemini Image (16).png",
+    "/images/websites-pictures/Google Gemini Image.png",
+    "/images/websites-pictures/Gemini Generated Image (1).png",
+    "/images/websites-pictures/Gemini Generated Image (3).png",
+    "/images/websites-pictures/Gemini Generated Image (5).png",
+    "/images/websites-pictures/Gemini Generated Image (7).png",
+  ],
+};
 
 // Project data - only real projects
 const projects = [
@@ -338,6 +384,47 @@ const PortfolioSection = memo(function PortfolioSection() {
             </a>
           </Button>
         </motion.div>
+      </div>
+
+      {/* Website Showcase Marquees */}
+      <div className="mt-16 md:mt-24 overflow-hidden">
+        {/* First Marquee Row - Left to Right */}
+        <div className="mb-6">
+          <Marquee className="[--duration:10s] [--gap:1.5rem]">
+            {websiteImages.row1.map((src, index) => (
+              <div
+                key={index}
+                className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+              >
+                <img
+                  src={src}
+                  alt={`Website showcase ${index + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </Marquee>
+        </div>
+
+        {/* Second Marquee Row - Right to Left */}
+        <Marquee className="[--duration:30s] [--gap:1.5rem]" reverse>
+          {websiteImages.row2.map((src, index) => (
+            <div
+              key={index}
+              className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+            >
+              <img
+                src={src}
+                alt={`Website showcase ${index + 10}`}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </Marquee>
       </div>
     </section>
   );

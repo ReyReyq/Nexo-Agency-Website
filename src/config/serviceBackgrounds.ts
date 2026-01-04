@@ -107,35 +107,32 @@ export const serviceBackgrounds: Record<string, BackgroundConfig> = {
     }
   },
 
-  // PrismaticBurst - dynamic light rays
+  // RippleGrid for digital-marketing - lightweight with marketing colors
   'digital-marketing': {
-    type: 'prismaticburst',
+    type: 'ripplegrid',
     props: {
-      animationType: 'rotate3d',
-      intensity: 2,
-      speed: 0.5,
-      distort: 1.0,
-      paused: false,
-      offset: { x: 0, y: 0 },
-      hoverDampness: 0.25,
-      rayCount: 24,
-      mixBlendMode: 'lighten',
-      colors: ['#ff007a', '#4d3dff', '#ffffff'] // Pink, blue, white - marketing vibes
+      enableRainbow: false,
+      gridColor: '#ff007a', // Pink/magenta for marketing vibes
+      rippleIntensity: 0.06,
+      gridSize: 12,
+      gridThickness: 14,
+      fadeDistance: 1.5,
+      vignetteStrength: 2.0,
+      glowIntensity: 0.15,
+      opacity: 0.85,
+      mouseInteraction: true,
+      mouseInteractionRadius: 1.3
     }
   },
+  // Orb for app-development - tech sphere with cyan hue
   'app-development': {
-    type: 'prismaticburst',
+    type: 'orb',
     props: {
-      animationType: 'rotate3d',
-      intensity: 1.8,
-      speed: 0.4,
-      distort: 0.8,
-      paused: false,
-      offset: { x: 0, y: 0 },
-      hoverDampness: 0.3,
-      rayCount: 20,
-      mixBlendMode: 'lighten',
-      colors: ['#03b3c3', '#0e5ea5', '#ffffff'] // Cyan, blue, white - tech vibes
+      hue: 185,  // Cyan for app-dev tech vibes
+      hoverIntensity: 0.5,
+      rotateOnHover: true,
+      forceHoverState: false,
+      backgroundColor: '#0a0a0a'
     }
   },
 

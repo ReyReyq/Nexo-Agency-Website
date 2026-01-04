@@ -402,7 +402,7 @@ const ContactPage = () => {
       <section className="min-h-screen flex items-center bg-hero-bg relative overflow-hidden">
         {/* Globe Background - Centered */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[600px] h-[600px] md:w-[800px] md:h-[800px] opacity-60">
+          <div className="w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[600px] md:h-[600px] lg:w-[800px] lg:h-[800px] opacity-60">
             <Globe className="w-full h-full" />
           </div>
         </div>

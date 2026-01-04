@@ -661,7 +661,7 @@ export const ecommerceBlogPosts: BlogPost[] = [
     `,
     category: "איקומרס",
     readTime: 15,
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80&fm=webp&fit=crop",
+    image: "/images/services/ecommerce.jpg",
     slug: "shopify-vs-woocommerce-israel-comparison",
     date: "1 בינואר 2026",
     lastUpdated: "1 בינואר 2026",

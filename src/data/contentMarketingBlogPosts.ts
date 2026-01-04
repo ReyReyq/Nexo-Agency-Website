@@ -494,7 +494,7 @@ export const contentMarketingBlogPosts: BlogPost[] = [
     `,
     category: "שיווק דיגיטלי",
     readTime: 15,
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80&fm=webp&fit=crop",
+    image: "/images/services/business-strategy.jpg",
     slug: "content-marketing-guide-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

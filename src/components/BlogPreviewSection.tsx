@@ -20,8 +20,8 @@ const ArticleCard = memo(({ post }: { post: BlogPost }) => (
   >
     {/* Flex container to fill the aspect-ratio box */}
     <div className="h-full flex flex-col">
-      {/* Image - 45% of card height */}
-      <div className="relative h-[45%] flex-shrink-0 overflow-hidden">
+      {/* Image - 45% of card height on desktop, 50% on mobile for bigger visual */}
+      <div className="relative h-[50%] md:h-[45%] flex-shrink-0 overflow-hidden">
         <img
           src={post.image}
           alt={post.title}
@@ -32,24 +32,34 @@ const ArticleCard = memo(({ post }: { post: BlogPost }) => (
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <span className="absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+        {/* Category badge - hidden on mobile, visible on md+ screens */}
+        <span className="hidden md:inline-block absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
           {post.category}
         </span>
+        {/* Title overlay on mobile for better visibility */}
+        <div className="md:hidden absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+          <h4 className="text-xs font-bold text-white leading-tight line-clamp-2" dir="rtl">
+            {post.title}
+          </h4>
+        </div>
       </div>
-      {/* Content - remaining 55% with overflow handling */}
-      <div className="flex-1 p-3 flex flex-col overflow-hidden" dir="rtl">
-        <h4 className="text-sm font-bold text-[#1a1a1a] leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
+      {/* Content - remaining space with overflow handling */}
+      <div className="flex-1 p-2 md:p-3 flex flex-col overflow-hidden" dir="rtl">
+        {/* Title hidden on mobile (shown in image overlay), visible on desktop */}
+        <h4 className="hidden md:block text-sm font-bold text-[#1a1a1a] leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
           {post.title}
         </h4>
-        <p className="mt-1.5 text-xs text-[#6a6a6a] leading-snug line-clamp-2 flex-1">
+        {/* Excerpt - hidden on mobile, visible on desktop */}
+        <p className="hidden md:block mt-1.5 text-xs text-[#6a6a6a] leading-snug line-clamp-2 flex-1">
           {post.excerpt}
         </p>
-        <div className="mt-auto pt-1.5 flex items-center justify-between border-t border-[#f0f0f0]">
+        {/* Mobile: Just show read time and CTA */}
+        <div className="mt-auto pt-1 md:pt-1.5 flex items-center justify-between border-t border-[#f0f0f0]">
           <div className="flex items-center gap-1 text-[#9a9a9a]">
             <Clock className="w-3 h-3" />
             <span className="text-[10px] font-medium">{post.readTime} דק׳</span>
           </div>
-          <span className="text-[10px] font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
+          <span className="text-[10px] font-semibold text-primary md:opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
             קרא עוד
             <ArrowLeft className="w-2.5 h-2.5" />
           </span>

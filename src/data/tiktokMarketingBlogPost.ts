@@ -938,17 +938,12 @@ export const tiktokMarketingBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים להפוך את טיקטוק למנוע צמיחה לעסק שלכם?</h2>
-
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/social-media-marketing" style="color: #ec4899;">שיווק ברשתות חברתיות</a> ובניית אסטרטגיית תוכן לטיקטוק ואינסטגרם.<br/>עזרנו לעשרות עסקים ישראליים להגיע למאות אלפי צפיות ולהמיר אותן ללקוחות.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">מוכנים לגלות איך טיקטוק יכול לעבוד בשבילכם?</p>
-
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים לדעת איך טיקטוק יכול לעבוד בשביל העסק שלכם?</h2>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/social-media-marketing" style="color: #ec4899;">שיווק ברשתות חברתיות</a> ובניית אסטרטגיית תוכן לטיקטוק.</p>
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לתיאום ייעוץ חינם ←
+    נשמע מעניין? ←
   </a>
-
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">ניתוח חשבון חינם + אסטרטגיית תוכן מותאמת + ללא התחייבות</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="related-reading">
@@ -976,7 +971,7 @@ export const tiktokMarketingBlogPost: BlogPost = {
   `,
   category: "שיווק דיגיטלי",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1611605698335-8b1569810432?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/services/social-media-marketing.jpg",
   slug: "tiktok-marketing-guide-business-2025",
   date: "1 בינואר 2025",
   lastUpdated: "1 בינואר 2025",

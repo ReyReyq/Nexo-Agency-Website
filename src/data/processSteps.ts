@@ -11,6 +11,10 @@ export interface ProcessStep {
   title: string;
   subtitle: string;
   description: ProcessStepDescription;
+  details?: {
+    label: string;
+    value: string;
+  }[];
   color: {
     gradient: string; // Tailwind gradient classes
     primary: string;  // Hex color for 3D
@@ -34,6 +38,11 @@ export const processSteps: ProcessStep[] = [
         "יוצאים עם הבנה מלאה של הצרכים"
       ]
     },
+    details: [
+      { label: "תוצר", value: "מסמך איפיון עסקי" },
+      { label: "זמן", value: "3-5 ימי עבודה" },
+      { label: "מיקוד", value: "קהל יעד ומטרות" }
+    ],
     color: {
       gradient: "from-blue-500 via-indigo-500 to-violet-500",
       primary: "#3B82F6",
@@ -55,6 +64,11 @@ export const processSteps: ProcessStep[] = [
         "מפה ברורה - מה בונים, למה ומתי"
       ]
     },
+    details: [
+      { label: "תוצר", value: "מפת אתר ו-Wireframes" },
+      { label: "טכנולוגיה", value: "מפרט טכני מלא" },
+      { label: "לו\"ז", value: "תוכנית עבודה מפורטת" }
+    ],
     color: {
       gradient: "from-violet-500 via-purple-500 to-fuchsia-500",
       primary: "#8B5CF6",
@@ -76,6 +90,11 @@ export const processSteps: ProcessStep[] = [
         "משפיעים בזמן אמת עד שאתם מרוצים לגמרי"
       ]
     },
+    details: [
+      { label: "תוצר", value: "פרוטוטייפ אינטראקטיבי" },
+      { label: "כלי עיצוב", value: "Figma (High-Fidelity)" },
+      { label: "איטרציות", value: "פידבק בלייב" }
+    ],
     color: {
       gradient: "from-fuchsia-500 via-pink-500 to-rose-500",
       primary: "#D946EF",
@@ -97,6 +116,11 @@ export const processSteps: ProcessStep[] = [
         "שקיפות מלאה ואפס הפתעות"
       ]
     },
+    details: [
+      { label: "סטאק", value: "Next.js, TypeScript, Tailwind" },
+      { label: "AI", value: "Vercel AI SDK, OpenAI" },
+      { label: "QA", value: "בדיקות אוטומטיות מלאות" }
+    ],
     color: {
       gradient: "from-rose-500 via-orange-500 to-amber-500",
       primary: "#F43F5E",
@@ -118,6 +142,11 @@ export const processSteps: ProcessStep[] = [
         "שותפות אמיתית להצלחה שלכם"
       ]
     },
+    details: [
+      { label: "ניטור", value: "Analytics & Heatmaps" },
+      { label: "תמיכה", value: "24/7 SLA לבעיות קריטיות" },
+      { label: "שיפור", value: "אופטימיזציית המרות" }
+    ],
     color: {
       gradient: "from-amber-500 via-green-500 to-emerald-500",
       primary: "#10B981",

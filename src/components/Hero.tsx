@@ -14,8 +14,8 @@ import { BackgroundBeams } from "./ui/background-beams";
 // Using WebP format for better compression, q=80 for good quality/size balance
 const heroImages = [
   HERO_TRANSITION_IMAGE, // Same as preloader middle image (already optimized)
-  "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1920&q=80&fm=webp&fit=crop",
-  "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80&fm=webp&fit=crop",
+  "/images/hero/creative-team-meeting.webp",
+  "/images/hero/team-collaboration.webp",
 ];
 
 // Distance threshold in pixels before changing image

@@ -653,22 +653,13 @@ export const chatbotImplementationBlogPost: BlogPost = {
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
   <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מוכנים להטמיע צ'אטבוט שעובד?</h2>
 
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/ai-automation/chatbots" style="color: #ec4899;">בניית צ'אטבוטים חכמים</a> לעסקים ישראליים.<br/>לא פתרונות מדף - אלא מערכות שמותאמות בדיוק לצרכים שלכם ומביאות תוצאות.</p>
-
-  <ul style="color: rgba(255,255,255,0.9); text-align: right; max-width: 400px; margin: 0 auto 24px; list-style: none; padding: 0;">
-    <li style="margin-bottom: 8px;">✓ תמיכה מלאה בעברית</li>
-    <li style="margin-bottom: 8px;">✓ אינטגרציה עם כל מערכת קיימת</li>
-    <li style="margin-bottom: 8px;">✓ AI מתקדם (GPT-4, Claude)</li>
-    <li style="margin-bottom: 8px;">✓ תמיכה ועדכונים שוטפים</li>
-  </ul>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">רוצים לראות דמו של צ'אטבוט בפעולה?</p>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/ai-automation/chatbots" style="color: #ec4899;">בניית צ'אטבוטים חכמים</a> לעסקים ישראליים.</p>
 
   <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
-    לתיאום שיחת ייעוץ חינם
+    נשמע מעניין?
   </a>
 
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">30 דקות - נבין מה אתם צריכים ונראה לכם מה אפשרי</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="sources">
@@ -685,7 +676,7 @@ export const chatbotImplementationBlogPost: BlogPost = {
   `,
   category: "AI ואוטומציה",
   readTime: 18,
-  image: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=800&q=80&fm=webp&fit=crop",
+  image: "/images/services/ai-automation.jpg",
   slug: "chatbot-implementation-guide",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

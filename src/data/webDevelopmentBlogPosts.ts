@@ -610,7 +610,7 @@ export const webDevelopmentBlogPosts: BlogPost[] = [
     `,
     category: "פיתוח אתרים",
     readTime: 12,
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80&fm=webp&fit=crop",
+    image: "/images/services/digital-marketing.jpg",
     slug: "website-development-cost-israel-2025",
     date: "1 בינואר 2025",
     lastUpdated: "1 בינואר 2025",

@@ -2,14 +2,14 @@ import { motion, useInView } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { Monitor, Palette, Brain, ArrowLeft, Zap, TrendingUp, Clock } from "lucide-react";
 
-// Service cards with optimized images: 600px for card display, WebP format
+// Service cards with optimized local images
 const services = [
   {
     icon: Monitor,
     title: "אתרים שמוכרים בשינה",
     subtitle: "בניית אתרים וחנויות",
     description: "לא סתם אתרים יפים. אתרים שעובדים 24/7 ומביאים לקוחות חדשים כל יום. אנחנו בונים מכונות מכירה דיגיטליות.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/services/web-development.jpg",
     stats: { value: "340%", label: "ROI ממוצע" },
   },
   {
@@ -17,7 +17,7 @@ const services = [
     title: "מיתוג שגורם לזכור אותך",
     subtitle: "מיתוג וזהות ויזואלית",
     description: "לא סתם לוגו. שפה ויזואלית שלמה שמשדרת יוקרה, בידול ומקצועיות. המותג שלך ייחרט בזיכרון.",
-    image: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/services/branding-design.jpg",
     stats: { value: "500+", label: "מותגים שעיצבנו" },
   },
   {
@@ -25,7 +25,7 @@ const services = [
     title: "AI שחוסך לך 20 שעות בשבוע",
     subtitle: "פתרונות AI לעסקים",
     description: "אוטומציות ובינה מלאכותית שעובדות בשבילך. צ'אטבוטים, אוטומציות, ומערכות חכמות שמייעלות את העסק.",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&q=80&fm=webp&fit=crop",
+    image: "/images/services/ai-automation.jpg",
     stats: { value: "20h", label: "חיסכון שבועי" },
   },
 ];

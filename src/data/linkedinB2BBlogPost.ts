@@ -968,17 +968,12 @@ export const linkedinB2BBlogPost: BlogPost = {
 </section>
 
 <section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
-  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים להפוך את לינקדאין למכונת לידים B2B?</h2>
-
-  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/digital-marketing" style="color: #ec4899;">שיווק דיגיטלי B2B</a> ובניית אסטרטגיות לינקדאין שמביאות לידים איכותיים.<br/>אנחנו עוזרים לחברות ישראליות להגדיל את הנוכחות בלינקדאין ולהמיר אותה לעסקאות.</p>
-
-  <p style="color: #ffffff; font-size: 1.25rem; font-weight: bold; margin-bottom: 32px;">רוצים לדעת איך לינקדאין יכולה להביא לכם יותר לקוחות B2B?</p>
-
-  <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #0077b5 0%, #005582 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(0, 119, 181, 0.4); transition: all 0.3s ease;">
-    לתיאום ייעוץ חינם ←
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">רוצים לדעת איך לינקדאין יכולה לעבוד בשבילכם?</h2>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-NEXO אנחנו מתמחים ב<a href="/services/digital-marketing" style="color: #ec4899;">שיווק דיגיטלי B2B</a> ובניית אסטרטגיות לינקדאין.</p>
+  <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+    רוצים לדעת עוד? ←
   </a>
-
-  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">ניתוח נוכחות לינקדאין חינם • ללא התחייבות • המלצות מעשיות תוך 48 שעות</p>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
 </section>
 
 <section class="related-reading">
@@ -1006,7 +1001,7 @@ export const linkedinB2BBlogPost: BlogPost = {
   `,
   category: "שיווק דיגיטלי",
   readTime: 22,
-  image: "https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=1200&q=80&fm=webp&fit=crop",
+  image: "/images/blog/linkedin-business-networking.webp",
   slug: "linkedin-b2b-marketing-guide",
   date: "2 בינואר 2025",
   lastUpdated: "2 בינואר 2025",

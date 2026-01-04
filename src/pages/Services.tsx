@@ -42,16 +42,16 @@ const sizeClasses: Record<CardSize, string> = {
 
 // New images for services (different from other pages)
 const serviceImages: Record<string, string> = {
-  "web-development": "https://images.unsplash.com/photo-1547658719-da2b51169166?w=800&q=80",
-  "ecommerce": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
-  "branding": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80",
-  "ai-automation": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80",
-  "digital-marketing": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
-  "seo": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?w=800&q=80",
-  "social-media": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80",
-  "strategy": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&q=80",
-  "app-development": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80",
-  "custom-development": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
+  "web-development": "/images/services/web-development.jpg",
+  "ecommerce": "/images/services/ecommerce.jpg",
+  "branding": "/images/services/branding-design.jpg",
+  "ai-automation": "/images/services/ai-automation.jpg",
+  "digital-marketing": "/images/services/digital-marketing.jpg",
+  "seo": "/images/services/seo-optimization.jpg",
+  "social-media": "/images/services/social-media-marketing.jpg",
+  "strategy": "/images/services/business-strategy.jpg",
+  "app-development": "/images/services/app-development.jpg",
+  "custom-development": "/images/services/custom-development.jpg",
 };
 
 const ServiceBentoCard = memo(({ service, index, size }: ServiceBentoCardProps) => {
@@ -153,7 +153,7 @@ const ServicesHero = memo(() => {
     <section className="relative min-h-[85vh] flex items-center bg-hero-bg pt-20 overflow-hidden">
       {/* Globe Background - Centered */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-[600px] h-[600px] md:w-[800px] md:h-[800px] opacity-60">
+        <div className="w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[600px] md:h-[600px] lg:w-[800px] lg:h-[800px] opacity-60">
           <Globe className="w-full h-full" />
         </div>
       </div>

@@ -49,9 +49,8 @@ const AboutDarkSection = () => {
         style={{ scale: imageScale }}
         className="absolute inset-0 bg-cover bg-center z-0"
       >
-        {/* TODO: Consider converting external Unsplash URL to local optimized image */}
         <img
-          src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=1920&q=80&fm=webp&fit=crop"
+          src="/images/gallery/team-office-meeting.jpg"
           alt="Team collaboration"
           loading="lazy"
           decoding="async"

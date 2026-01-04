@@ -463,12 +463,14 @@ export const digitalMarketingSmallBusinessBlogPost: BlogPost = {
   <p><strong>⚠️ טעות נפוצה:</strong> להתמקד ב"מדדי יהירות" (Vanity Metrics) כמו לייקים ועוקבים. הם נחמדים, אבל לא בהכרח מייצרים עסקים. עדיף 500 עוקבים איכותיים שהופכים ללקוחות מאשר 50,000 עוקבים אדישים.</p>
 </div>
 
-<!-- CTA Box -->
-<div class="cta-box" style="background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); color: white; border-radius: 16px; padding: 32px; margin: 40px 0; text-align: center;">
-  <h3 style="color: white; font-size: 1.5rem; margin-bottom: 16px;">מוכנים לקחת את השיווק הדיגיטלי שלכם לשלב הבא?</h3>
-  <p style="font-size: 1.1rem; margin-bottom: 24px; opacity: 0.95;">צוות המומחים של NEXO ילווה אתכם בבניית אסטרטגיה דיגיטלית מותאמת אישית לעסק שלכם. פגישת ייעוץ ראשונה ללא עלות.</p>
-  <a href="/contact" style="display: inline-block; background: white; color: #3b82f6; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem;">קבעו פגישת ייעוץ חינם &larr;</a>
-</div>
+<section class="cta-section" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 24px; padding: 48px 32px; margin: 48px 0; text-align: center;">
+  <h2 style="color: #ffffff; font-size: 2rem; margin-bottom: 16px;">מעוניינים בשיווק דיגיטלי לעסק?</h2>
+  <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; margin-bottom: 24px;">ב-<a href="/" style="color: #ec4899; text-decoration: underline;">NEXO</a> אנחנו עוזרים לעסקים לצמוח בדיגיטל.</p>
+  <a href="/contact" style="display: inline-block; background: linear-gradient(135deg, #ec4899 0%, #be185d 100%); color: #ffffff; font-weight: bold; font-size: 1.1rem; padding: 16px 40px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4); transition: all 0.3s ease;">
+    רוצים לדעת עוד? ←
+  </a>
+  <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 20px;">בואו נדבר</p>
+</section>
 
 <!-- FAQ Section with Schema.org -->
 <section id="faq" itemscope itemtype="https://schema.org/FAQPage">

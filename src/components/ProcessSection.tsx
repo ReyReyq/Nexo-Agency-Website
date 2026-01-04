@@ -118,8 +118,8 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
       }}
       dir="rtl"
     >
-      {/* Sticky Container */}
-      <div className="sticky top-0 min-h-screen min-h-[100dvh] overflow-hidden flex items-center justify-center lg:items-center">
+      {/* Sticky Container - needs fixed height (not min-height) for proper sticky behavior */}
+      <div className="sticky top-0 h-screen h-[100dvh] overflow-hidden flex items-center justify-center lg:items-center">
         {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.03]"

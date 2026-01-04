@@ -413,7 +413,7 @@ const Portfolio = () => {
         {/* First Marquee Row - Left to Right */}
         <div className="mb-4 sm:mb-6">
           <Marquee
-            className="[--duration:30s] [--gap:1rem] sm:[--gap:1.5rem]"
+            className="[--duration:10s] [--gap:1rem] sm:[--gap:1.5rem]"
           >
             {websiteImages.row1.map((src, index) => (
               <div

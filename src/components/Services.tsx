@@ -87,7 +87,7 @@ const ServiceCard = React.memo(({
       </div>
 
       {/* Content */}
-      <div className="absolute bottom-0 right-0 left-0 p-6 md:p-8">
+      <div className="absolute bottom-0 right-0 left-0 p-4 sm:p-6 md:p-8">
         {/* Stats Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -112,7 +112,7 @@ const ServiceCard = React.memo(({
         <div className="flex items-start justify-between">
           <div>
             <p className="text-primary text-sm font-medium mb-1">{service.subtitle}</p>
-            <h3 className="text-2xl md:text-3xl font-bold text-hero-fg mb-3">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-hero-fg mb-3">
               {service.title}
             </h3>
             <motion.p 
@@ -165,9 +165,9 @@ const Services = () => {
         }} />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 mb-16">
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
@@ -179,7 +179,7 @@ const Services = () => {
               transition={{ duration: 0.6 }}
               className="h-1 bg-primary mb-6"
             />
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-[1.1]">
+            <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-[1.1]">
               לא סתם שירותים.
               <br />
               <span className="text-gradient">פתרונות שעובדים.</span>
@@ -215,7 +215,7 @@ const Services = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {services.map((service, index) => (
             <ServiceCard key={index} service={service} index={index} />
           ))}

@@ -32,7 +32,7 @@ const Footer = () => {
   return (
     <>
     <footer ref={ref} className="bg-[#0a0a0a] text-white py-12 md:py-16">
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-10">
           {/* Logo & Tagline */}
@@ -61,7 +61,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
+                  className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, y: 10 }}
@@ -82,13 +82,13 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm"
           >
-            <a href="mailto:sales@nexoagency.com" className="text-white/60 hover:text-primary transition-colors">
+            <a href="mailto:sales@nexoagency.com" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
               sales@nexoagency.com
             </a>
-            <a href="tel:+972533622423" className="text-white/60 hover:text-primary transition-colors">
+            <a href="tel:+972533622423" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
               053-362-2423
             </a>
-            <span className="text-white/40">תל אביב, ישראל</span>
+            <span className="text-white/40 py-2">תל אביב, ישראל</span>
           </motion.div>
         </div>
 
@@ -106,11 +106,11 @@ const Footer = () => {
             </p>
 
             {/* Legal Links */}
-            <div className="flex gap-6 text-sm">
-              <a href="/privacy" className="text-white/40 hover:text-white transition-colors">
+            <div className="flex gap-4 text-sm">
+              <a href="/privacy" className="text-white/40 hover:text-white transition-colors py-2 min-h-[44px] flex items-center px-1">
                 מדיניות פרטיות
               </a>
-              <a href="/terms" className="text-white/40 hover:text-white transition-colors">
+              <a href="/terms" className="text-white/40 hover:text-white transition-colors py-2 min-h-[44px] flex items-center px-1">
                 תנאי שימוש
               </a>
             </div>
@@ -120,13 +120,13 @@ const Footer = () => {
     </footer>
 
     {/* Credit Section - RTL for Hebrew */}
-    <div className="bg-[#050505] border-t border-white/5 py-4" dir="rtl">
+    <div className="bg-[#050505] border-t border-white/5 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]" dir="rtl">
       <motion.a
         href="/"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ duration: 0.5, delay: 0.4 }}
-        className="flex items-center justify-center gap-2 text-white/30 hover:text-white/50 transition-colors duration-300"
+        className="flex items-center justify-center gap-2 text-white/30 hover:text-white/50 transition-colors duration-300 min-h-[44px] py-2"
       >
         <span className="text-xs font-medium">נוצר באהבה</span>
         <Heart className="w-3.5 h-3.5 text-primary fill-primary animate-pulse" />

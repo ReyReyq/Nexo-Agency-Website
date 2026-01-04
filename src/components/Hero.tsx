@@ -208,7 +208,7 @@ const Hero = () => {
       {/* Content - Bottom Right with text reveal animations */}
       <motion.div
         style={{ y: textY, opacity }}
-        className="relative z-10 container mx-auto px-6 md:px-12 pb-24 md:pb-32"
+        className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-16 pb-16 sm:pb-24 md:pb-32"
       >
         <div className="max-w-4xl ml-auto text-right" dir="rtl">
           {/* Stacked Headlines with reveal animation */}
@@ -219,7 +219,7 @@ const Hero = () => {
                 initial="hidden"
                 animate={hasAnimated ? "visible" : "hidden"}
                 variants={lineVariants}
-                className="text-[12vw] md:text-[10vw] lg:text-[9vw] font-black text-hero-fg leading-[0.85] tracking-[-0.02em]"
+                className="text-[clamp(2.5rem,12vw,6rem)] sm:text-[clamp(3rem,10vw,7rem)] md:text-[clamp(4rem,10vw,8rem)] lg:text-[clamp(5rem,9vw,10rem)] font-black text-hero-fg leading-[0.85] tracking-[-0.02em]"
               >
                 {line}
               </motion.h1>
@@ -232,7 +232,7 @@ const Hero = () => {
             initial="hidden"
             animate={hasAnimated ? "visible" : "hidden"}
             variants={fadeUpVariants}
-            className="text-hero-fg/70 text-lg md:text-xl max-w-2xl mt-8 leading-relaxed"
+            className="text-hero-fg/70 text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
           >
             סוכנות דיגיטל שמובילה מותגים לצמיחה אמיתית. אסטרטגיה, עיצוב ופיתוח - הכל תחת קורת גג אחת.
           </motion.p>
@@ -243,7 +243,7 @@ const Hero = () => {
             initial="hidden"
             animate={hasAnimated ? "visible" : "hidden"}
             variants={fadeUpVariants}
-            className="mt-10"
+            className="mt-8 sm:mt-10"
           >
             <motion.div
               style={{ x: springX, y: springY }}
@@ -259,7 +259,7 @@ const Hero = () => {
                 shimmerDuration="2.5s"
                 borderRadius="9999px"
                 background="linear-gradient(90deg, hsl(328, 100%, 54%), hsl(328, 100%, 48%))"
-                className="group relative inline-flex items-center gap-3 px-8 py-4 text-white font-semibold text-lg shadow-[0_0_30px_rgba(255,20,147,0.3)] hover:shadow-[0_0_50px_rgba(255,20,147,0.5)] transition-shadow duration-300"
+                className="group relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] text-white font-semibold text-base sm:text-lg shadow-[0_0_30px_rgba(255,20,147,0.3)] hover:shadow-[0_0_50px_rgba(255,20,147,0.5)] transition-shadow duration-300"
               >
                 <span className="relative z-10">בואו נדבר על הפרויקט שלכם</span>
                 <motion.span

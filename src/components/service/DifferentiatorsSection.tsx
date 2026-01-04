@@ -418,7 +418,7 @@ const FeaturedMarqueeCard = memo(({ stat, accentColor, bgColor }: FeaturedMarque
   return (
     <div
       className={cn(
-        "group relative flex-shrink-0 overflow-hidden rounded-2xl border-2 bg-card p-4",
+        "group relative flex-shrink-0 overflow-hidden rounded-2xl border-2 bg-card p-4 sm:p-5 md:p-6",
         "transition-all duration-300 hover:shadow-xl hover:shadow-primary/10"
       )}
       style={{
@@ -497,7 +497,7 @@ const BenefitCardComponent = memo(({ benefit, accentColor, bgColor }: BenefitCar
   return (
     <div
       className={cn(
-        "group relative flex-shrink-0 overflow-hidden rounded-2xl border border-border/50 bg-card p-4",
+        "group relative flex-shrink-0 overflow-hidden rounded-2xl border border-border/50 bg-card p-4 sm:p-5 md:p-6",
         "transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
       )}
       style={{
@@ -564,9 +564,9 @@ const DifferentiatorsSection = memo(({ service }: DifferentiatorsSectionProps) =
     <section
       ref={sectionRef}
       id="details"
-      className="py-24 md:py-32 bg-background overflow-hidden"
+      className="py-12 sm:py-16 md:py-20 bg-background overflow-hidden"
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -583,14 +583,14 @@ const DifferentiatorsSection = memo(({ service }: DifferentiatorsSectionProps) =
           >
             למה דווקא אנחנו?
           </span>
-          <h2 className="text-3xl md:text-5xl font-black text-foreground mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-6">
             מה אתם{" "}
             <span className="relative inline-block" style={{ color: service.accentColor }}>
               מקבלים
               <DrawCircle accentColor={service.accentColor} />
             </span>
           </h2>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             לא רק הבטחות - תוצאות אמיתיות שמשנות את העסק שלכם
           </p>
         </motion.div>
@@ -602,7 +602,7 @@ const DifferentiatorsSection = memo(({ service }: DifferentiatorsSectionProps) =
           <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 bg-gradient-to-l from-background to-transparent z-10" />
 
           {/* First row - scrolls right (includes featured stat card) */}
-          <Marquee pauseOnHover className="[--duration:40s] mb-4">
+          <Marquee pauseOnHover className="[--duration:40s] mb-3 sm:mb-4">
             {/* Featured stat card as first item */}
             <FeaturedMarqueeCard
               stat={data.featured}
@@ -638,13 +638,13 @@ const DifferentiatorsSection = memo(({ service }: DifferentiatorsSectionProps) =
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-16 mb-14 text-center"
+          className="mt-10 sm:mt-12 md:mt-16 mb-10 sm:mb-12 md:mb-14 text-center"
         >
-          <h3 className="text-3xl font-medium text-muted-foreground sm:text-4xl md:text-5xl">
+          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-muted-foreground">
             {data.copywriting.headline}
           </h3>
-          <div className="mt-4">
-            <span className="text-3xl font-bold sm:text-4xl md:text-5xl">
+          <div className="mt-3 sm:mt-4">
+            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
               <AnimatedText
                 phrases={data.copywriting.phrases}
                 accentColor={service.accentColor}

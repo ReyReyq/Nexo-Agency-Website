@@ -71,7 +71,7 @@ const MarqueeButtonMobile = ({
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className={`relative h-9 w-28 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 ${
+      className={`relative h-11 w-32 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 ${
         isPastHero
           ? "bg-[#1a1a1a] text-white hover:bg-[#2a2a2a]"
           : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
@@ -224,7 +224,7 @@ const GlassNavbar = () => {
           cursor: hovered ? "none" : "auto",
         }}
         className={`
-          glass-nav-area fixed left-4 right-4 top-4 z-40 mx-auto max-w-6xl overflow-hidden
+          glass-nav-area fixed left-4 right-4 top-[max(1rem,env(safe-area-inset-top))] z-40 mx-auto max-w-6xl overflow-hidden
           transition-all duration-500
           ${isScrolled
             ? isPastHero
@@ -374,7 +374,7 @@ const MenuButton = memo(({ setMenuOpen, isPastHero, isScrolled }: MenuButtonProp
       }}
       whileTap={{ scale: 0.9 }}
       className={`
-        relative z-10 flex items-center justify-center w-10 h-10 md:w-12 md:h-12
+        relative z-10 flex items-center justify-center w-11 h-11 md:w-12 md:h-12
         rounded-full transition-all duration-300
         ${isPastHero
           ? "bg-[#1a1a1a] text-white hover:bg-primary"

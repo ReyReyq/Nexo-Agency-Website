@@ -51,7 +51,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
     <AnimatePresence>
       {isOpen && (
         <motion.nav
-          className="fixed inset-0 z-50 bg-white"
+          className="fixed inset-0 z-50 bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
           initial="closed"
           animate="open"
           exit="closed"
@@ -70,7 +70,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
 
           {/* Close Button */}
           <motion.button
-            className="absolute top-6 left-6 md:top-8 md:left-8 text-2xl md:text-3xl bg-white text-[#1a1a1a] hover:text-primary border border-transparent hover:border-primary transition-colors p-3 md:p-4 rounded-full z-10"
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 text-2xl md:text-3xl bg-white text-[#1a1a1a] hover:text-primary border border-transparent hover:border-primary transition-colors p-3 md:p-4 rounded-full z-10 min-w-[44px] min-h-[44px] flex items-center justify-center"
             whileHover={{ rotate: "90deg", scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleClose}
@@ -80,12 +80,12 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
 
           {/* Logo in center top */}
           <motion.div
-            className="absolute top-6 md:top-8 left-1/2 -translate-x-1/2 z-10"
+            className="absolute top-4 sm:top-6 md:top-8 left-1/2 -translate-x-1/2 z-10"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Link to="/" onClick={handleClose}>
+            <Link to="/" onClick={handleClose} className="min-h-[44px] flex items-center">
               <img
                 src="/logo.svg"
                 alt="Nexo"
@@ -103,7 +103,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="flex flex-col gap-3 md:gap-4 absolute bottom-12 md:bottom-16 right-6 md:right-12 text-right"
+            className="flex flex-col gap-2 sm:gap-3 md:gap-4 absolute bottom-8 sm:bottom-12 md:bottom-16 right-4 sm:right-6 md:right-8 lg:right-12 text-right p-4 sm:p-6 md:p-8"
             dir="rtl"
           >
             {navLinks.map((link) => (
@@ -120,7 +120,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
           {/* Email at bottom left */}
           <motion.a
             href="mailto:sales@nexoagency.com"
-            className="absolute bottom-12 md:bottom-16 left-6 md:left-12 text-[#1a1a1a]/60 hover:text-primary transition-colors text-sm md:text-base font-medium"
+            className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-4 sm:left-6 md:left-8 lg:left-12 text-[#1a1a1a]/60 hover:text-primary transition-colors text-sm md:text-base font-medium min-h-[44px] flex items-center"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
@@ -148,7 +148,7 @@ const NavLink = memo(({ text, href, isActive, onClick }: NavLinkProps) => {
         to={href}
         onClick={onClick}
         className={`
-          inline-block z-10 w-fit font-black text-5xl md:text-7xl transition-colors
+          inline-block z-10 w-fit font-black text-2xl sm:text-3xl md:text-5xl lg:text-7xl transition-colors min-h-[44px] flex items-center
           ${isActive ? "text-primary" : "text-[#1a1a1a] hover:text-primary"}
         `}
       >

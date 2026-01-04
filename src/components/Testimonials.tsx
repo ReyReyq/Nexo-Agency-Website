@@ -131,7 +131,7 @@ const Testimonials = () => {
 
   return (
     <section className="py-24 md:py-32 bg-background overflow-hidden">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -227,17 +227,22 @@ const Testimonials = () => {
             </motion.button>
 
             {/* Dots */}
-            <div className="flex gap-2">
+            <div className="flex gap-1">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => handleDotClick(index)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === current
-                      ? "w-8 bg-primary"
-                      : "w-2 bg-border hover:bg-muted-foreground"
-                  }`}
-                />
+                  className="p-3 -m-1 flex items-center justify-center min-w-[44px] min-h-[44px]"
+                  aria-label={`Go to testimonial ${index + 1}`}
+                >
+                  <span
+                    className={`block h-2 rounded-full transition-all duration-300 ${
+                      index === current
+                        ? "w-8 bg-primary"
+                        : "w-2 bg-border hover:bg-muted-foreground"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 

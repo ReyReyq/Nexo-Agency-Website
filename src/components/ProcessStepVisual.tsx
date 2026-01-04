@@ -81,7 +81,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-[380px] md:h-[380px] -translate-x-12 sm:-translate-x-16 md:-translate-x-32"
+            className="relative z-10 w-full max-w-[380px] aspect-square -translate-x-8 sm:-translate-x-12 md:-translate-x-24 lg:-translate-x-32"
           >
             <Suspense fallback={<ComponentLoader />}>
               <FallingText
@@ -103,7 +103,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-48 h-40 sm:w-56 sm:h-48 md:w-[420px] md:h-[300px] flex items-center justify-center"
+            className="relative z-10 w-full max-w-[420px] aspect-[7/5] flex items-center justify-center"
           >
             <Suspense fallback={<ComponentLoader />}>
               <TrueFocus
@@ -126,7 +126,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-[420px] md:h-[420px]"
+            className="relative z-10 w-full max-w-[420px] aspect-square"
           >
             <Suspense fallback={<ComponentLoader />}>
               <ASCIIText
@@ -147,7 +147,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 flex items-center justify-center scale-[0.48] sm:scale-[0.56] md:scale-[0.72] lg:scale-100 origin-center"
+            className="relative z-10 flex items-center justify-center scale-[0.4] sm:scale-[0.5] md:scale-[0.65] lg:scale-[0.8] xl:scale-100 origin-center"
           >
             <Suspense fallback={<ComponentLoader />}>
               <IconCloud images={devToolImages} />
@@ -161,7 +161,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-48 sm:w-56 md:w-[340px]"
+            className="relative z-10 w-full max-w-[340px]"
           >
             <Suspense fallback={<ComponentLoader />}>
               <LaunchNotifications />
@@ -198,9 +198,9 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
         )}
       </AnimatePresence>
 
-      {/* Step number badge - hidden on mobile, visible on md+ */}
+      {/* Step number badge - 44px minimum on mobile for touch, scales up on larger screens */}
       <motion.div
-        className="absolute -bottom-4 -right-4 w-16 h-16 rounded-xl bg-white border-2 border-primary/20 hidden md:flex items-center justify-center shadow-md z-20"
+        className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 md:-bottom-4 md:-right-4 w-11 h-11 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-lg sm:rounded-xl bg-white border-2 border-primary/20 flex items-center justify-center shadow-md z-20"
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       >
@@ -211,7 +211,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.2 }}
-            className="text-xl md:text-2xl font-black text-primary"
+            className="text-lg sm:text-xl md:text-2xl font-black text-primary"
           >
             {stepNumber}
           </motion.span>

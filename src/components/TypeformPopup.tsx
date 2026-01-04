@@ -750,7 +750,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
   }, [isOpen, showStartScreen]);
 
   const renderStepContent = () => {
-    const inputClasses = `w-full text-2xl md:text-3xl bg-transparent border-b-2 pb-3 outline-none transition-colors ${
+    const inputClasses = `w-full min-h-[44px] text-xl sm:text-2xl md:text-3xl bg-transparent border-b-2 pb-3 outline-none transition-colors ${
       error?.field === currentStepData.id
         ? "border-red-500 text-red-500"
         : "border-foreground/20 focus:border-primary text-foreground placeholder:text-foreground/30"
@@ -841,7 +841,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
 
       case "budget":
         return (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 sm:gap-3">
             {budgetOptions.map((option, index) => (
               <motion.button
                 key={option.value}
@@ -852,7 +852,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-right ${
+                className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 min-h-[44px] rounded-xl border-2 transition-all text-right ${
                   formData.budget === option.value
                     ? "border-primary bg-primary/5"
                     : "border-foreground/10 hover:border-foreground/30"
@@ -884,14 +884,14 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
             placeholder="ספרו לנו על הפרויקט, האתגרים, מה חשוב לכם..."
             rows={4}
             autoFocus
-            className="w-full text-lg bg-transparent border-2 border-foreground/20 focus:border-primary p-4 rounded-xl outline-none text-foreground placeholder:text-foreground/30 transition-colors resize-none"
+            className="w-full min-h-[120px] text-base sm:text-lg bg-transparent border-2 border-foreground/20 focus:border-primary p-3 sm:p-4 rounded-xl outline-none text-foreground placeholder:text-foreground/30 transition-colors resize-none"
             dir="rtl"
           />
         );
 
       case "source":
         return (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {sourceOptions.map((option, index) => (
               <motion.button
                 key={option.value}
@@ -902,7 +902,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-right ${
+                className={`flex items-center gap-2 sm:gap-3 p-3 sm:p-4 min-h-[44px] rounded-xl border-2 transition-all text-right ${
                   formData.source === option.value
                     ? "border-primary bg-primary/5"
                     : "border-foreground/10 hover:border-foreground/30"
@@ -985,7 +985,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[10001] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[10001] flex items-center justify-center p-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
           variants={overlayVariants}
           initial="hidden"
           animate="visible"
@@ -1001,7 +1001,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
           {/* Modal */}
           <motion.div
             ref={modalRef}
-            className="relative w-full max-w-2xl bg-background rounded-2xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-background rounded-2xl shadow-2xl overflow-hidden"
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -1032,13 +1032,13 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 left-4 w-10 h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 flex items-center justify-center transition-colors z-10"
+              className="absolute top-4 left-4 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-foreground/5 hover:bg-foreground/10 flex items-center justify-center transition-colors z-10"
             >
               <X className="w-5 h-5 text-foreground/60" />
             </button>
 
             {/* Content */}
-            <div className="p-8 md:p-12 pt-16" dir="rtl">
+            <div className="p-4 sm:p-6 md:p-8 lg:p-12 pt-16" dir="rtl">
               <AnimatePresence mode="wait">
                 {showStartScreen ? (
                   <motion.div key="start" exit={{ opacity: 0, x: -50 }}>
@@ -1090,7 +1090,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                         disabled={!canProceed() || isSubmitting}
                         whileHover={canProceed() ? { scale: 1.02 } : {}}
                         whileTap={canProceed() ? { scale: 0.98 } : {}}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all ${
+                        className={`flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 min-h-[44px] rounded-full font-medium transition-all ${
                           canProceed()
                             ? "bg-primary text-white hover:bg-primary/90"
                             : "bg-foreground/10 text-foreground/30 cursor-not-allowed"
@@ -1119,7 +1119,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                       <button
                         onClick={handleBack}
                         disabled={currentStep === 0}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                        className={`flex items-center gap-2 px-4 py-2 min-h-[44px] min-w-[44px] rounded-lg transition-colors ${
                           currentStep === 0
                             ? "opacity-30 cursor-not-allowed"
                             : "hover:bg-foreground/5"

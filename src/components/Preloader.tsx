@@ -97,7 +97,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       initial={{ opacity: 1 }}
       animate={{ opacity: shouldFadeOut ? 0 : 1 }}
       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-[100] overflow-hidden"
+      className="fixed inset-0 z-[100] overflow-hidden h-screen h-[100dvh]"
       style={{
         backgroundColor: '#FAFAFA',
         willChange: 'opacity'
@@ -128,7 +128,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 times: [0, 0.4, 0.7, 1],
                 ease: [0.16, 1, 0.3, 1]
               }}
-              className="text-gray-900 text-5xl md:text-7xl font-display font-semibold tracking-[0.15em] uppercase"
+              className="text-gray-900 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold tracking-[0.15em] uppercase"
             >
               NEXO
             </motion.div>
@@ -270,7 +270,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           transition={{ duration: 0.5, delay: isZooming ? 3 : 0 }}
           className="absolute inset-0 z-30 flex items-end"
         >
-          <div className="container mx-auto px-6 md:px-12 pb-24 md:pb-32">
+          <div className="container mx-auto px-4 sm:px-6 md:px-12 pb-20 sm:pb-24 md:pb-32 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:pb-[calc(2rem+env(safe-area-inset-bottom))]">
             <div className="max-w-4xl ml-auto text-right" dir="rtl">
               {/* Stacked Headlines */}
               {["הופכים", "חזון", "למציאות", "דיגיטלית."].map((line, index) => (
@@ -283,7 +283,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                       delay: (isZooming ? 3.2 : 0) + index * 0.1,
                       ease: [0.16, 1, 0.3, 1]
                     }}
-                    className="text-[12vw] md:text-[10vw] lg:text-[9vw] font-black text-white leading-[0.85] tracking-[-0.02em]"
+                    className="text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[9vw] font-black text-white leading-[0.85] tracking-[-0.02em]"
                   >
                     {line}
                   </motion.h1>
@@ -295,7 +295,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: isZooming ? 3.7 : 0.5 }}
-                className="text-white/70 text-lg md:text-xl max-w-2xl mt-8 leading-relaxed"
+                className="text-white/70 text-base sm:text-lg md:text-xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
               >
                 סוכנות דיגיטל שמובילה מותגים לצמיחה אמיתית. אסטרטגיה, עיצוב ופיתוח - הכל תחת קורת גג אחת.
               </motion.p>
@@ -305,9 +305,9 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: isZooming ? 3.9 : 0.7 }}
-                className="mt-10"
+                className="mt-6 sm:mt-8 md:mt-10"
               >
-                <div className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-semibold text-lg">
+                <div className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-semibold text-base sm:text-lg">
                   <span>בואו נדבר על הפרויקט שלכם</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>

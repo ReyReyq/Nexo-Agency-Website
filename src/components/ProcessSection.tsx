@@ -33,7 +33,7 @@ const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorPr
       transition={{ duration: 0.2 }}
     >
       <div
-        className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
+        className={`w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
           isActive
             ? "bg-primary border-primary"
             : isPast
@@ -119,7 +119,7 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
       dir="rtl"
     >
       {/* Sticky Container */}
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center lg:items-center">
+      <div className="sticky top-0 min-h-screen min-h-[100dvh] overflow-hidden flex items-center justify-center lg:items-center">
         {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -130,9 +130,9 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
         />
 
         {/* Mobile: Full height flex container for vertical distribution */}
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 h-full lg:h-auto flex flex-col lg:block pt-28 pb-4 lg:pt-0 lg:pb-0">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full lg:h-auto flex flex-col lg:block pt-28 pb-4 lg:pt-0 lg:pb-0">
           {/* Mobile: Use flex-col with proper distribution */}
-          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:gap-20 lg:items-center max-w-6xl mx-auto flex-1 lg:flex-none">
+          <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 lg:gap-20 lg:items-center max-w-6xl mx-auto flex-1 lg:flex-none">
 
             {/* Left Side - Step Content (Text first on mobile) */}
             <div className="order-1 lg:order-1 flex-shrink-0">
@@ -167,7 +167,7 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
                       {processLabels.stepPrefix} {currentStep.number} {processLabels.stepSuffix}
                     </span>
 
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-2 lg:mb-3">
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl 2xl:text-7xl font-black mb-2 lg:mb-3">
                       <span style={{ color: currentStep.color.primary }}>
                         {currentStep.title}
                       </span>

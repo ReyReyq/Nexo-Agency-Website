@@ -102,7 +102,7 @@ const FAQSection = () => {
   const [selectedTab, setSelectedTab] = useState(TABS[0]);
 
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden" style={{ backgroundColor: '#FAF9F6' }}>
+    <section className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden" style={{ backgroundColor: '#FAF9F6' }}>
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.02]"
@@ -112,7 +112,7 @@ const FAQSection = () => {
         }}
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -130,14 +130,14 @@ const FAQSection = () => {
             className="h-1 bg-primary mx-auto mb-6"
           />
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4">
             <span className="text-[#1a1a1a]">שאלות </span>
             <span className="text-primary">
               נפוצות
             </span>
           </h2>
 
-          <p className="text-[#4a4a4a] text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-[#4a4a4a] text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
             כל מה שרציתם לדעת על העבודה איתנו - במקום אחד
           </p>
         </motion.div>
@@ -185,15 +185,15 @@ const Tabs = memo(({ selected, setSelected }: TabsProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="relative z-10 flex flex-wrap items-center justify-center gap-3 mb-10"
+      className="relative z-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10"
       dir="rtl"
     >
       {TABS.map((tab) => (
         <button
           onClick={() => setSelected(tab)}
           className={`
-            relative overflow-hidden whitespace-nowrap rounded-full px-5 py-2.5
-            text-sm md:text-base font-medium transition-colors duration-300
+            relative overflow-hidden whitespace-nowrap rounded-full px-4 sm:px-5 py-2.5 sm:py-3
+            text-sm md:text-base font-medium transition-colors duration-300 min-h-[44px]
             ${selected === tab
               ? "text-white"
               : "bg-white text-[#4a4a4a] hover:text-primary border border-[#e5e5e5] hover:border-primary/30"
@@ -352,12 +352,12 @@ const Question = memo(({ title, children, isOpen, onToggle }: QuestionProps) => 
     >
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 py-6"
+        className="flex w-full items-center justify-between gap-3 sm:gap-4 py-4 sm:py-5 md:py-6 min-h-[44px]"
         dir="rtl"
       >
         <motion.span
           variants={questionTitleVariants}
-          className="text-primary text-right text-lg md:text-xl font-medium"
+          className="text-primary text-right text-base sm:text-lg md:text-xl font-medium"
           style={{ WebkitTextFillColor: 'currentColor' }}
         >
           {title}
@@ -374,7 +374,7 @@ const Question = memo(({ title, children, isOpen, onToggle }: QuestionProps) => 
         }}
         className="overflow-hidden text-[#4a4a4a]"
       >
-        <p ref={ref} className="text-base md:text-lg leading-relaxed" dir="rtl">
+        <p ref={ref} className="text-sm sm:text-base md:text-lg leading-relaxed" dir="rtl">
           {children}
         </p>
       </motion.div>

@@ -125,7 +125,7 @@ const PortfolioSection = memo(function PortfolioSection() {
       id="portfolio"
       className="relative py-28 md:py-40 overflow-hidden bg-[#FAFAFA]"
     >
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 md:px-12 relative z-10">
         {/* Section Header */}
         <div ref={headerRef} className="mb-16 md:mb-24">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
@@ -143,7 +143,7 @@ const PortfolioSection = memo(function PortfolioSection() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="w-16 h-1 bg-primary mb-6 origin-right"
               />
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
                 הפרויקטים
                 <br />
                 <span className="text-primary">שלנו</span>
@@ -166,7 +166,7 @@ const PortfolioSection = memo(function PortfolioSection() {
         {/* Bento Grid */}
         <div
           ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 auto-rows-[280px] md:auto-rows-[320px]"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 auto-rows-[280px] md:auto-rows-[320px]"
         >
           {/* SimplyHebrew - Large Featured Card */}
           <motion.a
@@ -378,7 +378,7 @@ const PortfolioSection = memo(function PortfolioSection() {
             size="lg"
             className="group px-8 py-6 text-base font-bold rounded-full bg-[#1a1a1a] hover:bg-primary transition-colors duration-300"
           >
-            <a href="/portfolio" className="flex items-center gap-3">
+            <a href="/portfolio" className="flex items-center gap-3 min-h-[44px]">
               <span>צפייה בכל הפרויקטים</span>
               <ExternalLink className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
             </a>
@@ -394,7 +394,7 @@ const PortfolioSection = memo(function PortfolioSection() {
             {websiteImages.row1.map((src, index) => (
               <div
                 key={index}
-                className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+                className="relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
               >
                 <img
                   src={src}

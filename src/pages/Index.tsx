@@ -17,7 +17,7 @@ const Contact = lazy(() => import("@/components/Contact"));
 
 // Memoized loading placeholder for lazy-loaded sections - prevents re-creation on parent re-renders
 const SectionLoader = memo(() => (
-  <div className="min-h-[50vh] flex items-center justify-center bg-background">
+  <div className="min-h-[50vh] min-h-[50dvh] flex items-center justify-center bg-background">
     <div className="w-8 h-8 border-2 border-border border-t-primary rounded-full animate-spin" />
   </div>
 ));
@@ -47,7 +47,7 @@ const Index = () => {
         Main content is ALWAYS rendered underneath the preloader.
         This ensures no flash when preloader fades out - Hero is already there.
       */}
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen min-h-[100dvh] bg-background">
         {/* Glass Navigation with integrated scroll progress border */}
         <GlassNavbar />
 
@@ -55,7 +55,7 @@ const Index = () => {
         <main>
           {/* Hero section - sticky so it scrolls away naturally */}
           <div className="relative z-0">
-            <div className="sticky top-0 h-screen">
+            <div className="sticky top-0 h-screen h-[100dvh]">
               <Hero />
             </div>
 
@@ -68,7 +68,7 @@ const Index = () => {
           {/* AboutSection wrapper - sticky section with content scrolling over */}
           <div className="relative z-10">
             {/* Sticky about section - stays in place while content scrolls over */}
-            <div className="sticky top-0 h-screen shadow-2xl overflow-hidden bg-[#FAF9F6]">
+            <div className="sticky top-0 h-screen h-[100dvh] shadow-2xl overflow-hidden bg-[#FAF9F6]">
               <AboutSection />
             </div>
 

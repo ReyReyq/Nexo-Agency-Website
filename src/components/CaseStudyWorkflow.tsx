@@ -158,7 +158,7 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
       className="h-full flex flex-col justify-center"
       dir="rtl"
     >
-      <h4 className="text-2xl md:text-3xl font-display font-bold mb-3 text-primary">
+      <h4 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-3 text-primary">
         חלק מהזהות שיצרנו
       </h4>
       <p className="text-base text-foreground/60 mb-10 max-w-md">
@@ -166,13 +166,13 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
       </p>
 
       {/* Vertical stacked layout for left column */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Logo */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="p-6 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.05]"
+          className="p-4 sm:p-5 md:p-6 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.05]"
         >
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 mb-3">הלוגו</p>
           <p className="text-base leading-relaxed text-foreground/80">
@@ -185,7 +185,7 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="p-6 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.05]"
+          className="p-4 sm:p-5 md:p-6 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.05]"
         >
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 mb-4">טיפוגרפיה</p>
           <div className="flex flex-wrap gap-3">
@@ -202,10 +202,10 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="p-6 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.05]"
+          className="p-4 sm:p-5 md:p-6 rounded-2xl bg-foreground/[0.03] border border-foreground/[0.05]"
         >
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 mb-4">פלטת צבעים</p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             {brandIdentity.colorPalette.colors.map((color, i) => (
               <motion.div
                 key={i}
@@ -250,7 +250,7 @@ const AIPhotographyTextSection = ({ aiModels }: AIPhotographySectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-28 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden"
+      className="min-h-screen py-12 sm:py-16 md:py-20 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -265,7 +265,7 @@ const AIPhotographyTextSection = ({ aiModels }: AIPhotographySectionProps) => {
         </span>
       </motion.div>
 
-      <div ref={ref} className="container mx-auto px-6 relative z-10" dir="rtl">
+      <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
         {/* Step Label */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
@@ -284,7 +284,7 @@ const AIPhotographyTextSection = ({ aiModels }: AIPhotographySectionProps) => {
             initial={{ y: "100%" }}
             animate={isInView ? { y: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-            className="text-5xl md:text-7xl font-display font-black leading-[0.85] tracking-[-0.02em]"
+            className="text-4xl sm:text-5xl md:text-7xl font-display font-black leading-[0.85] tracking-[-0.02em]"
           >
             צילומי AI
           </motion.h3>
@@ -295,7 +295,7 @@ const AIPhotographyTextSection = ({ aiModels }: AIPhotographySectionProps) => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-2xl font-semibold mb-10 text-primary"
+          className="text-xl sm:text-2xl font-semibold mb-10 text-primary"
         >
           גישה חדשנית להפקת תוכן
         </motion.p>
@@ -372,7 +372,7 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-20 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden flex items-center justify-center"
+      className="min-h-screen py-12 sm:py-16 md:py-20 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden flex items-center justify-center"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -400,10 +400,10 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
         />
 
         {/* Marquee Container */}
-        <div className="flex gap-4 h-full justify-center overflow-hidden">
+        <div className="flex gap-3 sm:gap-4 h-full justify-center overflow-hidden">
           {/* First Column - Moving Up */}
           <motion.div
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-3 sm:gap-4"
             animate={{ y: [0, -500] }}
             transition={{
               y: {
@@ -436,7 +436,7 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
 
           {/* Second Column - Moving Down */}
           <motion.div
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-3 sm:gap-4"
             animate={{ y: [-500, 0] }}
             transition={{
               y: {
@@ -499,7 +499,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-28 md:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden hidden lg:block"
+      className="min-h-screen py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden hidden lg:block"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -514,8 +514,8 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
         </span>
       </motion.div>
 
-      <div ref={ref} className="container mx-auto px-12 relative z-10" dir="rtl">
-        <div className="grid grid-cols-2 gap-20 items-center">
+      <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
+        <div className="grid grid-cols-2 gap-8 sm:gap-12 lg:gap-16 xl:gap-20 items-center">
           {/* Text Content - Right side (RTL) */}
           <div>
             {/* Step Label */}
@@ -547,7 +547,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-3xl font-semibold mb-10 text-primary"
+              className="text-2xl sm:text-3xl font-semibold mb-10 text-primary"
             >
               גישה חדשנית להפקת תוכן
             </motion.p>
@@ -559,7 +559,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mb-8"
             >
-              <p className="text-xl font-heebo leading-relaxed text-foreground/90">
+              <p className="text-lg sm:text-xl font-heebo leading-relaxed text-foreground/90">
                 {aiModels.description}
               </p>
             </motion.div>
@@ -573,7 +573,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
               <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-primary/70 mb-4">
                 היתרונות
               </p>
-              <ul className="space-y-4">
+              <ul className="space-y-3 sm:space-y-4">
                 {[
                   "חיסכון משמעותי בעלויות צילום סטודיו",
                   "זמן הפקה מהיר יותר - מרעיון לתוצר תוך שעות",
@@ -585,10 +585,10 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.5, delay: 0.5 + i * 0.08 }}
-                    className="flex items-start gap-4 group"
+                    className="flex items-start gap-3 sm:gap-4 group"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0 group-hover:scale-150 transition-transform" />
-                    <span className="text-lg font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
+                    <span className="text-base sm:text-lg font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
                       {benefit}
                     </span>
                   </motion.li>
@@ -708,7 +708,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-28 md:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden"
+      className="min-h-screen py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden"
     >
       {/* HUGE Background Number - Editorial style - positioned behind everything */}
       <motion.div
@@ -723,10 +723,10 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
         </span>
       </motion.div>
 
-      <div ref={ref} className="container mx-auto px-6 md:px-12 relative z-10" dir="rtl">
+      <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
         {/* Two-column layout for Design step with brand identity */}
         {isDesignStep && brandIdentity ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 xl:gap-20">
             {/* Main content on the RIGHT side (RTL) */}
             <div className="order-1 lg:order-1">
               {/* Step Label */}
@@ -747,7 +747,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
                   initial={{ y: "100%" }}
                   animate={isInView ? { y: 0 } : {}}
                   transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="text-6xl md:text-8xl lg:text-9xl font-display font-black leading-[0.85] tracking-[-0.02em]"
+                  className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-display font-black leading-[0.85] tracking-[-0.02em]"
                 >
                   {step.title}
                 </motion.h3>
@@ -758,7 +758,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-2xl md:text-3xl font-semibold mb-10 text-primary"
+                className="text-xl sm:text-2xl md:text-3xl font-semibold mb-10 text-primary"
               >
                 {step.subtitle}
               </motion.p>
@@ -770,7 +770,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="mb-8"
               >
-                <p className="text-lg md:text-xl font-heebo leading-relaxed text-foreground/90">
+                <p className="text-base sm:text-lg md:text-xl font-heebo leading-relaxed text-foreground/90">
                   {step.challenge}
                 </p>
               </motion.div>
@@ -782,7 +782,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
                 transition={{ duration: 0.6, delay: 0.4 }}
                 className="mb-12"
               >
-                <p className="text-base md:text-lg font-heebo leading-relaxed text-foreground/70">
+                <p className="text-sm sm:text-base md:text-lg font-heebo leading-relaxed text-foreground/70">
                   {step.approach}
                 </p>
               </motion.div>
@@ -796,17 +796,17 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
                 <p className="text-[10px] uppercase tracking-[0.2em] font-medium text-primary/70 mb-4">
                   מה עשינו
                 </p>
-                <ul className="space-y-4">
+                <ul className="space-y-3 sm:space-y-4">
                   {step.bullets.map((bullet, i) => (
                     <motion.li
                       key={i}
                       initial={{ opacity: 0, x: 20 }}
                       animate={isInView ? { opacity: 1, x: 0 } : {}}
                       transition={{ duration: 0.5, delay: 0.6 + i * 0.08 }}
-                      className="flex items-start gap-4 group"
+                      className="flex items-start gap-3 sm:gap-4 group"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2.5 flex-shrink-0 group-hover:scale-150 transition-transform" />
-                      <span className="text-base md:text-lg font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
+                      <span className="text-sm sm:text-base md:text-lg font-heebo text-foreground/80 group-hover:text-foreground transition-colors leading-relaxed">
                         {bullet}
                       </span>
                     </motion.li>
@@ -841,7 +841,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
                 initial={{ y: "100%" }}
                 animate={isInView ? { y: 0 } : {}}
                 transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-                className="text-6xl md:text-8xl lg:text-9xl font-display font-black leading-[0.85] tracking-[-0.02em]"
+                className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-display font-black leading-[0.85] tracking-[-0.02em]"
               >
                 {step.title}
               </motion.h3>
@@ -852,7 +852,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-2xl md:text-3xl font-semibold mb-10 text-primary"
+              className="text-xl sm:text-2xl md:text-3xl font-semibold mb-10 text-primary"
             >
               {step.subtitle}
             </motion.p>
@@ -864,7 +864,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mb-8"
             >
-              <p className="text-lg md:text-xl font-heebo leading-relaxed text-foreground/90">
+              <p className="text-base sm:text-lg md:text-xl font-heebo leading-relaxed text-foreground/90">
                 {step.challenge}
               </p>
             </motion.div>
@@ -876,7 +876,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mb-12"
             >
-              <p className="text-base md:text-lg font-heebo leading-relaxed text-foreground/70">
+              <p className="text-sm sm:text-base md:text-lg font-heebo leading-relaxed text-foreground/70">
                 {step.approach}
               </p>
             </motion.div>
@@ -954,10 +954,10 @@ const WebsitePreviewSection = () => {
   return (
     <section
       ref={ref}
-      className="py-16 md:py-24 bg-[#FAF9F6] text-foreground relative overflow-hidden"
+      className="py-12 sm:py-16 md:py-20 lg:py-24 bg-[#FAF9F6] text-foreground relative overflow-hidden"
     >
-      <div className="container mx-auto px-6 md:px-12 relative z-10" dir="rtl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-14 items-center">
           {/* Text Content - Right side (RTL) */}
           <div className="order-2 lg:order-1">
             {/* Label */}
@@ -978,7 +978,7 @@ const WebsitePreviewSection = () => {
                 initial={{ y: "100%" }}
                 animate={isInView ? { y: 0 } : {}}
                 transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-                className="text-4xl md:text-5xl lg:text-6xl font-display font-black leading-[0.9] tracking-[-0.02em] text-foreground"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black leading-[0.9] tracking-[-0.02em] text-foreground"
               >
                 האתר
                 <br />
@@ -1156,7 +1156,7 @@ const CaseStudyWorkflow = ({
       <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 0 }}>
         <section
           ref={introRef}
-          className="min-h-screen text-foreground flex items-center justify-center overflow-hidden py-20 relative"
+          className="min-h-screen text-foreground flex items-center justify-center overflow-hidden py-12 sm:py-16 md:py-20 relative"
         >
           {/* Subtle gradient accent */}
           <div
@@ -1166,7 +1166,7 @@ const CaseStudyWorkflow = ({
             }}
           />
 
-          <div className="container mx-auto px-6 md:px-12 text-center relative z-10" dir="rtl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10" dir="rtl">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={isIntroInView ? { opacity: 1, y: 0 } : {}}
@@ -1189,7 +1189,7 @@ const CaseStudyWorkflow = ({
                   initial={{ y: "100%" }}
                   animate={isIntroInView ? { y: 0 } : {}}
                   transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-                  className="text-5xl md:text-7xl lg:text-8xl font-display font-black leading-[0.85] tracking-[-0.02em]"
+                  className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-display font-black leading-[0.85] tracking-[-0.02em]"
                 >
                   איך בנינו את
                   <br />
@@ -1203,7 +1203,7 @@ const CaseStudyWorkflow = ({
                   initial={{ opacity: 0, y: 20 }}
                   animate={isIntroInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.4, duration: 0.6 }}
-                  className="text-lg md:text-xl font-heebo max-w-2xl mx-auto leading-relaxed mb-14 text-foreground/70"
+                  className="text-base sm:text-lg md:text-xl font-heebo max-w-2xl mx-auto leading-relaxed mb-14 text-foreground/70"
                 >
                   {brandStory.narrative}
                 </motion.p>
@@ -1217,7 +1217,7 @@ const CaseStudyWorkflow = ({
                   transition={{ delay: 0.6, duration: 0.6 }}
                   className="inline-block"
                 >
-                  <blockquote className="text-lg md:text-xl font-heebo italic leading-relaxed text-foreground/80 max-w-xl mx-auto">
+                  <blockquote className="text-base sm:text-lg md:text-xl font-heebo italic leading-relaxed text-foreground/80 max-w-xl mx-auto">
                     "{brandStory.clientVision}"
                   </blockquote>
                   <p className="text-sm mt-6 font-medium text-primary">
@@ -1276,8 +1276,8 @@ const CaseStudyWorkflow = ({
 
       {/* ========== CONCLUSION SECTION ========== */}
       <div className="relative bg-primary" style={{ zIndex: 65 }}>
-        <section className="py-28 md:py-36 text-white">
-          <div className="container mx-auto px-6 md:px-12 text-center" dir="rtl">
+        <section className="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 text-white">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center" dir="rtl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1287,10 +1287,10 @@ const CaseStudyWorkflow = ({
               <span className="inline-block text-[10px] uppercase tracking-[0.3em] font-medium mb-6 text-white/50">
                 התוצאה
               </span>
-              <h3 className="text-5xl md:text-7xl font-display font-black mb-6 tracking-[-0.02em]">
+              <h3 className="text-4xl sm:text-5xl md:text-7xl font-display font-black mb-6 tracking-[-0.02em]">
                 והתוצאה?
               </h3>
-              <p className="text-xl md:text-2xl font-heebo max-w-xl mx-auto text-white/80 leading-relaxed">
+              <p className="text-lg sm:text-xl md:text-2xl font-heebo max-w-xl mx-auto text-white/80 leading-relaxed">
                 מותג יוקרה דיגיטלי שמדבר אל הג'נטלמן המודרני - חוויית קנייה מושלמת שמשקפת את ערכי היוקרה השקטה
               </p>
             </motion.div>

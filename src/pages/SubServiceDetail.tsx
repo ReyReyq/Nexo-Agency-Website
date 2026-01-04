@@ -196,7 +196,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
 
   return (
     <section
-      className="relative overflow-hidden bg-black"
+      className="relative overflow-hidden bg-black min-h-screen min-h-[100dvh]"
       style={{ minHeight: 'min(700px, 100svh)', height: '100svh', maxHeight: '900px' }}
     >
       {/* Ballpit Background Effect - Service-specific colors */}
@@ -212,7 +212,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
         />
       </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-24 flex items-center justify-center h-full">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-24 flex items-center justify-center h-full">
         <motion.div
           ref={heroRef}
           initial={INITIAL_FADE_UP_40}
@@ -249,7 +249,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
             initial={INITIAL_FADE_UP_30}
             animate={animateState}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-black text-hero-fg leading-tight mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-hero-fg leading-tight mb-4"
           >
             {subService.name}
           </motion.h1>
@@ -259,7 +259,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
             initial={INITIAL_FADE_UP_20}
             animate={animateState}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-xl md:text-2xl text-hero-fg/80 font-medium mb-4"
+            className="text-lg sm:text-xl md:text-2xl text-hero-fg/80 font-medium mb-4"
           >
             {subService.subtitle}
           </motion.p>
@@ -269,7 +269,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
             initial={INITIAL_FADE_UP_20}
             animate={animateState}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-hero-fg/60 text-lg max-w-2xl mx-auto mb-10"
+            className="text-hero-fg/60 text-base sm:text-lg max-w-2xl mx-auto mb-10"
           >
             {subService.heroDescription}
           </motion.p>
@@ -279,12 +279,12 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
             initial={INITIAL_FADE_UP_20}
             animate={animateState}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex flex-wrap justify-center gap-4"
+            className="flex flex-wrap justify-center gap-3 sm:gap-4"
           >
             <Magnet magnetStrength={3} padding={60}>
               <Link
                 to="/contact#contact-form"
-                className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full text-lg font-bold bg-white text-black transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden"
+                className="group relative inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-bold bg-white text-black transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 <span className="relative z-10 flex items-center gap-2">
@@ -297,7 +297,7 @@ const HeroSection = memo(({ subService, parentService }: HeroSectionProps) => {
             <Magnet magnetStrength={3} padding={60}>
               <a
                 href="#what-is-this"
-                className="group relative inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-hero-fg px-8 py-4 rounded-full text-lg font-medium hover:bg-white/20 hover:scale-105 active:scale-95 transition-all border border-white/20 overflow-hidden"
+                className="group relative inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-hero-fg px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-medium hover:bg-white/20 hover:scale-105 active:scale-95 transition-all border border-white/20 overflow-hidden"
               >
                 <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10 flex items-center gap-2">
@@ -335,8 +335,8 @@ const WhatIsThisSection = memo(({ subService, parentService }: WhatIsThisSection
       className="py-24 md:py-32 bg-background"
       dir="rtl"
     >
-      <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center max-w-6xl mx-auto">
           {/* Text Content - Right side in RTL */}
           <motion.div
             initial={INITIAL_FADE_RIGHT_60}
@@ -363,7 +363,7 @@ const WhatIsThisSection = memo(({ subService, parentService }: WhatIsThisSection
               initial={INITIAL_FADE_UP_30}
               animate={isInView ? ANIMATE_VISIBLE : ANIMATE_EMPTY}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-6"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-6"
             >
               {subService.whatIsThis.title}
             </motion.h2>
@@ -863,7 +863,7 @@ const FeaturesGridSection = memo(({ subService, parentService }: FeaturesGridSec
         style={{ backgroundColor: parentService.accentColor }}
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* ===== DESKTOP LAYOUT - Vision Board ===== */}
         <div className="hidden lg:block relative" style={{ minHeight: '850px' }}>
@@ -966,16 +966,16 @@ const FeaturesGridSection = memo(({ subService, parentService }: FeaturesGridSec
             transition={TRANSITION_DURATION_06}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-3 leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-3 leading-tight">
               {subService.features.title}
             </h2>
-            <p className="text-gray-600 text-base max-w-lg mx-auto">
+            <p className="text-gray-600 text-sm sm:text-base max-w-lg mx-auto">
               {subService.features.description}
             </p>
           </motion.div>
 
           {/* Cards Grid with rotations */}
-          <div className="grid md:grid-cols-2 gap-3 max-w-2xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-2 sm:gap-3 max-w-2xl mx-auto">
             {getVisionItems(subService.slug).map((item, index) => {
               const FeatureIcon = getIcon(item.icon);
               const colors = getCardColors(parentService.accentColor, index);
@@ -1056,7 +1056,7 @@ const WhyChooseUsSection = memo(({ subService, parentService }: WhyChooseUsSecti
       className="py-24 md:py-32 bg-gradient-to-b from-neutral-50 to-white"
       dir="rtl"
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={INITIAL_FADE_UP_40}
@@ -1070,16 +1070,16 @@ const WhyChooseUsSection = memo(({ subService, parentService }: WhyChooseUsSecti
             <span className="text-sm font-medium text-neutral-700">למה לבחור בנו</span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4">
             {subService.whyChooseUs.title}
           </h2>
-          <p className="text-neutral-600 text-lg leading-relaxed">
+          <p className="text-neutral-600 text-base sm:text-lg leading-relaxed">
             {subService.whyChooseUs.description}
           </p>
         </motion.div>
 
         {/* Benefits Cards - Modern Numbered Design */}
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 max-w-5xl mx-auto">
           {subService.whyChooseUs.benefits.map((benefit, index) => {
             return (
               <motion.div
@@ -1218,7 +1218,7 @@ const FAQSection = memo(({ subService, parentService }: FAQSectionProps) => {
       className="py-24 md:py-32 bg-background"
       dir="rtl"
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={INITIAL_FADE_UP_40}
@@ -1226,7 +1226,7 @@ const FAQSection = memo(({ subService, parentService }: FAQSectionProps) => {
           transition={TRANSITION_DURATION_06}
           className="text-center mb-12 max-w-3xl mx-auto"
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-4">
             שאלות נפוצות
           </h2>
           <p className="text-muted-foreground text-lg">
@@ -1401,7 +1401,7 @@ const RelatedSubServicesSection = memo(({ currentSubServiceId, parentService, pa
       className="py-20 md:py-28 bg-neutral-100"
       dir="rtl"
     >
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={INITIAL_FADE_UP_40}
@@ -1413,7 +1413,7 @@ const RelatedSubServicesSection = memo(({ currentSubServiceId, parentService, pa
             <Grid className="w-4 h-4" style={{ color: parentService.accentColor }} />
             <span className="text-sm font-medium text-neutral-700">שירותים נוספים</span>
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4">
             עוד ב{parentService.name}
           </h2>
           <p className="text-neutral-600 text-lg max-w-2xl mx-auto">
@@ -1483,7 +1483,7 @@ const RelatedSubServicesSection = memo(({ currentSubServiceId, parentService, pa
         >
           <Link
             to={`/services/${parentSlug}`}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-neutral-900 text-white font-medium hover:bg-neutral-800 transition-colors"
+            className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full bg-neutral-900 text-white font-medium hover:bg-neutral-800 transition-colors"
           >
             <span>כל השירותים ב{parentService.name}</span>
             <ArrowLeft className="w-4 h-4" />
@@ -1526,7 +1526,7 @@ const CTASection = memo(({ subService, parentService }: CTASectionProps) => {
         />
       </div>
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={INITIAL_FADE_UP_40}
           whileInView={ANIMATE_VISIBLE}
@@ -1534,25 +1534,25 @@ const CTASection = memo(({ subService, parentService }: CTASectionProps) => {
           className="max-w-3xl mx-auto text-center"
         >
           <Sparkles
-            className="w-12 h-12 mx-auto mb-6"
+            className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-6"
             style={{ color: parentService.accentColor }}
           />
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-6">
             {subService.ctaTitle}
           </h2>
 
-          <p className="text-muted-foreground text-lg mb-10 max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-base sm:text-lg mb-10 max-w-2xl mx-auto">
             {subService.ctaDescription}
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {/* Primary CTA */}
             <Magnet magnetStrength={3} padding={60}>
               <Link
                 to="/contact#contact-form"
                 className={cn(
-                  "group relative inline-flex items-center gap-2 px-8 py-4 rounded-full text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden",
+                  "group relative inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden",
                   `bg-gradient-to-r ${parentService.gradient}`
                 )}
               >
@@ -1568,7 +1568,7 @@ const CTASection = memo(({ subService, parentService }: CTASectionProps) => {
             <Magnet magnetStrength={3} padding={60}>
               <Link
                 to={`/services/${parentService.slug}`}
-                className="group relative inline-flex items-center gap-2 bg-muted text-foreground px-8 py-4 rounded-full text-lg font-medium hover:bg-muted/80 hover:scale-105 active:scale-95 transition-all border border-border overflow-hidden"
+                className="group relative inline-flex items-center gap-2 bg-muted text-foreground px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-medium hover:bg-muted/80 hover:scale-105 active:scale-95 transition-all border border-border overflow-hidden"
               >
                 <span className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <span className="relative z-10 flex items-center gap-2">

@@ -41,7 +41,7 @@ const WhyUs = () => {
       {/* Split Section - Text on Dark, 3D on Light */}
       <div className="grid lg:grid-cols-2 min-h-screen">
         {/* Left Side - Dark with Text */}
-        <div className="bg-hero-bg py-24 md:py-32 px-6 lg:px-12 flex flex-col justify-center order-2 lg:order-1 relative overflow-hidden">
+        <div className="bg-hero-bg py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 px-4 sm:px-6 lg:px-8 xl:px-12 flex flex-col justify-center order-2 lg:order-1 relative overflow-hidden">
           {/* Animated Background */}
           <motion.div
             animate={{
@@ -69,7 +69,7 @@ const WhyUs = () => {
               <span className="text-primary text-sm font-medium">מאז 2005</span>
             </motion.div>
 
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-hero-fg leading-[1.1] mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-hero-fg leading-[1.1] mb-6">
               20 שנה של
               <br />
               <span className="text-gradient">הובלה דיגיטלית</span>
@@ -86,19 +86,19 @@ const WhyUs = () => {
             </motion.p>
 
             {/* Benefits Grid */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-8">
               {benefits.map((benefit, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-2 sm:gap-3"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-                    <benefit.icon className="w-4 h-4 text-primary" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <benefit.icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-primary" />
                   </div>
-                  <span className="text-hero-fg/80 text-sm font-medium">{benefit.text}</span>
+                  <span className="text-hero-fg/80 text-xs sm:text-sm font-medium">{benefit.text}</span>
                 </motion.div>
               ))}
             </div>
@@ -120,7 +120,7 @@ const WhyUs = () => {
         {/* Right Side - 3D Element */}
         <motion.div
           style={{ y: sceneY }}
-          className="bg-background py-24 lg:py-0 flex items-center justify-center order-1 lg:order-2 relative"
+          className="bg-background py-12 sm:py-16 md:py-20 lg:py-0 flex items-center justify-center order-1 lg:order-2 relative"
         >
           {/* Subtle Grid Background */}
           <div className="absolute inset-0 opacity-[0.03]">
@@ -143,7 +143,7 @@ const WhyUs = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-hero-bg/70 to-hero-bg/40" />
         </motion.div>
 
-        <div className="relative z-10 container mx-auto px-6 py-24 md:py-32 flex items-center min-h-screen">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24 xl:py-32 flex items-center min-h-screen">
           <div className="max-w-3xl">
             <motion.div
               initial={{ width: 0 }}
@@ -158,7 +158,7 @@ const WhyUs = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="text-4xl md:text-5xl lg:text-7xl font-black text-hero-fg leading-[1.1] mb-8"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-black text-hero-fg leading-[1.1] mb-8"
             >
               אנחנו לא מסתפקים
               <br />
@@ -172,7 +172,7 @@ const WhyUs = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-hero-fg/80 text-lg md:text-xl leading-relaxed mb-8 max-w-2xl"
+              className="text-hero-fg/80 text-base sm:text-lg md:text-xl leading-relaxed mb-8 max-w-2xl"
             >
               כל פיקסל, כל שורת קוד, כל החלטה עיצובית - נבחנת מול סטנדרטים הגבוהים ביותר. 
               זו לא רק עבודה בשבילנו. זה אומנות. זה מקצוענות. זה אנחנו.

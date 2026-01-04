@@ -63,9 +63,9 @@ const ServicesSection = () => {
       {/* Animated Ribbon Background */}
       <RibbonBackground />
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Split layout - Cards on LEFT, Text on RIGHT - centered */}
-        <div className="flex flex-col-reverse lg:flex-row gap-8 lg:gap-8 items-center justify-center min-h-[70vh] max-w-5xl mx-auto" dir="ltr">
+        <div className="flex flex-col-reverse lg:flex-row gap-6 sm:gap-8 lg:gap-8 items-center justify-center min-h-[70vh] max-w-5xl mx-auto" dir="ltr">
 
           {/* LEFT side - Fan Card Carousel */}
           <div className="w-full lg:w-[58%] flex justify-center lg:justify-start">
@@ -92,7 +92,7 @@ const ServicesSection = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-3xl md:text-4xl lg:text-5xl font-black leading-[1.15] mb-6 text-[#1a1a1a]"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.15] mb-6 text-[#1a1a1a]"
               >
                 אנחנו בונים לכם את המכונה
                 <br />
@@ -104,7 +104,7 @@ const ServicesSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-base md:text-lg leading-[1.8] mb-10 text-[#3d3d3d] max-w-[400px]"
+                className="text-sm sm:text-base md:text-lg leading-[1.8] mb-10 text-[#3d3d3d] max-w-[400px]"
               >
                 לא עוד אתרים יפים שלא עובדים. אנחנו בונים מערכות שמייצרות תוצאות אמיתיות לעסק שלכם.
               </motion.p>

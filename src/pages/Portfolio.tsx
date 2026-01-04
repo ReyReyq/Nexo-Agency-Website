@@ -114,7 +114,7 @@ const Portfolio = () => {
       <GlassNavbar />
 
       {/* Hero */}
-      <section className="min-h-[90vh] flex items-center justify-center bg-hero-bg pt-20 relative overflow-hidden">
+      <section className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-hero-bg pt-16 sm:pt-20 pb-8 sm:pb-12 relative overflow-hidden">
         {/* Orb and Content Container */}
         <div className="relative w-full max-w-[600px] aspect-square md:max-w-[800px] flex items-center justify-center">
           {/* Orb Background */}
@@ -128,7 +128,7 @@ const Portfolio = () => {
           </div>
 
           {/* Hero Content - Staged inside the Orb */}
-          <div className="relative z-10 text-center px-8 md:px-12 pointer-events-none" dir="rtl">
+          <div className="relative z-10 text-center px-4 sm:px-8 md:px-12 pointer-events-none" dir="rtl">
             <motion.div
               ref={heroRef}
               initial={heroInitial}
@@ -143,13 +143,13 @@ const Portfolio = () => {
                 className="h-1 bg-primary mb-8"
               />
 
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-8">
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-6 sm:mb-8">
                 העבודות
                 <br />
                 <span className="text-gradient">שלנו.</span>
               </h1>
 
-              <p className="text-hero-fg/90 text-lg md:text-2xl leading-relaxed max-w-md font-medium">
+              <p className="text-hero-fg/90 text-base sm:text-lg md:text-2xl leading-relaxed max-w-md font-medium">
                 חזון שהופך למציאות דיגיטלית.
                 <br />
                 המבחר המדויק של היצירות שלנו.
@@ -160,9 +160,9 @@ const Portfolio = () => {
       </section>
 
       {/* Projects Bento Grid */}
-      <section className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+      <section className="py-12 sm:py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {/* Sioné - Full Width Top Card */}
             {projects.find(p => p.slug === 'sione') && (
               <motion.div
@@ -216,10 +216,10 @@ const Portfolio = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <h3 className="text-3xl md:text-5xl font-black text-white mb-3 group-hover:text-primary transition-colors">
+                          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 group-hover:text-primary transition-colors">
                             SIONÉ
                           </h3>
-                          <p className="text-white/70 text-lg md:text-xl max-w-2xl">
+                          <p className="text-white/70 text-base sm:text-lg md:text-xl max-w-2xl">
                             {projects.find(p => p.slug === 'sione')?.description}
                           </p>
                         </div>
@@ -290,7 +290,7 @@ const Portfolio = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <h3 className="text-2xl md:text-3xl font-black text-white mb-2 group-hover:text-primary transition-colors">
+                          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 group-hover:text-primary transition-colors">
                             SimplyHebrew
                           </h3>
                           <p className="text-white/70 text-sm md:text-base max-w-md hidden md:block">
@@ -364,7 +364,7 @@ const Portfolio = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <h3 className="text-2xl md:text-3xl font-black text-white mb-2 group-hover:text-primary transition-colors">
+                          <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 group-hover:text-primary transition-colors">
                             TeenVestor
                           </h3>
                           <p className="text-white/70 text-sm md:text-base max-w-md hidden md:block">
@@ -389,13 +389,13 @@ const Portfolio = () => {
       </section>
 
       {/* Website Showcase Marquees */}
-      <section className="py-12 md:py-20 bg-hero-bg overflow-hidden">
-        <div className="mb-8 md:mb-12 text-center">
+      <section className="py-10 sm:py-12 md:py-20 bg-hero-bg overflow-hidden">
+        <div className="mb-6 sm:mb-8 md:mb-12 text-center px-4 sm:px-6 lg:px-8">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
-            className="text-3xl md:text-4xl font-black text-hero-fg mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl font-black text-hero-fg mb-3 sm:mb-4"
           >
             עוד עבודות <span className="text-gradient">שלנו</span>
           </motion.h2>
@@ -404,21 +404,21 @@ const Portfolio = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={viewportOnce}
             transition={{ delay: 0.1 }}
-            className="text-hero-fg/60 text-lg"
+            className="text-hero-fg/60 text-base sm:text-lg"
           >
             גלריית אתרים שעיצבנו ופיתחנו
           </motion.p>
         </div>
 
         {/* First Marquee Row - Left to Right */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Marquee
-            className="[--duration:10s] [--gap:1.5rem]"
+            className="[--duration:10s] [--gap:1rem] sm:[--gap:1.5rem]"
           >
             {websiteImages.row1.map((src, index) => (
               <div
                 key={index}
-                className="relative w-[300px] md:w-[400px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+                className="relative w-[240px] sm:w-[300px] md:w-[360px] lg:w-[400px] aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
               >
                 <img
                   src={src}
@@ -435,13 +435,13 @@ const Portfolio = () => {
 
         {/* Second Marquee Row - Right to Left */}
         <Marquee
-          className="[--duration:30s] [--gap:1.5rem]"
+          className="[--duration:30s] [--gap:1rem] sm:[--gap:1.5rem]"
           reverse
         >
           {websiteImages.row2.map((src, index) => (
             <div
               key={index}
-              className="relative w-[300px] md:w-[400px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+              className="relative w-[240px] sm:w-[300px] md:w-[360px] lg:w-[400px] aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
             >
               <img
                 src={src}
@@ -457,25 +457,25 @@ const Portfolio = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-24 md:py-32 bg-hero-bg">
-        <div className="container mx-auto px-6 text-center">
+      <section className="py-16 sm:py-24 md:py-32 bg-hero-bg">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={ctaInitial}
             whileInView={ctaAnimate}
             viewport={viewportOnce}
             className="max-w-3xl mx-auto"
           >
-            <h2 className="text-4xl md:text-6xl font-black text-hero-fg mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-hero-fg mb-4 sm:mb-6">
               הפרויקט הבא
               <br />
               <span className="text-gradient">יכול להיות שלכם.</span>
             </h2>
-            <p className="text-hero-fg/70 text-lg mb-8">
+            <p className="text-hero-fg/70 text-base sm:text-lg mb-6 sm:mb-8">
               מוכנים להצטרף לרשימת ההצלחות שלנו?
             </p>
             <Link
               to="/contact#contact-form"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-primary/90 transition-colors"
             >
               בואו נדבר
               <ArrowLeft className="w-5 h-5" />

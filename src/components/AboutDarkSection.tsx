@@ -77,20 +77,20 @@ const AboutDarkSection = () => {
       </div>
 
       {/* Content - z-20, pointer-events-none except for interactive elements */}
-      <div className="relative z-20 container mx-auto px-6 py-24 md:py-32 flex items-center h-full pointer-events-none">
+      <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24 flex items-center h-full pointer-events-none">
         <div className="max-w-3xl">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: 80 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="h-1 bg-primary mb-8"
+            className="h-1 bg-primary mb-6 sm:mb-8"
           />
 
           <motion.h2
             initial={{ opacity: 0, y: 80 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl md:text-5xl lg:text-7xl font-black text-hero-fg leading-[1.1] mb-8"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-hero-fg leading-[1.1] mb-6 sm:mb-8"
           >
             כל פיקסל. כל שורת קוד.
             <br />
@@ -101,7 +101,7 @@ const AboutDarkSection = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-hero-fg/80 text-lg md:text-xl leading-relaxed mb-8 max-w-2xl"
+            className="text-hero-fg/80 text-base sm:text-lg md:text-xl leading-relaxed mb-6 sm:mb-8 max-w-2xl"
           >
             אנחנו לא סוכנות עוד אחת. אנחנו שותפים לצמיחה שלכם. כל פרויקט מותאם אישית, כל פתרון נמדד בתוצאות.
           </motion.p>
@@ -110,7 +110,7 @@ const AboutDarkSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap gap-6 pointer-events-auto"
+            className="flex flex-wrap gap-4 sm:gap-6 pointer-events-auto"
           >
             <RippleButton to="/contact#contact-form" variant="charcoal" size="sm">
               <span className="flex items-center gap-2">

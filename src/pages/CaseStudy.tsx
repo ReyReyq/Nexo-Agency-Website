@@ -293,7 +293,7 @@ const CaseStudy = () => {
       {/* Hero Section */}
       <motion.section
         ref={heroRef}
-        className="relative h-[100vh] overflow-hidden"
+        className="relative h-screen min-h-screen min-h-[100dvh] overflow-hidden"
         style={heroSectionStyle}
       >
         {/* Silk Background for Teenvestsor */}
@@ -343,10 +343,10 @@ const CaseStudy = () => {
 
         {/* Hero Content with Text Reveal */}
         <motion.div
-          className="absolute inset-0 flex items-end pb-24 md:pb-36"
+          className="absolute inset-0 flex items-end pb-16 sm:pb-24 md:pb-36"
           style={{ opacity: heroOpacity, y: heroTextY }}
         >
-          <div className="container mx-auto px-6 md:px-12" dir="rtl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8" dir="rtl">
             <motion.div
               initial={fadeInInitial}
               animate={fadeInAnimate}
@@ -373,7 +373,7 @@ const CaseStudy = () => {
                   initial={slideUpInitial}
                   animate={slideUpAnimate}
                   transition={titleTransition}
-                  className="text-6xl md:text-8xl lg:text-[10rem] font-black leading-[0.85] mb-8 tracking-tight"
+                  className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-black leading-[0.85] mb-6 sm:mb-8 tracking-tight"
                   style={titleStyle}
                 >
                   {caseStudy.title}
@@ -385,7 +385,7 @@ const CaseStudy = () => {
                 initial={fadeInUp30Initial}
                 animate={fadeInUp30Animate}
                 transition={transition08Delay07}
-                className="text-xl md:text-2xl lg:text-3xl font-light max-w-2xl leading-relaxed"
+                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light max-w-2xl leading-relaxed"
                 style={taglineStyle}
               >
                 {caseStudy.tagline}
@@ -397,9 +397,9 @@ const CaseStudy = () => {
       </motion.section>
 
       {/* Project Meta */}
-      <section className="py-16 md:py-24 border-b" style={borderStyle}>
-        <div className="container mx-auto px-6 md:px-12" dir="rtl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="py-12 sm:py-16 md:py-24 border-b" style={borderStyle}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8" dir="rtl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             <motion.div
               initial={fadeInUpInitial}
               whileInView={fadeInUpAnimate}
@@ -513,8 +513,8 @@ const CaseStudy = () => {
       )}
 
       {/* Overview Section - Compact Layout */}
-      <section className="py-12 md:py-16">
-        <div className="container mx-auto px-6 md:px-12" dir="rtl">
+      <section className="py-10 sm:py-12 md:py-16">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8" dir="rtl">
           {/* Overview Title & Text */}
           <motion.div
             initial={fadeInUpInitial}
@@ -524,7 +524,7 @@ const CaseStudy = () => {
             className="max-w-3xl mb-10"
           >
             <h2
-              className="text-3xl md:text-4xl font-black mb-4 leading-tight"
+              className="text-2xl sm:text-3xl md:text-4xl font-black mb-4 leading-tight"
               style={{ color: textColors.primary }}
             >
               סקירה כללית
@@ -538,23 +538,23 @@ const CaseStudy = () => {
           </motion.div>
 
           {/* Challenge & Solution - Side by Side */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <motion.div
               initial={fadeInUp30Initial}
               whileInView={fadeInUp30Animate}
               viewport={viewportOnce}
               transition={transition05}
-              className="p-6 md:p-8 rounded-2xl"
+              className="p-5 sm:p-6 md:p-8 rounded-2xl"
               style={{ backgroundColor: textColors.cardBg }}
             >
               <h3
-                className="text-xl font-bold mb-3"
+                className="text-lg sm:text-xl font-bold mb-3"
                 style={{ color: textColors.primary }}
               >
                 האתגר
               </h3>
               <p
-                className="leading-relaxed text-base"
+                className="leading-relaxed text-sm sm:text-base"
                 style={{ color: textColors.secondary }}
               >
                 {caseStudy.challenge}
@@ -566,17 +566,17 @@ const CaseStudy = () => {
               whileInView={fadeInUp30Animate}
               viewport={viewportOnce}
               transition={transition05Delay01}
-              className="p-6 md:p-8 rounded-2xl"
+              className="p-5 sm:p-6 md:p-8 rounded-2xl"
               style={{ backgroundColor: textColors.cardBgAlt }}
             >
               <h3
-                className="text-xl font-bold mb-3"
+                className="text-lg sm:text-xl font-bold mb-3"
                 style={{ color: textColors.primary }}
               >
                 הפתרון
               </h3>
               <p
-                className="leading-relaxed text-base"
+                className="leading-relaxed text-sm sm:text-base"
                 style={{ color: textColors.secondary }}
               >
                 {caseStudy.solution}
@@ -587,17 +587,17 @@ const CaseStudy = () => {
       </section>
 
       {/* CTA Section - Conversational */}
-      <section className="py-24 md:py-32 bg-[#FAF9F6] relative overflow-hidden">
-        <div className="container mx-auto px-6 md:px-12 text-center relative z-10" dir="rtl">
+      <section className="py-16 sm:py-24 md:py-32 bg-[#FAF9F6] relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10" dir="rtl">
           {/* Conversational headline */}
           <TextReveal>
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-black mb-4 leading-[1.1] text-foreground">
+            <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black mb-4 leading-[1.1] text-foreground">
               אהבתם את מה שראיתם?
             </h2>
           </TextReveal>
 
           <TextReveal delay={0.1}>
-            <h3 className="text-3xl md:text-5xl lg:text-6xl font-black mb-8 leading-[1.1]">
+            <h3 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-black mb-6 sm:mb-8 leading-[1.1]">
               <span className="text-primary">בואו נדבר על הפרויקט הבא שלכם</span>
             </h3>
           </TextReveal>
@@ -607,7 +607,7 @@ const CaseStudy = () => {
             whileInView={fadeInUpAnimate}
             viewport={viewportOnce}
             transition={transitionDelay03}
-            className="text-lg md:text-xl mb-10 max-w-xl mx-auto leading-relaxed text-foreground/70"
+            className="text-base sm:text-lg md:text-xl mb-8 sm:mb-10 max-w-xl mx-auto leading-relaxed text-foreground/70"
           >
             אנחנו כבר מתרגשים לשמוע את הסיפור שלכם ולהפוך אותו למשהו מיוחד
           </motion.p>
@@ -621,7 +621,7 @@ const CaseStudy = () => {
             <MagneticButton>
               <button
                 onClick={handlePopupOpen}
-                className="inline-flex items-center gap-4 px-10 py-5 rounded-full font-bold text-lg transition-all group bg-primary text-white hover:bg-primary/90"
+                className="inline-flex items-center gap-3 sm:gap-4 px-8 sm:px-10 py-4 sm:py-5 min-h-[44px] rounded-full font-bold text-base sm:text-lg transition-all group bg-primary text-white hover:bg-primary/90"
               >
                 <span>בואו נתחיל</span>
                 <ArrowLeft className="w-5 h-5 transition-transform group-hover:-translate-x-2" />
@@ -642,13 +642,13 @@ const CaseStudy = () => {
             {caseStudy.nextProject ? (
               <Link
                 to={`/portfolio/${caseStudy.nextProject}`}
-                className="group relative py-16 md:py-24 px-8 md:px-12 border-b md:border-b-0 md:border-l border-white/10 transition-colors hover:bg-white/5"
+                className="group relative py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 border-b md:border-b-0 md:border-l border-white/10 transition-colors hover:bg-white/5 min-h-[44px]"
               >
                 <div className="flex flex-col items-end text-right" dir="rtl">
-                  <span className="text-xs uppercase tracking-[0.2em] text-white/40 mb-3">
+                  <span className="text-xs uppercase tracking-[0.2em] text-white/40 mb-2 sm:mb-3">
                     הפרויקט הבא
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 group-hover:text-primary transition-colors">
                     {caseStudy.nextProject.charAt(0).toUpperCase() + caseStudy.nextProject.slice(1)}
                   </h3>
                   <div className="flex items-center gap-2 text-white/60 group-hover:text-primary transition-colors">
@@ -658,19 +658,19 @@ const CaseStudy = () => {
                 </div>
               </Link>
             ) : (
-              <div className="py-16 md:py-24 px-8 md:px-12 border-b md:border-b-0 md:border-l border-white/10" />
+              <div className="py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 border-b md:border-b-0 md:border-l border-white/10" />
             )}
 
             {/* All Projects */}
             <Link
               to="/portfolio"
-              className="group relative py-16 md:py-24 px-8 md:px-12 transition-colors hover:bg-white/5"
+              className="group relative py-12 sm:py-16 md:py-24 px-4 sm:px-8 md:px-12 transition-colors hover:bg-white/5 min-h-[44px]"
             >
               <div className="flex flex-col items-start text-right" dir="rtl">
-                <span className="text-xs uppercase tracking-[0.2em] text-white/40 mb-3">
+                <span className="text-xs uppercase tracking-[0.2em] text-white/40 mb-2 sm:mb-3">
                   עוד פרויקטים
                 </span>
-                <h3 className="text-2xl md:text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4 group-hover:text-primary transition-colors">
                   כל הפרויקטים
                 </h3>
                 <div className="flex items-center gap-2 text-white/60 group-hover:text-primary transition-colors">

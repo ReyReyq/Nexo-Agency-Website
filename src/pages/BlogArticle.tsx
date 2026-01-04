@@ -156,7 +156,7 @@ const BlogArticle = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-hero-bg/80 to-transparent" />
         </div>
 
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
@@ -187,12 +187,12 @@ const BlogArticle = () => {
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-hero-fg leading-tight mb-6 max-w-4xl">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-hero-fg leading-tight mb-6 max-w-4xl">
               {article.title}
             </h1>
 
             {/* Excerpt */}
-            <p className="text-xl text-hero-fg/70 max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-hero-fg/70 max-w-2xl leading-relaxed">
               {article.excerpt}
             </p>
 
@@ -215,15 +215,15 @@ const BlogArticle = () => {
       </section>
 
       {/* Article Content */}
-      <article className="py-16 md:py-24 bg-background">
-        <div className="container mx-auto px-6">
+      <article className="py-12 sm:py-16 md:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             {/* Share Button */}
-            <div className="flex justify-end mb-8">
+            <div className="flex justify-end mb-6 sm:mb-8">
               <button
                 onClick={handleShare}
                 aria-label={copied ? "הקישור הועתק" : "שתף מאמר"}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all"
+                className="flex items-center justify-center gap-2 min-w-[44px] min-h-[44px] px-4 py-2 rounded-full bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all"
               >
                 {copied ? (
                   <>
@@ -244,18 +244,18 @@ const BlogArticle = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="prose prose-lg prose-slate max-w-none
+              className="prose prose-sm sm:prose-base md:prose-lg lg:prose-xl prose-slate max-w-none
                 prose-headings:font-black prose-headings:text-foreground
-                prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
-                prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-                prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6
-                prose-p.lead:text-xl prose-p.lead:text-foreground prose-p.lead:font-medium
-                prose-ul:my-6 prose-ul:space-y-2
-                prose-ol:my-6 prose-ol:space-y-2
+                prose-h2:text-xl prose-h2:sm:text-2xl prose-h2:md:text-3xl prose-h2:mt-8 prose-h2:sm:mt-10 prose-h2:md:mt-12 prose-h2:mb-4 prose-h2:sm:mb-5 prose-h2:md:mb-6
+                prose-h3:text-lg prose-h3:sm:text-xl prose-h3:md:text-2xl prose-h3:mt-6 prose-h3:sm:mt-7 prose-h3:md:mt-8 prose-h3:mb-3 prose-h3:sm:mb-4
+                prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4 prose-p:sm:mb-5 prose-p:md:mb-6
+                prose-p.lead:text-base prose-p.lead:sm:text-lg prose-p.lead:md:text-xl prose-p.lead:text-foreground prose-p.lead:font-medium
+                prose-ul:my-4 prose-ul:sm:my-5 prose-ul:md:my-6 prose-ul:space-y-2
+                prose-ol:my-4 prose-ol:sm:my-5 prose-ol:md:my-6 prose-ol:space-y-2
                 prose-li:text-muted-foreground
                 prose-strong:text-foreground prose-strong:font-bold
                 prose-blockquote:border-l-4 prose-blockquote:border-primary
-                prose-blockquote:bg-primary/5 prose-blockquote:py-4 prose-blockquote:px-6
+                prose-blockquote:bg-primary/5 prose-blockquote:py-3 prose-blockquote:sm:py-4 prose-blockquote:px-4 prose-blockquote:sm:px-6
                 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
                 prose-blockquote:text-foreground prose-blockquote:font-medium
                 prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
@@ -285,12 +285,12 @@ const BlogArticle = () => {
 
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
-        <section className="py-16 md:py-24 bg-muted/30">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-black text-foreground mb-12 text-center">
+        <section className="py-12 sm:py-16 md:py-24 bg-muted/30">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-8 sm:mb-10 md:mb-12 text-center">
               מאמרים נוספים שיעניינו אותך
             </h2>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {relatedArticles.map((relatedPost, index) => (
                 <motion.article
                   key={relatedPost.id}

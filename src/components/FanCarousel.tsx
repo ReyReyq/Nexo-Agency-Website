@@ -60,7 +60,7 @@ const CarouselCard = memo(({
     >
       {/* Card - Clean, editorial design */}
       <div
-        className={`w-[240px] h-[320px] sm:w-[280px] sm:h-[360px] rounded-2xl overflow-hidden transform-gpu ${
+        className={`w-[220px] h-[300px] sm:w-[260px] sm:h-[340px] md:w-[280px] md:h-[360px] rounded-2xl overflow-hidden transform-gpu ${
           isActive ? "shadow-2xl" : "shadow-lg"
         }`}
         style={{
@@ -70,24 +70,24 @@ const CarouselCard = memo(({
         }}
       >
         {/* Card content - Typography focused */}
-        <div className="relative w-full h-full p-7 flex flex-col justify-end" dir="rtl">
+        <div className="relative w-full h-full p-5 sm:p-6 md:p-7 flex flex-col justify-end" dir="rtl">
           {/* Subtle gradient for text readability */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none" />
 
           {/* Card number - editorial style */}
-          <span className="absolute top-6 right-6 text-[4rem] font-black text-white/15 leading-none select-none">
+          <span className="absolute top-4 right-4 sm:top-5 sm:right-5 md:top-6 md:right-6 text-[3rem] sm:text-[3.5rem] md:text-[4rem] font-black text-white/15 leading-none select-none">
             {String(index + 1).padStart(2, '0')}
           </span>
 
           {/* Content */}
           <div className="relative z-10">
-            <span className="text-white/70 text-sm font-medium mb-2 block tracking-wide">
+            <span className="text-white/70 text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 block tracking-wide">
               {card.subtitle}
             </span>
-            <h3 className="text-[1.5rem] font-bold text-white mb-3 leading-[1.2] tracking-tight">
+            <h3 className="text-lg sm:text-xl md:text-[1.5rem] font-bold text-white mb-2 sm:mb-3 leading-[1.2] tracking-tight">
               {card.title}
             </h3>
-            <p className="text-white/75 text-sm leading-relaxed">
+            <p className="text-white/75 text-xs sm:text-sm leading-relaxed">
               {card.description}
             </p>
           </div>
@@ -188,7 +188,7 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
   );
 
   return (
-    <div className="relative w-full h-[380px] sm:h-[440px] flex items-center justify-center select-none">
+    <div className="relative w-full h-[340px] sm:h-[400px] md:h-[440px] px-4 sm:px-6 lg:px-8 flex items-center justify-center select-none">
       {/* Drag container */}
       <motion.div
         ref={containerRef}
@@ -216,19 +216,24 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
       </motion.div>
 
       {/* Dots indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-30">
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-2.5 md:gap-3 z-30">
         {cards.map((_, index) => (
           <motion.button
             key={index}
             onClick={cardClickHandlers[index]}
-            className={`rounded-full transition-all duration-300 ${
-              index === activeIndex
-                ? "w-7 h-2 bg-gray-900"
-                : "w-2 h-2 bg-gray-400 hover:bg-gray-500"
-            }`}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-          />
+            className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-all duration-300`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label={`Go to card ${index + 1}`}
+          >
+            <span
+              className={`rounded-full transition-all duration-300 ${
+                index === activeIndex
+                  ? "w-6 sm:w-7 h-2 bg-gray-900"
+                  : "w-2 h-2 bg-gray-400 hover:bg-gray-500"
+              }`}
+            />
+          </motion.button>
         ))}
       </div>
     </div>

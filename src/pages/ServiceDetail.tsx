@@ -77,7 +77,7 @@ const ServiceHero = memo(({ service }: ServiceHeroProps) => {
 
   return (
     <section
-      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-hero-bg"
+      className="relative min-h-screen min-h-[100dvh] flex items-center justify-center overflow-hidden bg-hero-bg"
     >
       {/* Animated Background - Service Specific */}
       <ServiceHeroBackground
@@ -86,7 +86,7 @@ const ServiceHero = memo(({ service }: ServiceHeroProps) => {
       />
 
       {/* Centered Content - pointer-events-none allows mouse to pass through to background */}
-      <div className="relative z-10 text-center px-6 pointer-events-none">
+      <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 pointer-events-none">
         <motion.div
           ref={heroRef}
           initial={INITIAL_FADE_UP_40}
@@ -99,7 +99,7 @@ const ServiceHero = memo(({ service }: ServiceHeroProps) => {
             initial={INITIAL_FADE_UP_30}
             animate={animateState}
             transition={TRANSITION_DELAY_03}
-            className="text-4xl md:text-6xl lg:text-7xl font-black text-hero-fg leading-[1.1] mb-6 max-w-4xl"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-hero-fg leading-[1.1] mb-4 sm:mb-6 max-w-4xl"
           >
             {service.headline}
           </motion.h1>
@@ -109,7 +109,7 @@ const ServiceHero = memo(({ service }: ServiceHeroProps) => {
             initial={INITIAL_FADE_UP_20}
             animate={animateState}
             transition={TRANSITION_DELAY_04}
-            className="text-hero-fg/60 text-lg md:text-xl max-w-2xl mb-10"
+            className="text-hero-fg/60 text-base sm:text-lg md:text-xl max-w-2xl mb-8 sm:mb-10"
           >
             {service.subtitle}
           </motion.p>
@@ -119,13 +119,13 @@ const ServiceHero = memo(({ service }: ServiceHeroProps) => {
             initial={INITIAL_FADE_UP_20}
             animate={animateState}
             transition={TRANSITION_DELAY_05}
-            className="flex flex-wrap justify-center gap-4 pointer-events-auto"
+            className="flex flex-wrap justify-center gap-3 sm:gap-4 pointer-events-auto"
           >
             {/* Primary CTA - White button with magnetic pull */}
             <Magnet magnetStrength={3} padding={60}>
               <Link
                 to="/contact#contact-form"
-                className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-full text-lg font-bold bg-white text-black transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden"
+                className="group relative inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-bold bg-white text-black transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden"
               >
                 {/* Shimmer effect on hover */}
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -140,7 +140,7 @@ const ServiceHero = memo(({ service }: ServiceHeroProps) => {
             <Magnet magnetStrength={3} padding={60}>
               <a
                 href="#details"
-                className="group relative inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-hero-fg px-8 py-4 rounded-full text-lg font-medium hover:bg-white/20 hover:scale-105 active:scale-95 transition-all border border-white/20 overflow-hidden"
+                className="group relative inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-hero-fg px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-medium hover:bg-white/20 hover:scale-105 active:scale-95 transition-all border border-white/20 overflow-hidden"
               >
                 {/* Glow effect on hover */}
                 <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -184,25 +184,25 @@ const SubServicesSection = memo(({ service }: SubServicesSectionProps) => {
   if (!subServices && childServices.length === 0) return null;
 
   return (
-    <section className="py-24 md:py-32 bg-muted/30" ref={sectionRef}>
-      <div className="container mx-auto px-6">
+    <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-muted/30" ref={sectionRef}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={INITIAL_FADE_UP_40}
           animate={animateState}
           transition={TRANSITION_DURATION_06}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-12 md:mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-3 sm:mb-4">
             השירותים שלנו בתחום
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
             פתרונות מקיפים שמותאמים לצרכים שלכם
           </p>
         </motion.div>
 
         {/* Sub-services grid */}
         {subServices && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             {subServices.map((sub, i) => {
               const SubIcon = sub.icon || service.icon;
               return (
@@ -211,18 +211,18 @@ const SubServicesSection = memo(({ service }: SubServicesSectionProps) => {
                   initial={INITIAL_FADE_UP_40}
                   animate={animateState}
                   transition={{ delay: i * 0.1 }}
-                  className="group p-6 rounded-2xl bg-background border border-border hover:border-primary/40 transition-all"
+                  className="group p-4 sm:p-5 md:p-6 rounded-2xl bg-background border border-border hover:border-primary/40 transition-all"
                 >
                   <div
                     className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center mb-4",
+                      "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 sm:mb-4",
                       `bg-gradient-to-br ${service.gradient}`
                     )}
                   >
-                    <SubIcon className="w-6 h-6 text-white" />
+                    <SubIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">{sub.name}</h3>
-                  <p className="text-muted-foreground text-sm">{sub.description}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">{sub.name}</h3>
+                  <p className="text-muted-foreground text-xs sm:text-sm">{sub.description}</p>
                 </motion.div>
               );
             })}
@@ -231,7 +231,7 @@ const SubServicesSection = memo(({ service }: SubServicesSectionProps) => {
 
         {/* Child services as cards */}
         {childServices.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mt-6 sm:mt-8">
             {childServices.map((child, i) => {
               const ChildIcon = child.icon;
               return (
@@ -243,22 +243,22 @@ const SubServicesSection = memo(({ service }: SubServicesSectionProps) => {
                 >
                   <Link
                     to={`/services/${child.slug}`}
-                    className="group block p-6 rounded-2xl bg-background border border-border hover:border-primary/40 transition-all h-full"
+                    className="group block p-4 sm:p-5 md:p-6 rounded-2xl bg-background border border-border hover:border-primary/40 transition-all h-full"
                   >
                     <div
                       className={cn(
-                        "w-12 h-12 rounded-xl flex items-center justify-center mb-4",
+                        "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 sm:mb-4",
                         `bg-gradient-to-br ${child.gradient}`
                       )}
                     >
-                      <ChildIcon className="w-6 h-6 text-white" />
+                      <ChildIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
                       {child.name}
                     </h3>
-                    <p className="text-muted-foreground text-sm mb-4">{child.description}</p>
+                    <p className="text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4">{child.description}</p>
                     <div
-                      className="flex items-center gap-2 text-sm font-medium"
+                      className="flex items-center gap-2 text-xs sm:text-sm font-medium"
                       style={{ color: child.accentColor }}
                     >
                       <span>למידע נוסף</span>
@@ -346,21 +346,21 @@ const RelatedBentoCard = memo(({ service, index, size, isInView }: RelatedBentoC
           {/* Content */}
           <div className={cn(
             "relative h-full flex flex-col justify-end",
-            isLarge ? "p-6" : "p-4"
+            isLarge ? "p-3 sm:p-4 md:p-6" : "p-2 sm:p-3 md:p-4"
           )}>
             <div>
               {/* Title */}
               <h3 className={cn(
                 "font-bold leading-tight text-white",
-                isLarge ? "text-xl md:text-2xl" : "text-base md:text-lg"
+                isLarge ? "text-base sm:text-lg md:text-xl lg:text-2xl" : "text-sm sm:text-base md:text-lg"
               )}>
                 {service.name}
               </h3>
 
               {/* Description */}
               <p className={cn(
-                "text-white/70 mt-2",
-                isLarge ? "text-sm md:text-base line-clamp-3" : "text-xs line-clamp-2"
+                "text-white/70 mt-1 sm:mt-2",
+                isLarge ? "text-xs sm:text-sm md:text-base line-clamp-2 sm:line-clamp-3" : "text-xs line-clamp-2"
               )}>
                 {service.description}
               </p>
@@ -368,13 +368,13 @@ const RelatedBentoCard = memo(({ service, index, size, isInView }: RelatedBentoC
               {/* CTA arrow */}
               <motion.div
                 className={cn(
-                  "flex items-center gap-2 text-white/80 mt-3",
-                  isLarge ? "text-sm" : "text-xs"
+                  "flex items-center gap-1 sm:gap-2 text-white/80 mt-2 sm:mt-3",
+                  isLarge ? "text-xs sm:text-sm" : "text-xs"
                 )}
                 animate={{ x: isHovered ? -3 : 0 }}
               >
                 <span>גלה עוד</span>
-                <ArrowLeft className={isLarge ? "w-4 h-4" : "w-3 h-3"} />
+                <ArrowLeft className={isLarge ? "w-3 h-3 sm:w-4 sm:h-4" : "w-3 h-3"} />
               </motion.div>
             </div>
           </div>
@@ -403,21 +403,21 @@ const RelatedServicesSection = memo(({ service }: RelatedServicesSectionProps) =
   if (relatedServices.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-24 bg-muted/30" ref={sectionRef}>
-      <div className="container mx-auto px-4 md:px-6">
+    <section className="py-16 sm:py-20 md:py-24 bg-muted/30" ref={sectionRef}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={INITIAL_FADE_UP_40}
           animate={isInView ? ANIMATE_VISIBLE : ANIMATE_EMPTY}
           transition={TRANSITION_DURATION_06}
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-6 sm:mb-8 md:mb-12"
         >
-          <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-3 sm:mb-4">
             שירותים נוספים שיכולים לעניין אתכם
           </h2>
         </motion.div>
 
         {/* Bento Grid: 3 columns, 2 rows - Large card spans 2x2, two smaller cards stack on right */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 auto-rows-[140px] md:auto-rows-[180px] max-w-4xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 auto-rows-[120px] sm:auto-rows-[140px] md:auto-rows-[180px] max-w-4xl mx-auto">
           {relatedServices.map((related, i) => (
             <RelatedBentoCard
               key={related.id}
@@ -456,29 +456,29 @@ SectionLoader.displayName = 'SectionLoader';
 
 const CTASection = memo(({ service }: CTASectionProps) => {
   return (
-    <section className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto px-6 text-center">
+    <section className="py-16 sm:py-20 md:py-24 lg:py-32 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={INITIAL_FADE_UP_40}
           whileInView={ANIMATE_VISIBLE}
           viewport={VIEWPORT_ONCE}
           className="max-w-3xl mx-auto"
         >
-          <Sparkles className="w-12 h-12 text-primary mx-auto mb-6" />
-          <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+          <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-primary mx-auto mb-4 sm:mb-6" />
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground mb-4 sm:mb-6">
             מוכנים להתחיל?
           </h2>
-          <p className="text-muted-foreground text-lg mb-8">
+          <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8">
             בואו נדבר על איך {service.name} יכול לעזור לעסק שלכם לצמוח.
             שיחת ייעוץ ראשונית - ללא התחייבות.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
             {/* Primary CTA - Service gradient with magnetic pull */}
             <Magnet magnetStrength={3} padding={60}>
               <Link
                 to="/contact#contact-form"
                 className={cn(
-                  "group relative inline-flex items-center gap-2 px-8 py-4 rounded-full text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden",
+                  "group relative inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-bold text-white transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl overflow-hidden",
                   `bg-gradient-to-r ${service.gradient}`
                 )}
               >
@@ -495,7 +495,7 @@ const CTASection = memo(({ service }: CTASectionProps) => {
             <Magnet magnetStrength={3} padding={60}>
               <Link
                 to="/services"
-                className="group relative inline-flex items-center gap-2 bg-muted text-foreground px-8 py-4 rounded-full text-lg font-medium hover:bg-muted/80 hover:scale-105 active:scale-95 transition-all border border-border overflow-hidden"
+                className="group relative inline-flex items-center gap-2 bg-muted text-foreground px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] rounded-full text-base sm:text-lg font-medium hover:bg-muted/80 hover:scale-105 active:scale-95 transition-all border border-border overflow-hidden"
               >
                 {/* Glow effect on hover */}
                 <span className="absolute inset-0 bg-foreground/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

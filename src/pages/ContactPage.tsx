@@ -317,7 +317,7 @@ const ContactPage = () => {
     switch (field) {
       case "budget":
         return (
-          <div className="grid grid-cols-1 gap-3 w-full max-w-md mx-auto">
+          <div className="grid grid-cols-1 gap-2 sm:gap-3 w-full max-w-md mx-auto">
             {budgetOptions.map((option) => (
               <motion.button
                 key={option.value}
@@ -325,14 +325,14 @@ const ContactPage = () => {
                 onClick={() => handleSelectionWithAutoAdvance("budget", option.value)}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`p-4 rounded-xl border-2 text-right transition-all ${
+                className={`p-3 sm:p-4 min-h-[44px] rounded-xl border-2 text-right transition-all ${
                   formData.budget === option.value
                     ? "border-primary bg-primary/10"
                     : "border-border hover:border-primary/50"
                 }`}
               >
-                <p className="font-bold text-foreground">{option.label}</p>
-                <p className="text-sm text-muted-foreground">{option.description}</p>
+                <p className="font-bold text-foreground text-sm sm:text-base">{option.label}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">{option.description}</p>
               </motion.button>
             ))}
           </div>
@@ -340,7 +340,7 @@ const ContactPage = () => {
 
       case "source":
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-md mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 w-full max-w-md mx-auto">
             {sourceOptions.map((option) => (
               <motion.button
                 key={option.value}
@@ -348,14 +348,14 @@ const ContactPage = () => {
                 onClick={() => handleSelectionWithAutoAdvance("source", option.value)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`p-4 rounded-xl border-2 text-center transition-all ${
+                className={`p-3 sm:p-4 min-h-[44px] rounded-xl border-2 text-center transition-all ${
                   formData.source === option.value
                     ? "border-primary bg-primary/10"
                     : "border-border hover:border-primary/50"
                 }`}
               >
-                <span className="text-2xl mb-2 block">{option.icon}</span>
-                <p className="text-sm font-medium text-foreground">{option.label}</p>
+                <span className="text-xl sm:text-2xl mb-1 sm:mb-2 block">{option.icon}</span>
+                <p className="text-xs sm:text-sm font-medium text-foreground">{option.label}</p>
               </motion.button>
             ))}
           </div>
@@ -368,7 +368,7 @@ const ContactPage = () => {
             onChange={(e) => handleInputChange("message", e.target.value)}
             placeholder="פרטים על הפרויקט, מטרות, לו״ז..."
             rows={4}
-            className="w-full max-w-md mx-auto px-6 py-4 text-lg bg-muted/50 border-2 border-border rounded-2xl focus:border-primary focus:outline-none resize-none text-foreground placeholder:text-muted-foreground text-right"
+            className="w-full max-w-md mx-auto px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-muted/50 border-2 border-border rounded-2xl focus:border-primary focus:outline-none resize-none text-foreground placeholder:text-muted-foreground text-right"
           />
         );
 
@@ -385,7 +385,7 @@ const ContactPage = () => {
                 : field === "email" ? "example@email.com"
                 : ""
             }
-            className={`w-full max-w-md mx-auto px-6 py-4 text-xl bg-muted/50 border-2 rounded-2xl focus:outline-none text-foreground placeholder:text-muted-foreground text-right transition-colors ${
+            className={`w-full max-w-md mx-auto px-4 sm:px-6 py-3 sm:py-4 min-h-[44px] text-lg sm:text-xl bg-muted/50 border-2 rounded-2xl focus:outline-none text-foreground placeholder:text-muted-foreground text-right transition-colors ${
               error ? "border-red-500" : "border-border focus:border-primary"
             }`}
             dir={field === "email" ? "ltr" : "rtl"}
@@ -399,7 +399,7 @@ const ContactPage = () => {
       <GlassNavbar />
 
       {/* Hero Section - Clean and Fast */}
-      <section className="min-h-screen flex items-center bg-hero-bg relative overflow-hidden">
+      <section className="min-h-screen min-h-[100dvh] flex items-center bg-hero-bg relative overflow-hidden">
         {/* Globe Background - Centered */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[600px] md:h-[600px] lg:w-[800px] lg:h-[800px] opacity-60">
@@ -409,7 +409,7 @@ const ContactPage = () => {
         {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-b from-hero-bg via-transparent to-hero-bg pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-r from-hero-bg via-transparent to-hero-bg pointer-events-none" />
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             ref={heroRef}
             initial={{ opacity: 0, y: 60 }}
@@ -417,13 +417,13 @@ const ContactPage = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-5xl mx-auto text-center"
           >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.95] mb-8">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.95] mb-6 sm:mb-8">
               בואו נבנה משהו
               <br />
               <span className="text-gradient">מדהים ביחד.</span>
             </h1>
 
-            <p className="text-hero-fg/60 text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto mb-12">
+            <p className="text-hero-fg/60 text-base sm:text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-12">
               יש לכם רעיון שמחכה לצאת לאור? אנחנו כאן כדי להפוך אותו למציאות דיגיטלית שמייצרת תוצאות.
             </p>
 
@@ -433,7 +433,7 @@ const ContactPage = () => {
                 onClick={scrollToForm}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="group px-8 py-4 bg-primary text-white rounded-full text-lg font-bold flex items-center justify-center gap-3 hover:bg-primary/90 transition-colors"
+                className="group px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-primary text-white rounded-full text-base sm:text-lg font-bold flex items-center justify-center gap-2 sm:gap-3 hover:bg-primary/90 transition-colors"
               >
                 <Send className="w-5 h-5" />
                 התחילו פרויקט
@@ -446,7 +446,7 @@ const ContactPage = () => {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-hero-fg/10 text-hero-fg rounded-full text-lg font-bold flex items-center justify-center gap-3 hover:bg-hero-fg/20 transition-colors border border-hero-fg/20"
+                className="px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-hero-fg/10 text-hero-fg rounded-full text-base sm:text-lg font-bold flex items-center justify-center gap-2 sm:gap-3 hover:bg-hero-fg/20 transition-colors border border-hero-fg/20"
               >
                 <MessageCircle className="w-5 h-5" />
                 שלחו וואטסאפ
@@ -469,80 +469,80 @@ const ContactPage = () => {
 
 
       {/* Contact Section with Embedded Form */}
-      <section id="contact-form" ref={contactRef} className="py-24 md:py-32 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
+      <section id="contact-form" ref={contactRef} className="py-16 sm:py-24 md:py-32 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-6xl mx-auto">
             {/* Left - Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               animate={isContactInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7 }}
             >
-              <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-4">
                 דברו איתנו ישירות
               </h2>
-              <p className="text-muted-foreground text-lg mb-8">
+              <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8">
                 צוות מרוחק, תוצאות קרובות. אנחנו זמינים בכל ערוץ שנוח לכם.
               </p>
 
               {/* Contact Cards */}
-              <div className="space-y-4 mb-12">
+              <div className="space-y-3 sm:space-y-4 mb-8 sm:mb-12">
                 <a
                   href="mailto:sales@nexoagency.com"
-                  className="group flex items-center gap-4 p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[44px]"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Mail className="w-6 h-6 text-primary" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors shrink-0">
+                    <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-muted-foreground text-sm mb-1">אימייל</p>
-                    <p className="text-foreground text-lg font-medium">sales@nexoagency.com</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-muted-foreground text-xs sm:text-sm mb-1">אימייל</p>
+                    <p className="text-foreground text-base sm:text-lg font-medium truncate">sales@nexoagency.com</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                 </a>
 
                 <a
                   href="tel:+972533622423"
-                  className="group flex items-center gap-4 p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[44px]"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                    <Phone className="w-6 h-6 text-primary" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors shrink-0">
+                    <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-muted-foreground text-sm mb-1">טלפון</p>
-                    <p className="text-foreground text-lg font-medium">053-362-2423</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-muted-foreground text-xs sm:text-sm mb-1">טלפון</p>
+                    <p className="text-foreground text-base sm:text-lg font-medium">053-362-2423</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                 </a>
 
                 <a
                   href="https://wa.me/972533622423"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-4 p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[44px]"
                 >
-                  <div className="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
-                    <MessageCircle className="w-6 h-6 text-green-500" />
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors shrink-0">
+                    <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-muted-foreground text-sm mb-1">וואטסאפ</p>
-                    <p className="text-foreground text-lg font-medium">שלחו הודעה מיידית</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-muted-foreground text-xs sm:text-sm mb-1">וואטסאפ</p>
+                    <p className="text-foreground text-base sm:text-lg font-medium">שלחו הודעה מיידית</p>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-green-500 transition-colors" />
+                  <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-green-500 transition-colors shrink-0" />
                 </a>
               </div>
 
               {/* Social */}
               <div>
                 <p className="text-muted-foreground text-sm mb-4">עקבו אחרינו</p>
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   {socialLinks.map((social, index) => (
                     <a
                       key={index}
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`w-12 h-12 rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-white hover:border-transparent transition-all ${social.color}`}
+                      className={`w-11 h-11 sm:w-12 sm:h-12 min-h-[44px] min-w-[44px] rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-white hover:border-transparent transition-all ${social.color}`}
                       aria-label={social.label}
                     >
                       <social.icon className="w-5 h-5" />
@@ -560,7 +560,7 @@ const ContactPage = () => {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="scroll-mt-24"
             >
-              <div className="h-full p-8 md:p-12 rounded-3xl bg-background border border-border shadow-xl">
+              <div className="h-full p-5 sm:p-8 md:p-12 rounded-3xl bg-background border border-border shadow-xl">
                 {isSuccess ? (
                   // Success State
                   <motion.div
@@ -598,7 +598,7 @@ const ContactPage = () => {
                     >
                       <Rocket className="w-10 h-10 text-primary" />
                     </motion.div>
-                    <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3">בואו נכיר!</h2>
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground mb-3">בואו נכיר!</h2>
                     <p className="text-muted-foreground mb-2 max-w-sm mx-auto">
                       כמה שאלות קצרות שיעזרו לנו להבין את הפרויקט שלכם ולהכין הצעה מותאמת אישית
                     </p>
@@ -607,7 +607,7 @@ const ContactPage = () => {
                       onClick={() => setShowStartScreen(false)}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="px-8 py-4 bg-primary text-white rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
+                      className="px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-primary text-white rounded-full text-base sm:text-lg font-bold hover:bg-primary/90 transition-colors"
                     >
                       בואו נתחיל →
                     </motion.button>
@@ -645,10 +645,10 @@ const ContactPage = () => {
                         transition={{ duration: 0.3 }}
                         className={`text-center ${shake ? "animate-shake" : ""}`}
                       >
-                        <h3 className="text-2xl md:text-3xl font-black text-foreground mb-2">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-foreground mb-2">
                           {currentStepData.title}
                         </h3>
-                        <p className="text-muted-foreground mb-8">{currentStepData.subtitle}</p>
+                        <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8">{currentStepData.subtitle}</p>
 
                         {renderStepContent()}
 
@@ -667,11 +667,11 @@ const ContactPage = () => {
                     </AnimatePresence>
 
                     {/* Navigation */}
-                    <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
+                    <div className="flex items-center justify-between mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-border">
                       <button
                         onClick={handleBack}
                         disabled={currentStep === 0}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                        className={`flex items-center gap-2 px-3 sm:px-4 py-2 min-h-[44px] rounded-lg transition-all ${
                           currentStep === 0
                             ? "opacity-0 pointer-events-none"
                             : "text-muted-foreground hover:text-foreground"
@@ -687,7 +687,7 @@ const ContactPage = () => {
                           disabled={isSubmitting}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                          className="flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 min-h-[44px] bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
                         >
                           {isSubmitting ? (
                             <>
@@ -733,27 +733,27 @@ const ContactPage = () => {
       <FAQSection />
 
       {/* CTA Section */}
-      <section className="bg-hero-bg py-24 md:py-32">
-        <div className="container mx-auto px-6 text-center">
+      <section className="bg-hero-bg py-16 sm:py-24 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-hero-fg mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-hero-fg mb-4">
               מוכנים לקחת את העסק שלכם
               <br />
               <span className="text-primary">לשלב הבא?</span>
             </h2>
-            <p className="text-hero-fg/60 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+            <p className="text-hero-fg/60 text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-10">
               בואו נדבר על איך אנחנו יכולים לעזור לכם להשיג את המטרות שלכם.
             </p>
             <motion.a
               href="#contact-form"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 min-h-[44px] bg-primary text-white rounded-full text-base sm:text-lg font-bold hover:bg-primary/90 transition-colors"
             >
               <Send className="w-5 h-5" />
               בואו נתחיל
@@ -763,8 +763,8 @@ const ContactPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-hero-bg border-t border-hero-fg/10 py-8">
-        <div className="container mx-auto px-6">
+      <footer className="bg-hero-bg border-t border-hero-fg/10 py-6 sm:py-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-4">
               <span className="text-2xl font-black text-hero-fg">NEXO</span>

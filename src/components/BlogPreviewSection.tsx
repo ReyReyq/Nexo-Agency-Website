@@ -38,15 +38,15 @@ const ArticleCard = memo(({ post }: { post: BlogPost }) => (
         </span>
         {/* Title overlay on mobile for better visibility */}
         <div className="md:hidden absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-          <h4 className="text-xs font-bold text-white leading-tight line-clamp-2" dir="rtl">
+          <h4 className="text-xs sm:text-sm font-bold text-white leading-tight line-clamp-2" dir="rtl">
             {post.title}
           </h4>
         </div>
       </div>
       {/* Content - remaining space with overflow handling */}
-      <div className="flex-1 p-2 md:p-3 flex flex-col overflow-hidden" dir="rtl">
+      <div className="flex-1 p-4 sm:p-5 md:p-6 flex flex-col overflow-hidden" dir="rtl">
         {/* Title hidden on mobile (shown in image overlay), visible on desktop */}
-        <h4 className="hidden md:block text-sm font-bold text-[#1a1a1a] leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
+        <h4 className="hidden md:block text-sm sm:text-base font-bold text-[#1a1a1a] leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
           {post.title}
         </h4>
         {/* Excerpt - hidden on mobile, visible on desktop */}
@@ -102,14 +102,14 @@ const BlogPreviewSection = () => {
       dir="rtl"
     >
       {/* Header Block - Centered above grid */}
-      <div className="container mx-auto px-6 md:px-12 mb-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center"
         >
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
             חושבים{" "}
             <span className="bg-gradient-to-l from-primary to-[#8330c2] bg-clip-text text-transparent">
               קדימה
@@ -149,7 +149,7 @@ const BlogPreviewSection = () => {
       >
         <Link
           to="/blog"
-          className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white border-2 border-[#1a1a1a] text-[#1a1a1a] font-bold text-lg shadow-lg hover:bg-[#1a1a1a] hover:text-white transition-all duration-300"
+          className="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white border-2 border-[#1a1a1a] text-[#1a1a1a] font-bold text-lg shadow-lg hover:bg-[#1a1a1a] hover:text-white transition-all duration-300 min-h-[44px]"
         >
           <span>כל המאמרים</span>
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />

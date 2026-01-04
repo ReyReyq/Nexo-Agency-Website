@@ -368,7 +368,7 @@ const Contact = () => {
                 : field === "email" ? "example@email.com"
                 : ""
             }
-            className={`w-full max-w-md mx-auto px-6 py-4 text-xl bg-white border-2 rounded-2xl focus:outline-none text-[#1a1a1a] placeholder:text-[#a0a0a0] text-right transition-colors ${
+            className={`w-full max-w-md mx-auto px-6 py-4 min-h-[44px] text-xl bg-white border-2 rounded-2xl focus:outline-none text-[#1a1a1a] placeholder:text-[#a0a0a0] text-right transition-colors ${
               error ? "border-red-500" : "border-[#e5e5e5] focus:border-primary"
             }`}
             dir={field === "email" ? "ltr" : "rtl"}
@@ -388,7 +388,7 @@ const Contact = () => {
         }}
       />
 
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <motion.div
           ref={ref}
@@ -534,13 +534,13 @@ const Contact = () => {
                     <button
                       onClick={handleBack}
                       disabled={currentStep === 0}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                      className={`flex items-center gap-2 px-4 min-h-[44px] rounded-lg transition-all ${
                         currentStep === 0
                           ? "opacity-0 pointer-events-none"
                           : "text-[#6a6a6a] hover:text-[#1a1a1a]"
                       }`}
                     >
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-5 h-5" />
                       <span>הקודם</span>
                     </button>
 

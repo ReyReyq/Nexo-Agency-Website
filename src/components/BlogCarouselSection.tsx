@@ -13,6 +13,7 @@ interface BlogCarouselSectionProps {
   subtitle?: string;
 }
 
+const CARD_WIDTH_XS = 260;
 const CARD_WIDTH_SM = 280;
 const CARD_WIDTH_MD = 320;
 const CARD_WIDTH_LG = 340;
@@ -21,7 +22,8 @@ const MARGIN = 16;
 // Helper to get card width based on screen size
 const getCardWidth = () => {
   if (typeof window === 'undefined') return CARD_WIDTH_LG;
-  if (window.innerWidth < 480) return CARD_WIDTH_SM;
+  if (window.innerWidth < 400) return CARD_WIDTH_XS;
+  if (window.innerWidth < 640) return CARD_WIDTH_SM;
   if (window.innerWidth < 768) return CARD_WIDTH_MD;
   return CARD_WIDTH_LG;
 };
@@ -42,13 +44,13 @@ const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number 
     >
       <Link to={`/blog/${post.slug}`} className="block group">
         {/* Image Container */}
-        <div className="relative overflow-hidden rounded-xl mb-4">
+        <div className="relative overflow-hidden rounded-xl mb-3 sm:mb-4">
           <motion.img
             src={post.image}
             alt={post.title}
             loading="lazy"
             decoding="async"
-            className="w-full h-[200px] object-cover"
+            className="w-full h-[160px] sm:h-[180px] md:h-[200px] object-cover"
             animate={{ scale: isHovered ? 1.05 : 1 }}
             transition={{ duration: 0.4 }}
           />
@@ -62,7 +64,7 @@ const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number 
         </div>
 
         {/* Content */}
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           {/* Meta info */}
           <div className="flex items-center gap-3 text-sm text-[#666]">
             <span className="flex items-center gap-1">
@@ -74,7 +76,7 @@ const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number 
           </div>
 
           {/* Title */}
-          <h3 className="text-lg font-bold text-[#1a1a1a] leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+          <h3 className="text-base sm:text-lg font-bold text-[#1a1a1a] leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
             {post.title}
           </h3>
 
@@ -185,9 +187,9 @@ const BlogCarouselSection = ({
       dir="rtl"
     >
       <div className="relative overflow-hidden">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
             <div>
               <motion.div
                 initial={{ width: 0 }}
@@ -199,7 +201,7 @@ const BlogCarouselSection = ({
                 <Sparkles className="w-5 h-5 text-primary" />
                 <span className="text-primary text-sm font-medium">הבלוג שלנו</span>
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-[#1a1a1a]">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1a1a1a]">
                 {title}
               </h2>
               <p className="text-[#555] mt-2 max-w-md">
@@ -208,16 +210,16 @@ const BlogCarouselSection = ({
             </div>
 
             {/* Navigation Arrows */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
-                className="p-2.5 rounded-full border border-[#ddd] bg-white text-[#1a1a1a] transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary"
+                className="min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-[#ddd] bg-white text-[#1a1a1a] transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center"
                 onClick={shiftRight}
                 aria-label="הבא"
               >
                 <ArrowRight className="w-5 h-5" />
               </button>
               <button
-                className="p-2.5 rounded-full border border-[#ddd] bg-white text-[#1a1a1a] transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary"
+                className="min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-[#ddd] bg-white text-[#1a1a1a] transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center"
                 onClick={shiftLeft}
                 aria-label="הקודם"
               >

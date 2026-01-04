@@ -26,7 +26,7 @@ const StepCard = ({ step, accentColor }: StepCardProps) => {
     <motion.div
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className="group relative h-[280px] w-[280px] sm:h-[320px] sm:w-[340px] md:h-[350px] md:w-[400px] flex-shrink-0 overflow-hidden rounded-2xl"
+      className="group relative h-[260px] w-[260px] sm:h-[300px] sm:w-[320px] md:h-[340px] md:w-[380px] lg:h-[350px] lg:w-[400px] flex-shrink-0 overflow-hidden rounded-xl sm:rounded-2xl"
     >
       {/* Glass effect background */}
       <div className="absolute inset-0 bg-white/80 backdrop-blur-xl" />
@@ -62,7 +62,7 @@ const StepCard = ({ step, accentColor }: StepCardProps) => {
 
         {/* Decorative element */}
         <div
-          className="absolute bottom-6 left-8 h-1 w-12 rounded-full opacity-30 transition-all duration-300 group-hover:w-20 group-hover:opacity-50"
+          className="absolute bottom-4 sm:bottom-5 md:bottom-6 left-5 sm:left-6 md:left-8 h-1 w-10 sm:w-12 rounded-full opacity-30 transition-all duration-300 group-hover:w-16 sm:group-hover:w-20 group-hover:opacity-50"
           style={{ backgroundColor: accentColor }}
         />
       </div>
@@ -99,20 +99,20 @@ const HorizontalProcessCarousel = ({
       {/* Sticky container */}
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden">
         {/* Section Header */}
-        <div className="flex flex-col items-center px-8 pt-20 pb-12 text-center">
+        <div className="flex flex-col items-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 sm:pb-12 text-center">
           {/* Accent line */}
           <div
-            className="mb-6 h-1 w-16 rounded-full"
+            className="mb-4 sm:mb-6 h-1 w-12 sm:w-16 rounded-full"
             style={{ backgroundColor: accentColor }}
           />
 
           {/* Title */}
-          <h2 className="mb-4 text-4xl font-bold text-neutral-900 md:text-5xl">
+          <h2 className="mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900">
             {title}
           </h2>
 
           {/* Description */}
-          <p className="max-w-2xl text-lg text-neutral-600 md:text-xl">
+          <p className="max-w-2xl text-base sm:text-lg md:text-xl text-neutral-600">
             {description}
           </p>
         </div>
@@ -121,7 +121,7 @@ const HorizontalProcessCarousel = ({
         <div className="flex flex-1 items-center overflow-hidden">
           <motion.div
             style={{ x }}
-            className="flex gap-6 px-8"
+            className="flex gap-4 sm:gap-6 md:gap-8 px-4 sm:px-6 lg:px-8"
           >
             {steps.map((step, index) => (
               <StepCard
@@ -134,17 +134,19 @@ const HorizontalProcessCarousel = ({
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
-          <span className="text-sm text-neutral-500">גלול להמשך</span>
+        <div className="absolute bottom-6 sm:bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2">
+          <span className="text-xs sm:text-sm text-neutral-500">גלול להמשך</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-            className="h-6 w-4 rounded-full border-2 border-neutral-400 p-1"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center"
           >
-            <div
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: accentColor }}
-            />
+            <div className="h-6 w-4 rounded-full border-2 border-neutral-400 p-1">
+              <div
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: accentColor }}
+              />
+            </div>
           </motion.div>
         </div>
       </div>

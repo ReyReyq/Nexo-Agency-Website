@@ -390,11 +390,11 @@ const PortfolioSection = memo(function PortfolioSection() {
       <div className="mt-16 md:mt-24 overflow-hidden">
         {/* First Marquee Row - Left to Right */}
         <div className="mb-6">
-          <Marquee className="[--duration:10s] [--gap:1.5rem]">
+          <Marquee className="[--duration:30s] [--gap:1.5rem]">
             {websiteImages.row1.map((src, index) => (
               <div
                 key={index}
-                className="relative w-48 sm:w-56 md:w-64 lg:w-72 aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+                className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
               >
                 <img
                   src={src}

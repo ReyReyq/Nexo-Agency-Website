@@ -84,13 +84,13 @@ export const budgetLabels: Record<string, string> = {
 };
 
 /**
- * Source value to Hebrew label mapping
+ * Source value to Hebrew label mapping (must match API labels for Monday.com status column)
  */
 export const sourceLabels: Record<string, string> = {
   'google': 'גוגל',
   'instagram': 'אינסטגרם',
   'facebook': 'פייסבוק',
-  'referral': 'המלצה מחבר/ה',
-  'portfolio': 'ראיתי פרויקט שלכם',
+  'referral': 'המלצה',
+  'portfolio': 'תיק עבודות',
   'other': 'אחר',
 };

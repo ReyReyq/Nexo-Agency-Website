@@ -67,6 +67,10 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const autoAdvanceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Refs to always access the latest callbacks (fixes race condition with state updates)
+  const handleNextRef = useRef<() => void>(() => {});
+  const handleSubmitRef = useRef<() => Promise<void>>(async () => {});
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     phone: "",
@@ -565,6 +569,15 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     }
   }, [currentStep, totalSteps, formData]);
 
+  // Keep refs updated with latest callbacks (fixes race condition with auto-advance)
+  useEffect(() => {
+    handleNextRef.current = handleNext;
+  }, [handleNext]);
+
+  useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
+
   const handleBack = useCallback(() => {
     if (currentStep > 0) {
       setError(null);
@@ -847,7 +860,8 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                 key={option.value}
                 onClick={() => {
                   updateFormData("budget", option.value);
-                  scheduleAutoAdvance(handleNext, 300);
+                  // Use ref to get the latest handleNext callback after state update
+                  scheduleAutoAdvance(() => handleNextRef.current(), 300);
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -897,7 +911,8 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
                 key={option.value}
                 onClick={() => {
                   updateFormData("source", option.value);
-                  scheduleAutoAdvance(handleSubmit, 300);
+                  // Use ref to get the latest handleSubmit callback after state update
+                  scheduleAutoAdvance(() => handleSubmitRef.current(), 300);
                 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

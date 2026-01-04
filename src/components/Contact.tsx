@@ -76,6 +76,9 @@ const Contact = () => {
   const { setTrackedTimeout } = useTimeoutCleanup();
   const isMountedRef = useRef(true);
 
+  // Ref to always access the latest handleNext callback (fixes race condition with state updates)
+  const handleNextRef = useRef<() => void>(() => {});
+
   // Track mount state for async operations
   useEffect(() => {
     isMountedRef.current = true;
@@ -241,6 +244,11 @@ const Contact = () => {
     }
   }, [currentStep, currentStepData, formData, totalSteps, validateField, setTrackedTimeout, handleSubmit]);
 
+  // Keep ref updated with latest handleNext (fixes race condition with auto-advance)
+  useEffect(() => {
+    handleNextRef.current = handleNext;
+  }, [handleNext]);
+
   // Handle previous step
   const handleBack = useCallback(() => {
     if (currentStep > 0) {
@@ -301,7 +309,8 @@ const Contact = () => {
                 type="button"
                 onClick={() => {
                   handleInputChange("budget", option.value);
-                  setTrackedTimeout(handleNext, 200);
+                  // Use ref to get the latest handleNext callback after state update
+                  setTrackedTimeout(() => handleNextRef.current(), 200);
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -327,7 +336,8 @@ const Contact = () => {
                 type="button"
                 onClick={() => {
                   handleInputChange("source", option.value);
-                  setTrackedTimeout(handleNext, 200);
+                  // Use ref to get the latest handleNext callback after state update
+                  setTrackedTimeout(() => handleNextRef.current(), 200);
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

@@ -153,6 +153,9 @@ const ContactPage = () => {
   const shakeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Refs to always access the latest callbacks (fixes race condition with state updates)
+  const handleSubmitRef = useRef<() => Promise<void>>(async () => {});
+
   // Handle previous step
   const handleBack = useCallback(() => {
     if (currentStep > 0) {
@@ -209,6 +212,11 @@ const ContactPage = () => {
     }
   }, [formData]);
 
+  // Keep ref updated with latest handleSubmit (fixes race condition with auto-advance)
+  useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
+
   // Handle selection with auto-advance (for budget/source options)
   const handleSelectionWithAutoAdvance = useCallback((field: string, value: string) => {
     handleInputChange(field, value);
@@ -221,14 +229,14 @@ const ContactPage = () => {
       // Check if we're on the last step - submit instead of advancing
       setCurrentStep((prev) => {
         if (prev >= totalSteps - 1) {
-          // On last step, trigger submit
-          handleSubmit();
+          // On last step, trigger submit using ref to get latest callback
+          handleSubmitRef.current();
           return prev; // Don't change step
         }
         return prev + 1;
       });
     }, 200);
-  }, [handleInputChange, totalSteps, handleSubmit]);
+  }, [handleInputChange, totalSteps]);
 
   // Handle next step
   const handleNext = useCallback(() => {

@@ -180,6 +180,7 @@ interface LazyComponentOptions {
   rootMargin?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ComponentType requires any for proper generic inference
 export function lazyLoadComponent<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   options: LazyComponentOptions = {}
@@ -224,6 +225,7 @@ export const preloadImages = (srcs: string[]): Promise<void[]> => {
 };
 
 // Preload a component
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- ComponentType requires any for proper generic inference
 export const preloadComponent = (
   importFn: () => Promise<{ default: ComponentType<any> }>
 ) => {

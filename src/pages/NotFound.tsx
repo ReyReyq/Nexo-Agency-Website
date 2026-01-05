@@ -9,15 +9,16 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
+    <main id="main-content" className="flex min-h-screen min-h-[100dvh] items-center justify-center bg-muted" dir="rtl">
       <div className="text-center">
         <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oops! Page not found</p>
+        <p className="mb-4 text-xl text-muted-foreground">הדף לא נמצא</p>
+        <p className="mb-6 text-muted-foreground">הדף שחיפשת לא קיים או שהוסר</p>
         <a href="/" className="text-primary underline hover:text-primary/90">
-          Return to Home
+          חזרה לדף הבית
         </a>
       </div>
-    </div>
+    </main>
   );
 };
 

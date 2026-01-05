@@ -224,7 +224,7 @@ const FanCarousel = ({ cards, onCardChange }: FanCarouselProps) => {
             className={`min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-all duration-300`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            aria-label={`Go to card ${index + 1}`}
+            aria-label={`עבור לכרטיס ${index + 1}`}
           >
             <span
               className={`rounded-full transition-all duration-300 ${

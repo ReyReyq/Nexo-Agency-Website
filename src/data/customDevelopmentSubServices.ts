@@ -17,7 +17,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
     subtitle: "פלטפורמות תוכנה כשירות שמייצרות הכנסה חוזרת",
     heroDescription:
       "פיתוח מערכות SaaS מקצה לקצה - מהרעיון הראשוני ועד למוצר מוכן לשוק. ארכיטקטורה מולטי-טננט, מערכות חיוב, ניהול משתמשים וכל מה שנדרש להפעלת עסק SaaS מצליח.",
-    heroImage: "/images/sub-services/custom-development/saas-hero.jpg",
+    heroImage: "/images/sub-services/custom-development/saas-hero.webp",
 
     whatIsThis: {
       title: "מה זה פיתוח SaaS?",
@@ -30,7 +30,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
         "תשתית סקלבילית - המערכת גדלה אוטומטית לפי הביקוש ללא צורך בהתערבות ידנית",
         "ניטור וניתוח - דשבורד עם מדדי עסקיים, ניתוח שימוש והתנהגות משתמשים",
       ],
-      image: "/images/sub-services/custom-development/saas-content.jpg",
+      image: "/images/sub-services/custom-development/saas-content.webp",
       imageAlt: "פלטפורמת SaaS בענן עם ממשק משתמש מודרני",
     },
 
@@ -192,7 +192,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
     subtitle: "ממשקי תכנות שמחברים מערכות ומאפשרים צמיחה",
     heroDescription:
       "פיתוח REST APIs ו-GraphQL APIs מאובטחים, מתועדים ומוכנים לסקייל. חיבור מערכות קיימות, פתיחת הנתונים לשותפים ובניית תשתית לאפליקציות.",
-    heroImage: "/images/sub-services/custom-development/api-hero.jpg",
+    heroImage: "/images/sub-services/custom-development/api-hero.webp",
 
     whatIsThis: {
       title: "מה זה פיתוח API?",
@@ -205,7 +205,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
         "ביצועים גבוהים - Caching חכם, אופטימיזציה לזמני תגובה מינימליים וטיפול בעומסים כבדים",
         "Versioning ותחזוקה - גרסאות API שמאפשרות שינויים ללא שבירת תאימות לאחור",
       ],
-      image: "/images/sub-services/custom-development/api-content.jpg",
+      image: "/images/sub-services/custom-development/api-content.webp",
       imageAlt: "קוד תכנות וממשקי API בסביבת פיתוח",
     },
 
@@ -367,7 +367,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
     subtitle: "לוחות בקרה חכמים שהופכים נתונים להחלטות",
     heroDescription:
       "פיתוח דשבורדים וממשקי ניהול מותאמים אישית. ויזואליזציה של נתונים בזמן אמת, דוחות אוטומטיים ולוחות בקרה שמספקים תמונה ברורה של העסק.",
-    heroImage: "/images/sub-services/custom-development/dashboard-hero.jpg",
+    heroImage: "/images/sub-services/custom-development/dashboard-hero.webp",
 
     whatIsThis: {
       title: "מה זה מערכת דשבורד?",
@@ -380,7 +380,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
         "דוחות אוטומטיים - הפקת דוחות תקופתיים שנשלחים אוטומטית למייל או ל-Slack",
         "גישה מכל מקום - צפייה בדשבורד מהמחשב, מהטאבלט או מהטלפון בכל זמן",
       ],
-      image: "/images/sub-services/custom-development/dashboard-content.jpg",
+      image: "/images/sub-services/custom-development/dashboard-content.webp",
       imageAlt: "לוח בקרה עם גרפים וויזואליזציה של נתונים עסקיים",
     },
 
@@ -542,7 +542,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
     subtitle: "אוטומציה של תהליכים עסקיים שחוסכת זמן וכסף",
     heroDescription:
       "פיתוח מערכות אוטומציה מותאמות שמייעלות תהליכי עבודה. מ-Workflow automation פשוט ועד מערכות מורכבות שמפעילות את העסק כמעט לבד.",
-    heroImage: "/images/sub-services/custom-development/automation-hero.jpg",
+    heroImage: "/images/sub-services/custom-development/automation-hero.webp",
 
     whatIsThis: {
       title: "מה זה מערכת אוטומציה?",
@@ -555,7 +555,7 @@ export const customDevelopmentSubServices: SubServiceDetail[] = [
         "דוחות והתראות - יצירה אוטומטית של דוחות ושליחת התראות כשמשהו דורש תשומת לב",
         "RPA (Robotic Process Automation) - בוטים שמחקים פעולות אנושיות במערכות ללא API",
       ],
-      image: "/images/sub-services/custom-development/automation-content.jpg",
+      image: "/images/sub-services/custom-development/automation-content.webp",
       imageAlt: "תהליכי אוטומציה עסקיים וזרימות עבודה דיגיטליות",
     },
 

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LenisProvider } from "@/lib/lenis";
 import ScrollToTop from "@/components/ScrollToTop";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Eagerly loaded pages (home page with preloader, and small fallback page)
 import Index from "./pages/Index";
@@ -48,14 +49,15 @@ PageLoader.displayName = 'PageLoader';
 
 // Main App component - memoized to prevent unnecessary re-renders from parent
 const App = memo(() => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <LenisProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <LenisProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/about" element={
               <Suspense fallback={<PageLoader />}>
@@ -108,11 +110,12 @@ const App = memo(() => (
               </Suspense>
             } />
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </LenisProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+            </Routes>
+          </BrowserRouter>
+        </LenisProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 ));
 
 App.displayName = 'App';

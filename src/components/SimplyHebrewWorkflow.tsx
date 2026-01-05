@@ -583,12 +583,12 @@ const SimplyHebrewWorkflow = memo(({
       </div>
 
       {/* ========== STEP 4: פיתוח ========== */}
-      <div className="sticky top-0" style={{ backgroundColor: '#faf6f0', zIndex: 40 }}>
+      <div className="sticky top-0" style={{ backgroundColor: '#faf6f0', zIndex: 30 }}>
         <StepSection step={workflowSteps[3]} index={3} />
       </div>
 
       {/* ========== CONCLUSION SECTION ========== */}
-      <div className="relative" style={{ backgroundColor: '#1a5f4a', zIndex: 50 }}>
+      <div className="relative" style={{ backgroundColor: '#1a5f4a', zIndex: 30 }}>
         <section className="py-28 md:py-36 text-white">
           <div className="container mx-auto px-6 md:px-12 text-center" dir="rtl">
             <motion.div

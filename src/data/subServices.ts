@@ -22,6 +22,7 @@ export interface SubServiceDetail {
     description: string;
     points: string[];
     image: string;
+    imageAlt?: string;
   };
 
   features: {
@@ -80,7 +81,7 @@ const createPlaceholderSubService = (
   name,
   subtitle,
   heroDescription: `תוכן בקרוב - ${name}`,
-  heroImage: "/images/services/digital-marketing.jpg",
+  heroImage: "/images/services/digital-marketing.webp",
 
   whatIsThis: {
     title: `מה זה ${name}?`,
@@ -90,7 +91,7 @@ const createPlaceholderSubService = (
       "נקודה שנייה - Content coming soon",
       "נקודה שלישית - Content coming soon",
     ],
-    image: "/images/services/business-strategy.jpg",
+    image: "/images/services/business-strategy.webp",
   },
 
   features: {
@@ -203,7 +204,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
     name: "דפי נחיתה",
     subtitle: "דפי נחיתה ממירים שהופכים מבקרים ללקוחות",
     heroDescription: "דפי נחיתה מקצועיים עם אחוזי המרה גבוהים, מותאמים לקמפיינים פרסומיים ומעוצבים למקסימום תוצאות עסקיות.",
-    heroImage: "/images/sub-services/web-development/landing-pages-hero.jpg",
+    heroImage: "/images/sub-services/web-development/landing-pages-hero.webp",
 
     whatIsThis: {
       title: "מה זה דף נחיתה?",
@@ -215,7 +216,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
         "התאמה מושלמת לקמפיינים ממומנים בגוגל, פייסבוק ואינסטגרם",
         "מדידה מדויקת של ביצועים עם אנליטיקס וכלי מעקב מתקדמים"
       ],
-      image: "/images/sub-services/web-development/landing-pages-content.jpg",
+      image: "/images/sub-services/web-development/landing-pages-content.webp",
       imageAlt: "מסך מחשב נייד המציג נתוני אנליטיקס וגרפים של ביצועי דף נחיתה",
     },
 
@@ -356,7 +357,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
     name: "אתרי וורדפרס",
     subtitle: "אתרים מקצועיים על מערכת הניהול הפופולרית בעולם",
     heroDescription: "אתרי וורדפרס מותאמים אישית עם עיצוב ייחודי, תוספים מתקדמים וממשק ניהול קל שמאפשר לכם שליטה מלאה באתר.",
-    heroImage: "/images/sub-services/web-development/wordpress-hero.jpg",
+    heroImage: "/images/sub-services/web-development/wordpress-hero.webp",
 
     whatIsThis: {
       title: "מה זה אתר וורדפרס?",
@@ -368,7 +369,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
         "קהילה ענקית - תמיכה, עדכונים ותוספים חדשים כל הזמן",
         "חסכוני לטווח ארוך - עלויות תחזוקה נמוכות והרחבה פשוטה"
       ],
-      image: "/images/sub-services/web-development/wordpress-content.jpg",
+      image: "/images/sub-services/web-development/wordpress-content.webp",
       imageAlt: "מסך מחשב המציג קוד תכנות צבעוני של אתר וורדפרס",
     },
 
@@ -509,7 +510,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
     name: "אפליקציות ווב",
     subtitle: "מערכות ווב מתקדמות עם פונקציונליות מורכבת",
     heroDescription: "אפליקציות ווב מותאמות אישית שפותרות בעיות עסקיות מורכבות. טכנולוגיות מתקדמות, ביצועים גבוהים וחווית משתמש מעולה.",
-    heroImage: "/images/sub-services/web-development/web-apps-hero.jpg",
+    heroImage: "/images/sub-services/web-development/web-apps-hero.webp",
 
     whatIsThis: {
       title: "מה זה אפליקציית ווב?",
@@ -521,7 +522,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
         "התאמה לתהליכים עסקיים ספציפיים - פיתוח מותאם לצרכים הייחודיים שלכם",
         "סקלביליות - המערכת גדלה יחד עם העסק ומתאימה לעומסים גדולים"
       ],
-      image: "/images/sub-services/web-development/web-apps-content.jpg",
+      image: "/images/sub-services/web-development/web-apps-content.webp",
       imageAlt: "לוח בקרה של אפליקציית ווב עם גרפים ונתונים עסקיים",
     },
 
@@ -662,7 +663,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
     name: "אתרים תדמיתיים",
     subtitle: "אתרי תדמית מקצועיים שבונים אמון ומחזקים מותג",
     heroDescription: "אתרים תדמיתיים יוקרתיים שמייצגים את העסק שלכם בצורה הטובה ביותר. עיצוב פרימיום, תוכן משכנע ונוכחות דיגיטלית שמרשימה.",
-    heroImage: "/images/sub-services/web-development/corporate-sites-hero.jpg",
+    heroImage: "/images/sub-services/web-development/corporate-sites-hero.webp",
 
     whatIsThis: {
       title: "מה זה אתר תדמיתי?",
@@ -674,7 +675,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
         "נגישות 24/7 - הלקוחות יכולים ללמוד עליכם בכל שעה מכל מקום",
         "יתרון על המתחרים - עסק עם אתר איכותי נתפס כמקצועי יותר"
       ],
-      image: "/images/sub-services/web-development/corporate-sites-content.jpg",
+      image: "/images/sub-services/web-development/corporate-sites-content.webp",
       imageAlt: "צוות עסקי בפגישה במשרד מודרני עם רקע עירוני",
     },
 
@@ -815,7 +816,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
     name: "אתרי קטלוג",
     subtitle: "הצגת מוצרים ושירותים בצורה מסודרת ומרשימה",
     heroDescription: "אתרי קטלוג מקצועיים שמציגים את המוצרים והשירותים שלכם בצורה ברורה ואטרקטיבית. חיפוש, סינון וניהול קל - בלי מורכבות של חנות אונליין.",
-    heroImage: "/images/sub-services/web-development/catalog-sites-hero.jpg",
+    heroImage: "/images/sub-services/web-development/catalog-sites-hero.webp",
 
     whatIsThis: {
       title: "מה זה אתר קטלוג?",
@@ -827,7 +828,7 @@ const webDevelopmentSubServices: SubServiceDetail[] = [
         "ניהול פשוט - הוספה ועדכון מוצרים בקלות דרך ממשק ניהול",
         "חיבור לתהליך המכירה שלכם - טפסים, וואטסאפ, טלפון או הפניה לחנות"
       ],
-      image: "/images/sub-services/web-development/catalog-sites-content.jpg",
+      image: "/images/sub-services/web-development/catalog-sites-content.webp",
       imageAlt: "תצוגת מוצרים בחנות אונליין עם קטגוריות מסודרות",
     },
 
@@ -972,7 +973,7 @@ const ecommerceSubServices: SubServiceDetail[] = [
     name: "חנויות שופיפיי",
     subtitle: "חנויות אונליין על פלטפורמת Shopify",
     heroDescription: "פלטפורמת Shopify מאפשרת לכם להקים חנות אונליין מקצועית במהירות ובקלות. אנו מתמחים בבניית חנויות שופיפיי מותאמות אישית עם עיצוב ייחודי, אינטגרציות לשוק הישראלי, ואופטימיזציה להמרות גבוהות.",
-    heroImage: "/images/sub-services/ecommerce/shopify-hero.jpg",
+    heroImage: "/images/sub-services/ecommerce/shopify-hero.webp",
 
     whatIsThis: {
       title: "מה זה Shopify?",
@@ -984,8 +985,8 @@ const ecommerceSubServices: SubServiceDetail[] = [
         "תמיכה מובנית במכירה רב-ערוצית - אתר, רשתות חברתיות, אמזון, eBay ונקודות מכירה פיזיות",
         "אבטחה ברמה הגבוהה ביותר עם תעודת SSL ועמידה בתקן PCI DSS"
       ],
-      image: "/images/sub-services/ecommerce/shopify-content.jpg",
-      alt: "ממשק ניהול חנות שופיפיי עם דשבורד מכירות ומוצרים",
+      image: "/images/sub-services/ecommerce/shopify-content.webp",
+      imageAlt: "ממשק ניהול חנות שופיפיי עם דשבורד מכירות ומוצרים",
     },
 
     features: {
@@ -1123,7 +1124,7 @@ const ecommerceSubServices: SubServiceDetail[] = [
     name: "חנויות ווקומרס",
     subtitle: "חנויות אונליין על בסיס WordPress",
     heroDescription: "WooCommerce היא פלטפורמת הקוד הפתוח המובילה לחנויות אונליין, המשלבת את העוצמה והגמישות של WordPress. אנו בונים חנויות WooCommerce מותאמות אישית עם שליטה מלאה על הקוד והנתונים.",
-    heroImage: "/images/sub-services/ecommerce/woocommerce-hero.jpg",
+    heroImage: "/images/sub-services/ecommerce/woocommerce-hero.webp",
 
     whatIsThis: {
       title: "מה זה WooCommerce?",
@@ -1135,8 +1136,8 @@ const ecommerceSubServices: SubServiceDetail[] = [
         "אינטגרציה מלאה עם WordPress - ניהול תוכן, בלוג, SEO ופונקציונליות אתר מלאה בממשק אחד",
         "ללא עמלות על עסקאות - בניגוד לפלטפורמות SaaS, אין עמלה על כל מכירה (רק עמלת מעבד התשלומים)"
       ],
-      image: "/images/sub-services/ecommerce/woocommerce-content.jpg",
-      alt: "ממשק ניהול חנות ווקומרס על בסיס וורדפרס",
+      image: "/images/sub-services/ecommerce/woocommerce-content.webp",
+      imageAlt: "ממשק ניהול חנות ווקומרס על בסיס וורדפרס",
     },
 
     features: {
@@ -1274,7 +1275,7 @@ const ecommerceSubServices: SubServiceDetail[] = [
     name: "מערכות תשלום",
     subtitle: "אינטגרציות תשלום מאובטחות",
     heroDescription: "אינטגרציה מקצועית של מערכות תשלום לחנות האונליין שלכם. אנו מתמחים בחיבור לכל מעבדי התשלומים הישראליים, תוך הקפדה על אבטחה מקסימלית ותאימות לתקנים בינלאומיים.",
-    heroImage: "/images/sub-services/ecommerce/payments-hero.jpg",
+    heroImage: "/images/sub-services/ecommerce/payments-hero.webp",
 
     whatIsThis: {
       title: "מה זה מערכות תשלום לחנות אונליין?",
@@ -1286,8 +1287,8 @@ const ecommerceSubServices: SubServiceDetail[] = [
         "אפשרויות תשלום מגוונות - כרטיסי אשראי, תשלומים, Bit, Apple Pay, Google Pay ופייפאל",
         "מערכות למניעת הונאות ו-3D Secure מגנות על העסק מפני עסקאות מזויפות וציברבקים"
       ],
-      image: "/images/sub-services/ecommerce/payments-content.jpg",
-      alt: "מערכת תשלומים מאובטחת עם כרטיסי אשראי וסליקה דיגיטלית",
+      image: "/images/sub-services/ecommerce/payments-content.webp",
+      imageAlt: "מערכת תשלומים מאובטחת עם כרטיסי אשראי וסליקה דיגיטלית",
     },
 
     features: {
@@ -1425,7 +1426,7 @@ const ecommerceSubServices: SubServiceDetail[] = [
     name: "ניהול מלאי",
     subtitle: "מערכות לניהול מלאי וסנכרון",
     heroDescription: "מערכות ניהול מלאי חכמות שמסנכרנות בין החנות האונליין, המחסן, ונקודות המכירה. אוטומציה של תהליכי מלאי, התראות חכמות, ואינטגרציה מלאה עם מערכות ERP קיימות.",
-    heroImage: "/images/sub-services/ecommerce/inventory-hero.jpg",
+    heroImage: "/images/sub-services/ecommerce/inventory-hero.webp",
 
     whatIsThis: {
       title: "מה זה מערכת ניהול מלאי?",
@@ -1437,8 +1438,8 @@ const ecommerceSubServices: SubServiceDetail[] = [
         "ניהול רב-מקומי - מחסנים, סניפים, ספקי dropshipping, ו-fulfillment centers",
         "אינטגרציה עם מערכות ERP, הנהלת חשבונות, וספקים לאוטומציה מלאה של שרשרת האספקה"
       ],
-      image: "/images/sub-services/ecommerce/inventory-content.jpg",
-      alt: "מערכת ניהול מלאי ומחסן עם מעקב אחר מוצרים",
+      image: "/images/sub-services/ecommerce/inventory-content.webp",
+      imageAlt: "מערכת ניהול מלאי ומחסן עם מעקב אחר מוצרים",
     },
 
     features: {
@@ -1584,7 +1585,7 @@ const brandingSubServices: SubServiceDetail[] = [
     name: "עיצוב לוגו",
     subtitle: "לוגו ייחודי שמייצג את המותג שלכם",
     heroDescription: "הלוגו הוא הפנים של העסק שלכם - הסמל שיזכרו, יזהו ויתחברו אליו. אנחנו מעצבים לוגואים שמספרים את הסיפור שלכם במבט אחד.",
-    heroImage: "/images/sub-services/branding/logo-design-hero.jpg",
+    heroImage: "/images/sub-services/branding/logo-design-hero.webp",
 
     whatIsThis: {
       title: "מה זה עיצוב לוגו?",
@@ -1595,7 +1596,7 @@ const brandingSubServices: SubServiceDetail[] = [
         "העיצוב משקף את הערכים, האישיות והייחודיות של העסק שלכם בצורה ויזואלית",
         "לוגו מקצועי בונה אמון ומבדל אתכם מהמתחרים בשוק רווי",
       ],
-      image: "/images/sub-services/branding/logo-design-content.jpg",
+      image: "/images/sub-services/branding/logo-design-content.webp",
       imageAlt: "תהליך עיצוב לוגו מקצועי - סקיצות ורעיונות יצירתיים",
     },
 
@@ -1736,7 +1737,7 @@ const brandingSubServices: SubServiceDetail[] = [
     name: "זהות חזותית",
     subtitle: "שפה עיצובית מלאה ועקבית למותג",
     heroDescription: "זהות חזותית היא הרבה יותר מלוגו - היא המערכת השלמה שמגדירה איך המותג שלכם נראה, מרגיש ומתקשר בכל נקודת מגע.",
-    heroImage: "/images/sub-services/branding/visual-identity-hero.jpg",
+    heroImage: "/images/sub-services/branding/visual-identity-hero.webp",
 
     whatIsThis: {
       title: "מה זה זהות חזותית?",
@@ -1748,7 +1749,7 @@ const brandingSubServices: SubServiceDetail[] = [
         "היא חוסכת זמן וכסף בטווח הארוך - כל עיצוב חדש מתבסס על מערכת קיימת ומוגדרת",
         "זהות מקצועית משדרת אמינות ובונה אמון עם קהל היעד עוד לפני שאמרתם מילה",
       ],
-      image: "/images/sub-services/branding/visual-identity-content.jpg",
+      image: "/images/sub-services/branding/visual-identity-content.webp",
       imageAlt: "דוגמה לזהות חזותית מקצועית - פלטת צבעים וטיפוגרפיה",
     },
 
@@ -1889,7 +1890,7 @@ const brandingSubServices: SubServiceDetail[] = [
     name: "ספר מותג",
     subtitle: "מדריך מקיף לשימוש נכון במותג",
     heroDescription: "ספר המותג הוא ה'חוקה' של הזהות שלכם - המסמך שמבטיח שהמותג ייראה מושלם ועקבי בכל מקום ובידי כל אדם.",
-    heroImage: "/images/sub-services/branding/brand-book-hero.jpg",
+    heroImage: "/images/sub-services/branding/brand-book-hero.webp",
 
     whatIsThis: {
       title: "מה זה ספר מותג?",
@@ -1900,7 +1901,7 @@ const brandingSubServices: SubServiceDetail[] = [
         "הספר חוסך זמן וכסף על תיקונים ואי הבנות - הכל מוגדר וברור מראש",
         "הוא הופך את תהליך העבודה עם ספקים, מעצבים ועובדים להרבה יותר חלק ויעיל",
       ],
-      image: "/images/sub-services/branding/brand-book-content.jpg",
+      image: "/images/sub-services/branding/brand-book-content.webp",
       imageAlt: "ספר מותג מקצועי פתוח עם הנחיות עיצוב",
     },
 
@@ -2041,7 +2042,7 @@ const brandingSubServices: SubServiceDetail[] = [
     name: "קופירייטינג",
     subtitle: "כתיבה שיווקית ומסרים שמוכרים",
     heroDescription: "מילים הן הכלי החזק ביותר שלכם. קופירייטינג מקצועי הופך את המותג שלכם לבלתי נשכח ואת המסרים שלכם למשכנעים.",
-    heroImage: "/images/sub-services/branding/copywriting-hero.jpg",
+    heroImage: "/images/sub-services/branding/copywriting-hero.webp",
 
     whatIsThis: {
       title: "מה זה קופירייטינג?",
@@ -2052,7 +2053,7 @@ const brandingSubServices: SubServiceDetail[] = [
         "קופי טוב מבדיל בין אתר שאנשים עוזבים לאתר שאנשים קונים בו. בין פוסט שגוללים הלאה לפוסט שמגיבים עליו",
         "בעברית זה אתגר כפול - צריך לכתוב נכון, לדבר בגובה העיניים, ולהתאים לתרבות הישראלית",
       ],
-      image: "/images/sub-services/branding/copywriting-content.jpg",
+      image: "/images/sub-services/branding/copywriting-content.webp",
       imageAlt: "כתיבה שיווקית מקצועית - עט ומחברת על שולחן עבודה",
     },
 
@@ -2199,7 +2200,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
     name: "צ'אטבוטים",
     subtitle: "בוטים חכמים לשירות ומכירות 24/7",
     heroDescription: "צ'אטבוטים מבוססי AI שמספקים מענה מיידי ללקוחות, מגדילים מכירות ומשפרים את חווית השירות - כל זאת בזמינות מלאה, 24 שעות ביממה.",
-    heroImage: "/images/sub-services/ai-automation/chatbots-hero.jpg",
+    heroImage: "/images/sub-services/ai-automation/chatbots-hero.webp",
 
     whatIsThis: {
       title: "מה זה צ'אטבוט AI?",
@@ -2211,7 +2212,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
         "אינטגרציה מלאה עם מערכות CRM ומאגרי מידע קיימים בארגון",
         "יכולת להעביר שיחות מורכבות לנציג אנושי בצורה חלקה ועם כל ההקשר"
       ],
-      image: "/images/sub-services/ai-automation/chatbots-content.jpg",
+      image: "/images/sub-services/ai-automation/chatbots-content.webp",
       imageAlt: "ממשק צ'אטבוט AI לשיחות עם לקוחות",
     },
 
@@ -2347,7 +2348,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
     name: "אוטומציה עסקית",
     subtitle: "אוטומציות חכמות שמשחררות זמן ומונעות טעויות",
     heroDescription: "הפכו תהליכים ידניים לאוטומציות חכמות. חסכו שעות עבודה, מנעו טעויות אנוש והתמקדו במה שבאמת חשוב - צמיחת העסק.",
-    heroImage: "/images/sub-services/ai-automation/automation-hero.jpg",
+    heroImage: "/images/sub-services/ai-automation/automation-hero.webp",
 
     whatIsThis: {
       title: "מה זה אוטומציה עסקית?",
@@ -2358,7 +2359,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
         "הפחתה דרמטית של טעויות אנוש - המערכת עובדת לפי כללים קבועים ומדויקים",
         "חיסכון של שעות עבודה יומיות שמתורגמות לעשרות אלפי שקלים בשנה"
       ],
-      image: "/images/sub-services/ai-automation/automation-content.jpg",
+      image: "/images/sub-services/ai-automation/automation-content.webp",
       imageAlt: "דשבורד אוטומציה עסקית עם ניתוח נתונים",
     },
 
@@ -2499,7 +2500,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
     name: "תמונות AI",
     subtitle: "יצירת תמונות מותאמות אישית בבינה מלאכותית",
     heroDescription: "הפקת תמונות ייחודיות ומותאמות למותג באמצעות טכנולוגיות AI מתקדמות. מהרעיון לתמונה מושלמת - ללא צילומים יקרים, ללא מאגרי תמונות גנריים.",
-    heroImage: "/images/sub-services/ai-automation/ai-images-hero.jpg",
+    heroImage: "/images/sub-services/ai-automation/ai-images-hero.webp",
 
     whatIsThis: {
       title: "מה זה יצירת תמונות AI?",
@@ -2511,7 +2512,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
         "מהירות יצירה חסרת תקדים - מרעיון לתמונה סופית תוך דקות עד שעות, לא ימים",
         "גמישות מלאה לשינויים ווריאציות - קל לייצר גרסאות שונות עד שמגיעים למושלם"
       ],
-      image: "/images/sub-services/ai-automation/ai-images-content.jpg",
+      image: "/images/sub-services/ai-automation/ai-images-content.webp",
       imageAlt: "יצירת תמונות מקוריות באמצעות בינה מלאכותית",
     },
 
@@ -2647,7 +2648,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
     name: "תוכן AI",
     subtitle: "יצירת תוכן איכותי בקנה מידה עם בינה מלאכותית",
     heroDescription: "שילוב חכם של בינה מלאכותית ועריכה אנושית ליצירת תוכן מקצועי, מותאם SEO ובשפת המותג שלכם - בקצב שלא חלמתם עליו.",
-    heroImage: "/images/sub-services/ai-automation/ai-content-hero.jpg",
+    heroImage: "/images/sub-services/ai-automation/ai-content-hero.webp",
 
     whatIsThis: {
       title: "מה זה יצירת תוכן AI?",
@@ -2658,7 +2659,7 @@ const aiAutomationSubServices: SubServiceDetail[] = [
         "שמירה על קול המותג ועקביות - בין אם זה 10 פוסטים או 1,000 תיאורי מוצרים",
         "תוכן בעברית מקצועית - שוטפת, נעימה לקריאה, ללא התרגום הקשיח האופייני לAI"
       ],
-      image: "/images/sub-services/ai-automation/ai-content-content.jpg",
+      image: "/images/sub-services/ai-automation/ai-content-content.webp",
       imageAlt: "יצירת תוכן שיווקי איכותי באמצעות בינה מלאכותית",
     },
 
@@ -2805,7 +2806,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
     name: "גוגל אדס",
     subtitle: "קמפיינים ממומנים בגוגל שמביאים תוצאות מדידות",
     heroDescription: "הגיעו ללקוחות שמחפשים בדיוק את מה שאתם מציעים. ניהול קמפיינים מקצועי ב-Google Ads עם התמקדות ב-ROI מקסימלי ותוצאות עסקיות אמיתיות.",
-    heroImage: "/images/sub-services/digital-marketing/google-ads-hero.jpg",
+    heroImage: "/images/sub-services/digital-marketing/google-ads-hero.webp",
 
     whatIsThis: {
       title: "מה זה גוגל אדס?",
@@ -2817,7 +2818,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
         "פרסום ביוטיוב - וידאו ומודעות מוקפצות בפלטפורמת הוידאו הגדולה בעולם",
         "תשלום לפי תוצאה (PPC) - משלמים רק כשמישהו לוחץ על המודעה, מה שמבטיח יעילות תקציבית"
       ],
-      image: "/images/sub-services/digital-marketing/google-ads-content.jpg",
+      image: "/images/sub-services/digital-marketing/google-ads-content.webp",
       imageAlt: "לוח בקרה של גוגל אדס עם גרפים וניתוח ביצועי קמפיינים",
     },
 
@@ -2958,7 +2959,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
     name: "פרסום מטא",
     subtitle: "פרסום ממוקד בפייסבוק ואינסטגרם",
     heroDescription: "הגיעו לקהל היעד שלכם ברשתות החברתיות הגדולות בעולם. קמפיינים יצירתיים וממוקדים ב-Facebook ו-Instagram שמייצרים מודעות למותג, לידים ומכירות.",
-    heroImage: "/images/sub-services/digital-marketing/meta-ads-hero.jpg",
+    heroImage: "/images/sub-services/digital-marketing/meta-ads-hero.webp",
 
     whatIsThis: {
       title: "מה זה פרסום מטא?",
@@ -2969,7 +2970,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
         "אינטגרציה עם איקומרס - חיבור ישיר לחנות האונליין, קטלוג מוצרים דינמי ומודעות שופינג אוטומטיות",
         "רימרקטינג מתקדם - הגעה חוזרת למבקרים באתר, לקוחות קיימים או לאנשים שהראו עניין במוצרים שלכם"
       ],
-      image: "/images/sub-services/digital-marketing/meta-ads-content.jpg",
+      image: "/images/sub-services/digital-marketing/meta-ads-content.webp",
       imageAlt: "אפליקציות רשתות חברתיות על מסך סמארטפון - פייסבוק ואינסטגרם",
     },
 
@@ -3110,7 +3111,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
     name: "שיווק במייל",
     subtitle: "קמפיינים ואוטומציות אימייל שמייצרים מכירות",
     heroDescription: "שיווק באימייל הוא עדיין אחד הערוצים הכי אפקטיביים ורווחיים בדיגיטל. בנו מערכת יחסים עם הלקוחות שלכם, הגדילו מכירות חוזרות וצרו נאמנות למותג.",
-    heroImage: "/images/sub-services/digital-marketing/email-marketing-hero.jpg",
+    heroImage: "/images/sub-services/digital-marketing/email-marketing-hero.webp",
 
     whatIsThis: {
       title: "מה זה שיווק באימייל?",
@@ -3122,7 +3123,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
         "פרסונליזציה - התאמה אישית של התוכן לכל נמען על בסיס העדפות, היסטוריית רכישות ומאפיינים נוספים",
         "מדידה מדויקת - פתיחות, קליקים, המרות, הסרות - הכל נמדד ומאפשר אופטימיזציה מתמדת"
       ],
-      image: "/images/sub-services/digital-marketing/email-marketing-content.jpg",
+      image: "/images/sub-services/digital-marketing/email-marketing-content.webp",
       imageAlt: "תיבת דואר אלקטרוני עם קמפיינים שיווקיים במחשב נייד",
     },
 
@@ -3263,7 +3264,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
     name: "שיווק משפיענים",
     subtitle: "שיתופי פעולה אותנטיים עם משפיענים",
     heroDescription: "הגיעו לקהלים חדשים דרך אנשים שהם כבר סומכים עליהם. שיווק משפיענים מביא חשיפה אותנטית, אמינות למותג ותוצאות עסקיות מדידות.",
-    heroImage: "/images/sub-services/digital-marketing/influencer-hero.jpg",
+    heroImage: "/images/sub-services/digital-marketing/influencer-hero.webp",
 
     whatIsThis: {
       title: "מה זה שיווק משפיענים?",
@@ -3274,7 +3275,7 @@ const digitalMarketingSubServices: SubServiceDetail[] = [
         "תוכן איכותי - משפיענים הם יוצרי תוכן מקצועיים. אתם מקבלים תוכן שאפשר להשתמש בו גם בערוצים שלכם",
         "הוכחה חברתית - כשמשפיען משתמש במוצר שלכם, זה נותן לו לגיטימציה ומעודד אחרים לנסות"
       ],
-      image: "/images/sub-services/digital-marketing/influencer-content.jpg",
+      image: "/images/sub-services/digital-marketing/influencer-content.webp",
       imageAlt: "יוצר תוכן ומשפיען מצלם תוכן לרשתות חברתיות",
     },
 

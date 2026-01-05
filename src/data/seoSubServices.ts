@@ -17,7 +17,7 @@ export const seoSubServices: SubServiceDetail[] = [
     subtitle: "תשתית טכנית מושלמת לדירוג מקסימלי במנועי החיפוש",
     heroDescription:
       "SEO טכני מקצועי שמבטיח שמנועי החיפוש יכולים לסרוק, להבין ולדרג את האתר שלכם בצורה מיטבית. נטפל במהירות האתר, מבנה הקוד, אינדוקס ובעיות טכניות שמונעות מכם להגיע לעמוד הראשון.",
-    heroImage: "/images/sub-services/seo/technical-seo-hero.jpg",
+    heroImage: "/images/sub-services/seo/technical-seo-hero.webp",
 
     whatIsThis: {
       title: "מה זה SEO טכני?",
@@ -30,7 +30,7 @@ export const seoSubServices: SubServiceDetail[] = [
         "אבטחת HTTPS ותעודות SSL - גורם דירוג חשוב ומגביר אמון גולשים",
         "התאמה מלאה למובייל - Mobile-First Indexing של גוגל הופך זאת להכרחי",
       ],
-      image: "/images/sub-services/seo/technical-seo-content.jpg",
+      image: "/images/sub-services/seo/technical-seo-content.webp",
       imageAlt: "מסך מחשב עם קוד תכנות - SEO טכני ואופטימיזציה",
     },
 
@@ -192,7 +192,7 @@ export const seoSubServices: SubServiceDetail[] = [
     subtitle: "שלטו בתוצאות החיפוש המקומיות ומשכו לקוחות מהאזור שלכם",
     heroDescription:
       "SEO מקומי מקצועי שמביא את העסק שלכם לראש תוצאות החיפוש המקומיות בגוגל. נדאג לפרופיל Google Business מושלם, דירוגים גבוהים במפות ונוכחות דיגיטלית מקומית שמושכת לקוחות לעסק הפיזי שלכם.",
-    heroImage: "/images/sub-services/seo/local-seo-hero.jpg",
+    heroImage: "/images/sub-services/seo/local-seo-hero.webp",
 
     whatIsThis: {
       title: "מה זה SEO מקומי?",
@@ -205,7 +205,7 @@ export const seoSubServices: SubServiceDetail[] = [
         "בניית ציטוטים NAP - שם, כתובת וטלפון עקביים ברחבי האינטרנט",
         "תוכן מקומי ממוקד - דפי נחיתה לאזורים ושכונות ספציפיות",
       ],
-      image: "/images/sub-services/seo/local-seo-content.jpg",
+      image: "/images/sub-services/seo/local-seo-content.webp",
       imageAlt: "בית קפה מקומי עם חזית מזמינה - SEO מקומי לעסקים",
     },
 
@@ -367,7 +367,7 @@ export const seoSubServices: SubServiceDetail[] = [
     subtitle: "אסטרטגיית תוכן שמביאה תנועה אורגנית איכותית ומגבירה סמכות",
     heroDescription:
       "תוכן ממוקד SEO שמושך תנועה אורגנית איכותית ומביא לקוחות פוטנציאליים. נבנה אסטרטגיית תוכן מקיפה הכוללת מחקר מילות מפתח מעמיק, יצירת תוכן איכותי וממוקד, ואופטימיזציה שוטפת לתוצאות מקסימליות.",
-    heroImage: "/images/sub-services/seo/content-seo-hero.jpg",
+    heroImage: "/images/sub-services/seo/content-seo-hero.webp",
 
     whatIsThis: {
       title: "מה זה תוכן ממוקד SEO?",
@@ -380,7 +380,7 @@ export const seoSubServices: SubServiceDetail[] = [
         "אופטימיזציה On-Page מלאה - כותרות, מטא, מבנה, קישורים פנימיים ו-Schema",
         "מדידה ושיפור מתמיד - מעקב אחרי ביצועים ועדכון תוכן להגברת דירוגים",
       ],
-      image: "/images/sub-services/seo/content-seo-content.jpg",
+      image: "/images/sub-services/seo/content-seo-content.webp",
       imageAlt: "מחברת פתוחה עם עט על שולחן עבודה - יצירת תוכן ממוקד SEO",
     },
 
@@ -542,7 +542,7 @@ export const seoSubServices: SubServiceDetail[] = [
     subtitle: "Backlinks איכותיים שמגבירים סמכות ומשפרים דירוגים",
     heroDescription:
       "שירות בניית קישורים מקצועי שמביא Backlinks איכותיים מאתרים סמכותיים. נבנה פרופיל קישורים טבעי ומגוון שמגביר את הסמכות של האתר שלכם בעיני גוגל ומוביל לשיפור משמעותי בדירוגים.",
-    heroImage: "/images/sub-services/seo/link-building-hero.jpg",
+    heroImage: "/images/sub-services/seo/link-building-hero.webp",
 
     whatIsThis: {
       title: "מה זה בניית קישורים?",
@@ -555,7 +555,7 @@ export const seoSubServices: SubServiceDetail[] = [
         "שיטות White Hat בלבד - עבודה לגיטימית שמביאה תוצאות ללא סיכון לעונש",
         "תוכן שמושך קישורים - יצירת נכסים שאנשים רוצים לקשר אליהם באופן טבעי",
       ],
-      image: "/images/sub-services/seo/link-building-content.jpg",
+      image: "/images/sub-services/seo/link-building-content.webp",
       imageAlt: "גרף דיגיטלי של רשת קישורים ונתונים - בניית קישורים ו-Backlinks",
     },
 

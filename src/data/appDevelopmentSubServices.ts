@@ -16,7 +16,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
     name: "אפליקציות iOS",
     subtitle: "אפליקציות נייטיב לאייפון ואייפד בסטנדרט הגבוה ביותר",
     heroDescription: "פיתוח אפליקציות iOS מקצועיות בטכנולוגיית Swift. אפליקציות מהירות, מאובטחות ומעוצבות בהתאם להנחיות Apple, מוכנות לפרסום ב-App Store.",
-    heroImage: "/images/sub-services/app-development/ios-hero.jpg",
+    heroImage: "/images/sub-services/app-development/ios-hero.webp",
 
     whatIsThis: {
       title: "מה זה פיתוח אפליקציות iOS?",
@@ -28,7 +28,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
         "אינטגרציה עם אקוסיסטם Apple - iCloud, Apple Pay, Siri, Handoff בין מכשירים",
         "אבטחה מתקדמת - App Store מאושר עם בדיקות קפדניות ו-Sandbox isolation"
       ],
-      image: "/images/sub-services/app-development/ios-content.jpg",
+      image: "/images/sub-services/app-development/ios-content.webp",
       imageAlt: "אייפון עם ממשק אפליקציה מעוצב - פיתוח אפליקציות iOS",
     },
 
@@ -165,7 +165,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
     name: "אפליקציות אנדרואיד",
     subtitle: "אפליקציות נייטיב לכל מכשירי האנדרואיד בשוק",
     heroDescription: "פיתוח אפליקציות Android מקצועיות בטכנולוגיית Kotlin. תמיכה במגוון רחב של מכשירים, מהירות מרבית ונוכחות ב-Google Play Store.",
-    heroImage: "/images/sub-services/app-development/android-hero.jpg",
+    heroImage: "/images/sub-services/app-development/android-hero.webp",
 
     whatIsThis: {
       title: "מה זה פיתוח אפליקציות Android?",
@@ -177,7 +177,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
         "Google Play Store - פרסום מהיר עם תהליך אישור קצר יותר מ-Apple",
         "אינטגרציות Google - Maps, Firebase, Google Pay, Google Assistant ועוד"
       ],
-      image: "/images/sub-services/app-development/android-content.jpg",
+      image: "/images/sub-services/app-development/android-content.webp",
       imageAlt: "טלפון אנדרואיד עם ממשק Material Design - פיתוח אפליקציות אנדרואיד",
     },
 
@@ -314,7 +314,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
     name: "אפליקציות חוצות פלטפורמות",
     subtitle: "אפליקציה אחת לכל הפלטפורמות עם React Native או Flutter",
     heroDescription: "פיתוח אפליקציות Cross-Platform בטכנולוגיות React Native ו-Flutter. קוד בסיס אחד שעובד על iOS ו-Android, חיסכון משמעותי בזמן ובעלויות.",
-    heroImage: "/images/sub-services/app-development/cross-platform-hero.jpg",
+    heroImage: "/images/sub-services/app-development/cross-platform-hero.webp",
 
     whatIsThis: {
       title: "מה זה פיתוח Cross-Platform?",
@@ -326,7 +326,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
         "ביצועים מעולים - טכנולוגיות מודרניות שמספקות חוויה כמעט זהה לנייטיב",
         "צוות פיתוח אחוד - אותו צוות עובד על שתי הפלטפורמות, תקשורת וסנכרון קלים יותר"
       ],
-      image: "/images/sub-services/app-development/cross-platform-content.jpg",
+      image: "/images/sub-services/app-development/cross-platform-content.webp",
       imageAlt: "מספר מכשירים ניידים עם אפליקציה אחידה - פיתוח חוצה פלטפורמות",
     },
 
@@ -463,7 +463,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
     name: "אפליקציות PWA",
     subtitle: "Progressive Web Apps - אפליקציות ווב שמתנהגות כמו נייטיב",
     heroDescription: "פיתוח Progressive Web Apps - אפליקציות ווב מתקדמות שנראות ומתנהגות כמו אפליקציות נייטיב. ללא צורך בהורדה מחנות, עובדות על כל מכשיר, ומתעדכנות אוטומטית.",
-    heroImage: "/images/sub-services/app-development/pwa-hero.jpg",
+    heroImage: "/images/sub-services/app-development/pwa-hero.webp",
 
     whatIsThis: {
       title: "מה זה אפליקציית PWA?",
@@ -475,7 +475,7 @@ export const appDevelopmentSubServices: SubServiceDetail[] = [
         "עובדת אופליין - Service Workers מאפשרים שימוש גם ללא חיבור לאינטרנט",
         "עדכונים אוטומטיים - לא צריך לעדכן בחנות, השינויים מגיעים מיד לכל המשתמשים"
       ],
-      image: "/images/sub-services/app-development/pwa-content.jpg",
+      image: "/images/sub-services/app-development/pwa-content.webp",
       imageAlt: "מסך מחשב וטלפון עם אפליקציית ווב מתקדמת - פיתוח PWA",
     },
 

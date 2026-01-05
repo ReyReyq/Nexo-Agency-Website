@@ -11,11 +11,11 @@ export const HERO_TRANSITION_IMAGE = "/images/hero/team-collaboration.webp";
 
 // Preloader images - middle one (index 2) will become hero background
 const preloaderPhotos = [
-  { src: '/images/gallery/minimal-gradient-sunset.jpg', alt: 'Gradient sunset' },
-  { src: '/images/gallery/abstract-gradient-purple.jpg', alt: 'Purple gradient' },
+  { src: '/images/gallery/minimal-gradient-sunset.webp', alt: 'Gradient sunset' },
+  { src: '/images/gallery/abstract-gradient-purple.webp', alt: 'Purple gradient' },
   { src: HERO_TRANSITION_IMAGE, alt: 'Team collaboration' }, // MAIN - matches Hero first image
-  { src: '/images/gallery/architecture-modern-building.jpg', alt: 'Modern building' },
-  { src: '/images/gallery/workspace-modern-office.jpg', alt: 'Modern office' },
+  { src: '/images/gallery/architecture-modern-building.webp', alt: 'Modern building' },
+  { src: '/images/gallery/workspace-modern-office.webp', alt: 'Modern office' },
 ];
 
 const Preloader = ({ onComplete }: PreloaderProps) => {
@@ -188,6 +188,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 <motion.img
                   src={photo.src}
                   alt={photo.alt}
+                  width={256}
+                  height={160}
                   initial={{ scale: 1.4 }}
                   animate={{ scale: 1 }}
                   transition={{
@@ -224,7 +226,9 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         >
           <img
             src={HERO_TRANSITION_IMAGE}
-            alt="Team collaboration"
+            alt="עבודת צוות"
+            width={1920}
+            height={1080}
             className="w-full h-full object-cover"
           />
 
@@ -254,7 +258,9 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         >
           <img
             src={HERO_TRANSITION_IMAGE}
-            alt="Team collaboration"
+            alt="עבודת צוות"
+            width={1920}
+            height={1080}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[hsl(0,0%,4%)]/80 via-[hsl(0,0%,4%)]/30 to-transparent" />

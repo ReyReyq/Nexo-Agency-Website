@@ -2,6 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import compression from "vite-plugin-compression";
+import { visualizer } from "rollup-plugin-visualizer";
+import preload from "vite-plugin-preload";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -9,7 +12,21 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+  plugins: [
+    react(),
+    mode === "development" && componentTagger(),
+    compression({ algorithm: "gzip" }),
+    compression({ algorithm: "brotliCompress", ext: ".br" }),
+    // Automatically adds modulepreload links for entry chunks and their imports
+    // This improves initial load performance by preloading critical JS modules
+    preload(),
+    mode === "analyze" && visualizer({
+      filename: "stats.html",
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -25,39 +42,42 @@ export default defineConfig(({ mode }) => ({
     minify: "esbuild",
     rollupOptions: {
       output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          "ui-vendor": [
-            "@radix-ui/react-accordion",
-            "@radix-ui/react-alert-dialog",
-            "@radix-ui/react-aspect-ratio",
-            "@radix-ui/react-avatar",
-            "@radix-ui/react-checkbox",
-            "@radix-ui/react-collapsible",
-            "@radix-ui/react-context-menu",
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-hover-card",
-            "@radix-ui/react-label",
-            "@radix-ui/react-menubar",
-            "@radix-ui/react-navigation-menu",
-            "@radix-ui/react-popover",
-            "@radix-ui/react-progress",
-            "@radix-ui/react-radio-group",
-            "@radix-ui/react-scroll-area",
-            "@radix-ui/react-select",
-            "@radix-ui/react-separator",
-            "@radix-ui/react-slider",
-            "@radix-ui/react-slot",
-            "@radix-ui/react-switch",
-            "@radix-ui/react-tabs",
-            "@radix-ui/react-toast",
-            "@radix-ui/react-toggle",
-            "@radix-ui/react-toggle-group",
-            "@radix-ui/react-tooltip",
-          ],
-          "animation": ["gsap", "framer-motion"],
-          "three-vendor": ["three", "@react-three/fiber", "@react-three/drei"],
+        // Use function-based manualChunks for proper code-splitting with lazy imports
+        // This ensures Three.js stays in its own chunk when lazy-loaded
+        manualChunks(id) {
+          // React core - needed on every page
+          if (id.includes("node_modules/react/") ||
+              id.includes("node_modules/react-dom/") ||
+              id.includes("node_modules/react-router-dom/")) {
+            return "react-vendor";
+          }
+
+          // Three.js and related packages - lazy loaded, separate chunk
+          // This chunk will only load when Globe, Ballpit, PixelTrail, Silk, or ASCIIText are used
+          if (id.includes("node_modules/three/") ||
+              id.includes("node_modules/@react-three/")) {
+            return "three-vendor";
+          }
+
+          // Cobe (Globe library) - separate from Three.js
+          if (id.includes("node_modules/cobe/")) {
+            return "cobe-vendor";
+          }
+
+          // Radix UI components - common UI primitives
+          if (id.includes("node_modules/@radix-ui/")) {
+            return "ui-vendor";
+          }
+
+          // Framer Motion - animation library
+          if (id.includes("node_modules/framer-motion/")) {
+            return "framer-motion";
+          }
+
+          // GSAP - animation library
+          if (id.includes("node_modules/gsap/")) {
+            return "gsap-vendor";
+          }
         },
       },
     },

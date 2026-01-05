@@ -1,8 +1,23 @@
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect, useCallback, memo, useMemo } from "react";
-import { ArrowLeft, ArrowRight, Clock, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, Sparkles, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { blogPosts, type BlogPost } from "@/data/blogPosts";
+import { getBlogPosts, type BlogPost } from "@/data/blogPosts";
+
+// Helper to generate srcset for blog carousel images
+const generateBlogCardSrcSet = (src: string) => {
+  // Only process local images
+  if (!src.startsWith('/images/') && !src.startsWith('/blog/')) return { src };
+
+  const extension = src.substring(src.lastIndexOf('.'));
+  const basePath = src.substring(0, src.lastIndexOf('.'));
+
+  return {
+    src,
+    srcSet: `${basePath}-sm${extension} 260w, ${basePath}-md${extension} 340w, ${src} 480w`,
+    sizes: '(max-width: 400px) 260px, (max-width: 768px) 280px, 340px',
+  };
+};
 
 interface BlogCarouselSectionProps {
   /** Filter posts by categories. If not provided, shows all posts. */
@@ -32,6 +47,9 @@ const getCardWidth = () => {
 const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  // Generate responsive srcset for the blog image
+  const imageSet = useMemo(() => generateBlogCardSrcSet(post.image), [post.image]);
+
   return (
     <div
       className="relative shrink-0 cursor-pointer"
@@ -42,11 +60,13 @@ const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number 
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Link to={`/blog/${post.slug}`} className="block group">
-        {/* Image Container */}
+      <Link to={`/blog/${post.slug}`} className="block group rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-light">
+        {/* Image Container - Responsive with srcset */}
         <div className="relative overflow-hidden rounded-xl mb-3 sm:mb-4">
           <motion.img
-            src={post.image}
+            src={imageSet.src}
+            srcSet={imageSet.srcSet}
+            sizes={imageSet.sizes}
             alt={post.title}
             loading="lazy"
             decoding="async"
@@ -58,7 +78,7 @@ const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Category badge */}
-          <span className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium bg-white/90 text-[#1a1a1a] backdrop-blur-sm">
+          <span className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium bg-white/90 text-nexo-charcoal backdrop-blur-sm">
             {post.category}
           </span>
         </div>
@@ -66,22 +86,22 @@ const BlogCard = memo(({ post, cardWidth }: { post: BlogPost; cardWidth: number 
         {/* Content */}
         <div className="space-y-1.5 sm:space-y-2">
           {/* Meta info */}
-          <div className="flex items-center gap-3 text-sm text-[#666]">
+          <div className="flex items-center gap-3 text-sm text-nexo-ash">
             <span className="flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
               {post.readTime} דקות קריאה
             </span>
-            <span>•</span>
+            <span>-</span>
             <span>{post.date}</span>
           </div>
 
           {/* Title */}
-          <h3 className="text-base sm:text-lg font-bold text-[#1a1a1a] leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
+          <h3 className="text-base sm:text-lg font-bold text-nexo-charcoal leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">
             {post.title}
           </h3>
 
           {/* Excerpt */}
-          <p className="text-sm text-[#555] line-clamp-2 leading-relaxed">
+          <p className="text-sm text-nexo-steel line-clamp-2 leading-relaxed">
             {post.excerpt}
           </p>
 
@@ -109,6 +129,23 @@ const BlogCarouselSection = ({
 }: BlogCarouselSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState(getCardWidth);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load blog posts on mount
+  useEffect(() => {
+    async function loadPosts() {
+      try {
+        const posts = await getBlogPosts();
+        setAllPosts(posts);
+      } catch (error) {
+        console.error('Failed to load blog posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadPosts();
+  }, []);
 
   // Handle responsive card width
   useEffect(() => {
@@ -124,10 +161,10 @@ const BlogCarouselSection = ({
   // Filter posts by categories if provided, otherwise show all
   const posts = useMemo(() => {
     if (!categories || categories.length === 0) {
-      return blogPosts;
+      return allPosts;
     }
-    return blogPosts.filter(post => categories.includes(post.category));
-  }, [categories]);
+    return allPosts.filter(post => categories.includes(post.category));
+  }, [categories, allPosts]);
 
   const totalPosts = posts.length;
 
@@ -174,6 +211,22 @@ const BlogCarouselSection = ({
     setCurrentIndex((prev) => prev - 1);
   }, []);
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <section
+        className="py-16 md:py-24 bg-nexo-light"
+        dir="rtl"
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   // If no posts match the filter, don't render the section
   if (totalPosts === 0) {
     return null;
@@ -182,8 +235,7 @@ const BlogCarouselSection = ({
   return (
     <section
       ref={containerRef}
-      className="py-16 md:py-24"
-      style={{ backgroundColor: "#FAF9F6" }}
+      className="py-16 md:py-24 bg-nexo-light"
       dir="rtl"
     >
       <div className="relative overflow-hidden">
@@ -201,10 +253,10 @@ const BlogCarouselSection = ({
                 <Sparkles className="w-5 h-5 text-primary" />
                 <span className="text-primary text-sm font-medium">הבלוג שלנו</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#1a1a1a]">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-nexo-charcoal">
                 {title}
               </h2>
-              <p className="text-[#555] mt-2 max-w-md">
+              <p className="text-nexo-steel mt-2 max-w-md">
                 {subtitle}
               </p>
             </div>
@@ -212,14 +264,14 @@ const BlogCarouselSection = ({
             {/* Navigation Arrows */}
             <div className="flex items-center gap-2 sm:gap-3">
               <button
-                className="min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-[#ddd] bg-white text-[#1a1a1a] transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center"
+                className="min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-nexo-mist bg-white text-nexo-charcoal transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-light"
                 onClick={shiftRight}
                 aria-label="הבא"
               >
                 <ArrowRight className="w-5 h-5" />
               </button>
               <button
-                className="min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-[#ddd] bg-white text-[#1a1a1a] transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center"
+                className="min-w-[44px] min-h-[44px] p-2.5 rounded-full border border-nexo-mist bg-white text-nexo-charcoal transition-all duration-200 hover:bg-primary hover:text-white hover:border-primary flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-light"
                 onClick={shiftLeft}
                 aria-label="הקודם"
               >
@@ -260,7 +312,7 @@ const BlogCarouselSection = ({
           >
             <Link
               to="/blog"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#1a1a1a] text-white font-medium hover:bg-primary transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-nexo-charcoal text-white font-medium hover:bg-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-light"
             >
               <span>לכל המאמרים</span>
               <ArrowLeft className="w-4 h-4" />

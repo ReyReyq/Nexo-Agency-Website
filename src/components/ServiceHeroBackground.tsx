@@ -1,5 +1,6 @@
 import { lazy, Suspense, memo } from 'react';
 import { getBackgroundConfig, type BackgroundConfig } from '@/config/serviceBackgrounds';
+import ErrorBoundary, { WebGLErrorFallback } from '@/components/ErrorBoundary';
 
 // Lazy load heavy background components
 const Squares = lazy(() => import('@/components/ui/Squares'));
@@ -20,47 +21,40 @@ const BackgroundLoader = () => (
 );
 
 // Render the appropriate background based on config
+// Wrapped in ErrorBoundary to gracefully handle WebGL/3D errors
 const BackgroundRenderer = memo(({ config }: { config: BackgroundConfig }) => {
-  switch (config.type) {
-    case 'squares':
-      return (
-        <Suspense fallback={<BackgroundLoader />}>
-          <Squares {...config.props} />
-        </Suspense>
-      );
-    case 'dotgrid':
-      return (
-        <Suspense fallback={<BackgroundLoader />}>
-          <DotGrid {...config.props} />
-        </Suspense>
-      );
-    case 'ripplegrid':
-      return (
-        <Suspense fallback={<BackgroundLoader />}>
-          <RippleGrid {...config.props} />
-        </Suspense>
-      );
-    case 'prismaticburst':
-      return (
-        <Suspense fallback={<BackgroundLoader />}>
-          <PrismaticBurst {...config.props} />
-        </Suspense>
-      );
-    case 'terminal':
-      return (
-        <Suspense fallback={<BackgroundLoader />}>
-          <FaultyTerminal {...config.props} />
-        </Suspense>
-      );
-    case 'orb':
-      return (
-        <Suspense fallback={<BackgroundLoader />}>
-          <Orb {...config.props} />
-        </Suspense>
-      );
-    default:
-      return <BackgroundLoader />;
-  }
+  const renderComponent = () => {
+    switch (config.type) {
+      case 'squares':
+        return <Squares {...config.props} />;
+      case 'dotgrid':
+        return <DotGrid {...config.props} />;
+      case 'ripplegrid':
+        return <RippleGrid {...config.props} />;
+      case 'prismaticburst':
+        return <PrismaticBurst {...config.props} />;
+      case 'terminal':
+        return <FaultyTerminal {...config.props} />;
+      case 'orb':
+        return <Orb {...config.props} />;
+      default:
+        return <BackgroundLoader />;
+    }
+  };
+
+  return (
+    <ErrorBoundary
+      variant="component"
+      fallback={<WebGLErrorFallback />}
+      onError={(error) => {
+        console.warn(`[ServiceHeroBackground] ${config.type} component failed:`, error.message);
+      }}
+    >
+      <Suspense fallback={<BackgroundLoader />}>
+        {renderComponent()}
+      </Suspense>
+    </ErrorBoundary>
+  );
 });
 
 BackgroundRenderer.displayName = 'BackgroundRenderer';

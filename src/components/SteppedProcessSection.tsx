@@ -131,13 +131,14 @@ const SteppedProcessSection: React.FC<SteppedProcessSectionProps> = ({
           <div className="p-6 md:p-8 bg-neutral-50 border-t border-neutral-100">
             <div className="flex items-center justify-between gap-4">
               <button
-                className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-300 ${
+                className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-50 ${
                   currentStep === 0
                     ? "text-neutral-300 cursor-not-allowed"
                     : "text-neutral-700 hover:bg-neutral-200"
                 }`}
                 onClick={() => handleSetStep(-1)}
                 disabled={currentStep === 0}
+                aria-label="שלב קודם"
               >
                 הקודם
               </button>
@@ -148,7 +149,7 @@ const SteppedProcessSection: React.FC<SteppedProcessSectionProps> = ({
               </span>
 
               <button
-                className={`px-6 py-2.5 rounded-lg font-medium text-white transition-all duration-300 ${
+                className={`px-6 py-2.5 rounded-lg font-medium text-white transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--accent-color)] ${
                   currentStep === numSteps - 1
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:opacity-90 hover:shadow-lg"
@@ -156,6 +157,7 @@ const SteppedProcessSection: React.FC<SteppedProcessSectionProps> = ({
                 style={{ backgroundColor: accentColor }}
                 onClick={() => handleSetStep(1)}
                 disabled={currentStep === numSteps - 1}
+                aria-label="שלב הבא"
               >
                 הבא
               </button>
@@ -217,9 +219,9 @@ const Step: React.FC<StepProps> = ({ num, isActive, accentColor }) => {
       <div
         className={`w-9 h-9 md:w-10 md:h-10 flex items-center justify-center shrink-0 border-2 rounded-full font-semibold text-sm relative z-10 transition-colors duration-300`}
         style={{
-          borderColor: isActive ? accentColor : "#d1d5db",
+          borderColor: isActive ? accentColor : "var(--nexo-smoke)",
           backgroundColor: isActive ? accentColor : "transparent",
-          color: isActive ? "white" : "#d1d5db",
+          color: isActive ? "white" : "var(--nexo-smoke)",
         }}
       >
         <AnimatePresence mode="wait">

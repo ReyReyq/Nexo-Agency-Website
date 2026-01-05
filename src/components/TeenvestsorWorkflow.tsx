@@ -565,7 +565,7 @@ const TeenvestsorWorkflow = ({
       ))}
 
       {/* ========== CONCLUSION SECTION ========== */}
-      <div className="sticky top-0" style={{ zIndex: 65 }}>
+      <div className="sticky top-0" style={{ zIndex: 30 }}>
         <section
           className="min-h-[60vh] flex items-center justify-center relative overflow-hidden"
           style={{

@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import Matter from 'matter-js';
+import DOMPurify from 'dompurify';
 import { useVisibilityPause } from '@/hooks/useVisibilityPause';
 
 interface FallingTextProps {
@@ -62,7 +63,7 @@ const FallingText: React.FC<FallingTextProps> = ({
       .map(phrase => {
         const isHighlighted = highlightWords.some(hw => phrase.includes(hw));
         return `<span
-          class="inline-block mx-1 my-1 select-none ${isHighlighted ? 'text-primary' : 'text-[#1a1a1a]'}"
+          class="inline-block mx-1 my-1 select-none ${isHighlighted ? 'text-primary' : 'text-nexo-charcoal'}"
           style="cursor: grab; white-space: nowrap; font-weight: ${isHighlighted ? '700' : fontWeight}; font-family: ${fontFamily}; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"
         >
           ${phrase}
@@ -70,7 +71,7 @@ const FallingText: React.FC<FallingTextProps> = ({
       })
       .join('');
 
-    textRef.current.innerHTML = newHTML;
+    textRef.current.innerHTML = DOMPurify.sanitize(newHTML);
   }, [text, highlightWords, fontWeight, fontFamily]);
 
   // Handle triggers

@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { getPrefersReducedMotion } from '@/hooks/use-reduced-motion';
 import {
   Clock,
   PerspectiveCamera,
@@ -10,6 +11,7 @@ import {
   Vector2,
   Vector3,
   MeshPhysicalMaterial,
+  MeshPhysicalMaterialParameters,
   ShaderChunk,
   Color,
   Object3D,
@@ -20,13 +22,26 @@ import {
   PointLight,
   ACESFilmicToneMapping,
   Raycaster,
-  Plane
+  Plane,
+  OrthographicCamera,
+  Mesh,
+  BufferGeometry,
+  Material,
+  IUniform
 } from 'three';
+import type { WebGLProgramParametersWithUniforms } from 'three/src/renderers/webgl/WebGLPrograms.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
-import { Observer } from 'gsap/Observer';
 import { gsap } from 'gsap';
+import { Observer } from 'gsap/dist/Observer';
 
 gsap.registerPlugin(Observer);
+
+// Interface for postprocessing effects (e.g., EffectComposer)
+interface PostProcessingEffect {
+  render: () => void;
+  setSize: (width: number, height: number) => void;
+  dispose: () => void;
+}
 
 interface XConfig {
   canvas?: HTMLCanvasElement;
@@ -46,7 +61,7 @@ interface SizeData {
 
 class X {
   #config: XConfig;
-  #postprocessing: any;
+  #postprocessing: PostProcessingEffect | null = null;
   #resizeObserver?: ResizeObserver;
   #intersectionObserver?: IntersectionObserver;
   #resizeTimer?: number;
@@ -189,8 +204,8 @@ class X {
       const fovRad = (this.camera.fov * Math.PI) / 180;
       this.size.wHeight = 2 * Math.tan(fovRad / 2) * this.camera.position.length();
       this.size.wWidth = this.size.wHeight * this.camera.aspect;
-    } else if ((this.camera as any).isOrthographicCamera) {
-      const cam = this.camera as any;
+    } else if ('isOrthographicCamera' in this.camera && (this.camera as OrthographicCamera).isOrthographicCamera) {
+      const cam = this.camera as unknown as OrthographicCamera;
       this.size.wHeight = cam.top - cam.bottom;
       this.size.wWidth = cam.right - cam.left;
     }
@@ -209,12 +224,14 @@ class X {
     this.size.pixelRatio = pr;
   }
 
-  get postprocessing() {
+  get postprocessing(): PostProcessingEffect | null {
     return this.#postprocessing;
   }
-  set postprocessing(value: any) {
+  set postprocessing(value: PostProcessingEffect | null) {
     this.#postprocessing = value;
-    this.render = value.render.bind(value);
+    if (value) {
+      this.render = value.render.bind(value);
+    }
   }
 
   #onIntersection(entries: IntersectionObserverEntry[]) {
@@ -257,15 +274,24 @@ class X {
 
   clear() {
     this.scene.traverse(obj => {
-      if ((obj as any).isMesh && typeof (obj as any).material === 'object' && (obj as any).material !== null) {
-        Object.keys((obj as any).material).forEach(key => {
-          const matProp = (obj as any).material[key];
-          if (matProp && typeof matProp === 'object' && typeof matProp.dispose === 'function') {
-            matProp.dispose();
-          }
+      // Type guard for Mesh objects
+      if ('isMesh' in obj && (obj as Mesh).isMesh) {
+        const mesh = obj as Mesh<BufferGeometry, Material | Material[]>;
+        const material = mesh.material;
+
+        // Handle single material or array of materials
+        const materials = Array.isArray(material) ? material : [material];
+        materials.forEach(mat => {
+          // Dispose of material properties that have dispose methods (textures, etc.)
+          Object.keys(mat).forEach(key => {
+            const matProp = (mat as Record<string, unknown>)[key];
+            if (matProp && typeof matProp === 'object' && matProp !== null && 'dispose' in matProp && typeof (matProp as { dispose: unknown }).dispose === 'function') {
+              (matProp as { dispose: () => void }).dispose();
+            }
+          });
+          mat.dispose();
         });
-        (obj as any).material.dispose();
-        (obj as any).geometry.dispose();
+        mesh.geometry.dispose();
       }
     });
     this.scene.clear();
@@ -422,7 +448,7 @@ class W {
 }
 
 class Y extends MeshPhysicalMaterial {
-  uniforms: { [key: string]: { value: any } } = {
+  uniforms: { [key: string]: IUniform<number> } = {
     thicknessDistortion: { value: 0.1 },
     thicknessAmbient: { value: 0 },
     thicknessAttenuation: { value: 0.1 },
@@ -430,10 +456,10 @@ class Y extends MeshPhysicalMaterial {
     thicknessScale: { value: 10 }
   };
 
-  constructor(params: any) {
+  constructor(params: MeshPhysicalMaterialParameters) {
     super(params);
     this.defines = { USE_UV: '' };
-    this.onBeforeCompile = shader => {
+    this.onBeforeCompile = (shader: WebGLProgramParametersWithUniforms) => {
       Object.assign(shader.uniforms, this.uniforms);
       shader.fragmentShader =
         `
@@ -471,11 +497,16 @@ class Y extends MeshPhysicalMaterial {
       if (this.onBeforeCompile2) this.onBeforeCompile2(shader);
     };
   }
-  onBeforeCompile2?: (shader: any) => void;
+  onBeforeCompile2?: (shader: WebGLProgramParametersWithUniforms) => void;
 }
 
+// Mobile detection helper
+const getIsMobile = () => typeof window !== 'undefined' &&
+  (window.matchMedia('(max-width: 768px)').matches ||
+   'ontouchstart' in window);
+
 const XConfig = {
-  count: 200,
+  count: getIsMobile() ? 50 : 200,
   colors: [0, 0, 0],
   ambientColor: 0xffffff,
   ambientIntensity: 1,
@@ -594,7 +625,7 @@ function processPointerInteraction() {
 
 function onTouchStart(e: TouchEvent) {
   if (e.touches.length > 0) {
-    e.preventDefault();
+    // Don't prevent default - allow scrolling on mobile
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
@@ -613,7 +644,7 @@ function onTouchStart(e: TouchEvent) {
 
 function onTouchMove(e: TouchEvent) {
   if (e.touches.length > 0) {
-    e.preventDefault();
+    // Don't prevent default - allow scrolling on mobile
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
     for (const [elem, data] of pointerMap) {
       const rect = elem.getBoundingClientRect();
@@ -773,7 +804,7 @@ interface CreateBallpitReturn {
   dispose: () => void;
 }
 
-function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallpitReturn {
+function createBallpit(canvas: HTMLCanvasElement, config: Partial<typeof XConfig> = {}): CreateBallpitReturn {
   const threeInstance = new X({
     canvas,
     size: 'parent',
@@ -791,9 +822,13 @@ function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallp
   const intersectionPoint = new Vector3();
   let isPaused = false;
 
-  canvas.style.touchAction = 'none';
+  // Allow vertical scrolling on mobile (pan-y) while disabling horizontal pan
+  // Use 'pan-y' on mobile to allow scrolling, 'none' on desktop for full interaction
+  const isMobile = getIsMobile();
+  canvas.style.touchAction = isMobile ? 'pan-y' : 'none';
   canvas.style.userSelect = 'none';
-  (canvas.style as any).webkitUserSelect = 'none';
+  // webkitUserSelect is a vendor-prefixed property for older Safari
+  (canvas.style as CSSStyleDeclaration & { webkitUserSelect?: string }).webkitUserSelect = 'none';
 
   const pointerData = createPointerData({
     domElement: canvas,
@@ -808,7 +843,7 @@ function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallp
       spheres.config.controlSphere0 = false;
     }
   });
-  function initialize(cfg: any) {
+  function initialize(cfg: Partial<typeof XConfig>) {
     if (spheres) {
       threeInstance.clear();
       threeInstance.scene.remove(spheres);
@@ -841,17 +876,19 @@ function createBallpit(canvas: HTMLCanvasElement, config: any = {}): CreateBallp
   };
 }
 
-interface BallpitProps {
+interface BallpitProps extends Partial<typeof XConfig> {
   className?: string;
-  followCursor?: boolean;
-  [key: string]: any;
 }
 
 const Ballpit: React.FC<BallpitProps> = ({ className = '', followCursor = true, ...props }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const spheresInstanceRef = useRef<CreateBallpitReturn | null>(null);
+  const [prefersReducedMotion] = useState(() => getPrefersReducedMotion());
 
   useEffect(() => {
+    // Skip WebGL animation when reduced motion is preferred
+    if (prefersReducedMotion) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -866,7 +903,34 @@ const Ballpit: React.FC<BallpitProps> = ({ className = '', followCursor = true, 
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [prefersReducedMotion]);
+
+  // When reduced motion is preferred, show a static gradient sphere instead
+  if (prefersReducedMotion) {
+    return (
+      <div
+        className={className}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Static gradient orb visualization */}
+        <div
+          style={{
+            width: '60%',
+            height: '60%',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle at 30% 30%, rgba(80, 80, 80, 0.8) 0%, rgba(40, 40, 40, 0.6) 40%, rgba(20, 20, 20, 0.4) 70%, transparent 100%)',
+            boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.3)',
+          }}
+        />
+      </div>
+    );
+  }
 
   return <canvas className={className} ref={canvasRef} style={{ width: '100%', height: '100%' }} />;
 };

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-export function useThrottleCallback<T extends (...args: any[]) => void>(
+export function useThrottleCallback<T extends (...args: unknown[]) => void>(
   callback: T,
   delay: number = 16 // ~60fps
 ): T {

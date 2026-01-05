@@ -4,84 +4,84 @@ import { Check, ExternalLink, Copy } from 'lucide-react';
 // Image categories based on research
 const imageCategories = {
   "Creative Workspace (Dark)": [
-    { url: "/images/gallery/workspace-modern-office.jpg", desc: "Dark office with glowing screens" },
-    { url: "/images/gallery/workspace-team-desk.jpg", desc: "Moody desk setup with monitor" },
-    { url: "/images/gallery/workspace-meeting-room.jpg", desc: "Team collaboration in dark office" },
-    { url: "/images/gallery/workspace-open-plan.jpg", desc: "Modern coworking space dark" },
-    { url: "/images/gallery/workspace-minimal.jpg", desc: "Minimal desk dark aesthetic" },
-    { url: "/images/gallery/workspace-laptop-team.jpg", desc: "Tech team working late" },
+    { url: "/images/gallery/workspace-modern-office.webp", desc: "Dark office with glowing screens" },
+    { url: "/images/gallery/workspace-team-desk.webp", desc: "Moody desk setup with monitor" },
+    { url: "/images/gallery/workspace-meeting-room.webp", desc: "Team collaboration in dark office" },
+    { url: "/images/gallery/workspace-open-plan.webp", desc: "Modern coworking space dark" },
+    { url: "/images/gallery/workspace-minimal.webp", desc: "Minimal desk dark aesthetic" },
+    { url: "/images/gallery/workspace-laptop-team.webp", desc: "Tech team working late" },
   ],
   "Designer at Work (Moody)": [
-    { url: "/images/gallery/portrait-professional-man.jpg", desc: "Creative professional portrait" },
-    { url: "/images/gallery/portrait-business-man.jpg", desc: "Business professional dark" },
-    { url: "/images/gallery/portrait-business-woman.jpg", desc: "Woman professional dark bg" },
-    { url: "/images/gallery/team-office-meeting.jpg", desc: "Team meeting moody lighting" },
-    { url: "/images/gallery/team-coding-session.jpg", desc: "Developer working late" },
-    { url: "/images/gallery/team-collaboration-desk.jpg", desc: "Creative team collaboration" },
+    { url: "/images/gallery/portrait-professional-man.webp", desc: "Creative professional portrait" },
+    { url: "/images/gallery/portrait-business-man.webp", desc: "Business professional dark" },
+    { url: "/images/gallery/portrait-business-woman.webp", desc: "Woman professional dark bg" },
+    { url: "/images/gallery/team-office-meeting.webp", desc: "Team meeting moody lighting" },
+    { url: "/images/gallery/team-coding-session.webp", desc: "Developer working late" },
+    { url: "/images/gallery/team-collaboration-desk.webp", desc: "Creative team collaboration" },
   ],
   "Luxury Product (Dark)": [
-    { url: "/images/gallery/product-luxury-watch.jpg", desc: "Luxury watch dark background" },
-    { url: "/images/gallery/product-minimalist-watch.jpg", desc: "Product on dark surface" },
-    { url: "/images/gallery/product-sneaker.jpg", desc: "Sneaker dark aesthetic" },
-    { url: "/images/gallery/product-headphones.jpg", desc: "Headphones dark premium" },
-    { url: "/images/gallery/product-perfume.jpg", desc: "Perfume bottle dark" },
-    { url: "/images/gallery/product-cosmetics.jpg", desc: "Cosmetics dark background" },
+    { url: "/images/gallery/product-luxury-watch.webp", desc: "Luxury watch dark background" },
+    { url: "/images/gallery/product-minimalist-watch.webp", desc: "Product on dark surface" },
+    { url: "/images/gallery/product-sneaker.webp", desc: "Sneaker dark aesthetic" },
+    { url: "/images/gallery/product-headphones.webp", desc: "Headphones dark premium" },
+    { url: "/images/gallery/product-perfume.webp", desc: "Perfume bottle dark" },
+    { url: "/images/gallery/product-cosmetics.webp", desc: "Cosmetics dark background" },
   ],
   "Automotive (Premium Dark)": [
-    { url: "/images/gallery/automotive-luxury-car.jpg", desc: "Sports car dark garage" },
-    { url: "/images/gallery/automotive-sports-car.jpg", desc: "Luxury car side view" },
-    { url: "/images/gallery/automotive-classic-porsche.jpg", desc: "Porsche dark aesthetic" },
-    { url: "/images/gallery/automotive-modern-car.jpg", desc: "Car detail close-up" },
-    { url: "/images/gallery/automotive-bmw.jpg", desc: "BMW dark studio" },
-    { url: "/images/gallery/automotive-mercedes.jpg", desc: "Mercedes dark background" },
+    { url: "/images/gallery/automotive-luxury-car.webp", desc: "Sports car dark garage" },
+    { url: "/images/gallery/automotive-sports-car.webp", desc: "Luxury car side view" },
+    { url: "/images/gallery/automotive-classic-porsche.webp", desc: "Porsche dark aesthetic" },
+    { url: "/images/gallery/automotive-modern-car.webp", desc: "Car detail close-up" },
+    { url: "/images/gallery/automotive-bmw.webp", desc: "BMW dark studio" },
+    { url: "/images/gallery/automotive-mercedes.webp", desc: "Mercedes dark background" },
   ],
   "Abstract Tech (Dark)": [
-    { url: "/images/gallery/abstract-gradient-purple.jpg", desc: "Purple abstract gradient" },
-    { url: "/images/gallery/abstract-gradient-colorful.jpg", desc: "Abstract flowing shapes" },
-    { url: "/images/gallery/abstract-gradient-pink.jpg", desc: "Purple gradient abstract" },
-    { url: "/images/gallery/abstract-gradient-rainbow.jpg", desc: "Colorful gradient mesh" },
-    { url: "/images/gallery/abstract-3d-shapes.jpg", desc: "Dark abstract waves" },
-    { url: "/images/gallery/abstract-geometric.jpg", desc: "Geometric abstract dark" },
+    { url: "/images/gallery/abstract-gradient-purple.webp", desc: "Purple abstract gradient" },
+    { url: "/images/gallery/abstract-gradient-colorful.webp", desc: "Abstract flowing shapes" },
+    { url: "/images/gallery/abstract-gradient-pink.webp", desc: "Purple gradient abstract" },
+    { url: "/images/gallery/abstract-gradient-rainbow.webp", desc: "Colorful gradient mesh" },
+    { url: "/images/gallery/abstract-3d-shapes.webp", desc: "Dark abstract waves" },
+    { url: "/images/gallery/abstract-geometric.webp", desc: "Geometric abstract dark" },
   ],
   "Technology (Moody)": [
-    { url: "/images/gallery/tech-circuit-board.jpg", desc: "Circuit board macro dark" },
-    { url: "/images/gallery/tech-cyber-security.jpg", desc: "Cybersecurity dark" },
-    { url: "/images/gallery/tech-matrix-code.jpg", desc: "Matrix code dark" },
-    { url: "/images/gallery/tech-laptop-code.jpg", desc: "Laptop code dark" },
-    { url: "/images/gallery/tech-programming.jpg", desc: "Programming dark screen" },
-    { url: "/images/gallery/tech-code-screen.jpg", desc: "Code editor dark theme" },
+    { url: "/images/gallery/tech-circuit-board.webp", desc: "Circuit board macro dark" },
+    { url: "/images/gallery/tech-cyber-security.webp", desc: "Cybersecurity dark" },
+    { url: "/images/gallery/tech-matrix-code.webp", desc: "Matrix code dark" },
+    { url: "/images/gallery/tech-laptop-code.webp", desc: "Laptop code dark" },
+    { url: "/images/gallery/tech-programming.webp", desc: "Programming dark screen" },
+    { url: "/images/gallery/tech-code-screen.webp", desc: "Code editor dark theme" },
   ],
   "Artistic/Editorial": [
-    { url: "/images/gallery/editorial-man-portrait.jpg", desc: "Portrait dramatic lighting" },
-    { url: "/images/gallery/editorial-woman-fashion.jpg", desc: "Fashion portrait dark" },
-    { url: "/images/gallery/editorial-woman-casual.jpg", desc: "Editorial portrait moody" },
-    { url: "/images/gallery/editorial-woman-beauty.jpg", desc: "Artistic close-up" },
-    { url: "/images/gallery/editorial-woman-smile.jpg", desc: "Professional headshot" },
-    { url: "/images/gallery/editorial-woman-laughing.jpg", desc: "Creative portrait dark" },
+    { url: "/images/gallery/editorial-man-portrait.webp", desc: "Portrait dramatic lighting" },
+    { url: "/images/gallery/editorial-woman-fashion.webp", desc: "Fashion portrait dark" },
+    { url: "/images/gallery/editorial-woman-casual.webp", desc: "Editorial portrait moody" },
+    { url: "/images/gallery/editorial-woman-beauty.webp", desc: "Artistic close-up" },
+    { url: "/images/gallery/editorial-woman-smile.webp", desc: "Professional headshot" },
+    { url: "/images/gallery/editorial-woman-laughing.webp", desc: "Creative portrait dark" },
   ],
   "Hands Creating": [
-    { url: "/images/gallery/hands-pottery.jpg", desc: "Hands typing keyboard" },
-    { url: "/images/gallery/hands-painting.jpg", desc: "Designer hands working" },
-    { url: "/images/gallery/hands-typing.jpg", desc: "Hands phone design" },
-    { url: "/images/gallery/hands-design-work.jpg", desc: "Artist hands sketching" },
-    { url: "/images/gallery/hands-ecommerce.jpg", desc: "Hands with tablet" },
-    { url: "/images/gallery/hands-teamwork.jpg", desc: "Team hands meeting" },
+    { url: "/images/gallery/hands-pottery.webp", desc: "Hands typing keyboard" },
+    { url: "/images/gallery/hands-painting.webp", desc: "Designer hands working" },
+    { url: "/images/gallery/hands-typing.webp", desc: "Hands phone design" },
+    { url: "/images/gallery/hands-design-work.webp", desc: "Artist hands sketching" },
+    { url: "/images/gallery/hands-ecommerce.webp", desc: "Hands with tablet" },
+    { url: "/images/gallery/hands-teamwork.webp", desc: "Team hands meeting" },
   ],
   "Architecture (Dark)": [
-    { url: "/images/gallery/architecture-skyscraper.jpg", desc: "Modern building dark sky" },
-    { url: "/images/gallery/architecture-modern-building.jpg", desc: "Architecture geometric dark" },
-    { url: "/images/gallery/architecture-interior.jpg", desc: "Building facade dark" },
-    { url: "/images/gallery/architecture-apartments.jpg", desc: "Skyscraper night" },
-    { url: "/images/gallery/architecture-glass-building.jpg", desc: "Modern interior dark" },
-    { url: "/images/gallery/architecture-white-building.jpg", desc: "Building pattern dark" },
+    { url: "/images/gallery/architecture-skyscraper.webp", desc: "Modern building dark sky" },
+    { url: "/images/gallery/architecture-modern-building.webp", desc: "Architecture geometric dark" },
+    { url: "/images/gallery/architecture-interior.webp", desc: "Building facade dark" },
+    { url: "/images/gallery/architecture-apartments.webp", desc: "Skyscraper night" },
+    { url: "/images/gallery/architecture-glass-building.webp", desc: "Modern interior dark" },
+    { url: "/images/gallery/architecture-white-building.webp", desc: "Building pattern dark" },
   ],
   "Minimal/Clean": [
-    { url: "/images/gallery/minimal-gradient-blue.jpg", desc: "Gradient minimal blue" },
-    { url: "/images/gallery/minimal-gradient-pink-blue.jpg", desc: "Gradient minimal pink" },
-    { url: "/images/gallery/minimal-gradient-purple-blue.jpg", desc: "Minimal dark gradient" },
-    { url: "/images/gallery/minimal-gradient-sunset.jpg", desc: "Abstract minimal dark" },
-    { url: "/images/gallery/minimal-abstract-marble.jpg", desc: "Marble texture dark" },
-    { url: "/images/gallery/portrait-professional-man.jpg", desc: "Clean minimal surface" },
+    { url: "/images/gallery/minimal-gradient-blue.webp", desc: "Gradient minimal blue" },
+    { url: "/images/gallery/minimal-gradient-pink-blue.webp", desc: "Gradient minimal pink" },
+    { url: "/images/gallery/minimal-gradient-purple-blue.webp", desc: "Minimal dark gradient" },
+    { url: "/images/gallery/minimal-gradient-sunset.webp", desc: "Abstract minimal dark" },
+    { url: "/images/gallery/minimal-abstract-marble.webp", desc: "Marble texture dark" },
+    { url: "/images/gallery/portrait-professional-man.webp", desc: "Clean minimal surface" },
   ],
 };
 
@@ -178,7 +178,7 @@ export default function ImagePicker() {
     : imageCategories;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <main id="main-content" className="min-h-screen bg-gray-950 text-white">
       {/* Header */}
       <div className="sticky top-0 z-50 bg-gray-950/95 backdrop-blur-sm border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -282,6 +282,6 @@ export default function ImagePicker() {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

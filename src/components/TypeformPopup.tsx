@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowLeft, ArrowRight, Check, Send, Rocket, AlertCircle } from "lucide-react";
 import confetti from "canvas-confetti";
+import FocusTrap from "focus-trap-react";
 import { submitContactForm, type FormData as SubmissionFormData } from "@/utils/formSubmission";
 
 interface TypeformPopupProps {
@@ -398,7 +399,6 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
       // Use sendBeacon for reliable delivery even when page is closing
       const blob = new Blob([JSON.stringify(abandonmentData)], { type: "application/json" });
       navigator.sendBeacon("/api/form-abandonment", blob);
-      console.log("Form abandonment tracked:", abandonmentData);
     }
   }, [formData, currentStep]);
 
@@ -464,14 +464,25 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     };
   }, [isOpen]);
 
-  // Handle keyboard navigation
+  // Handle Escape key to close modal (works in all states: start screen, form, success)
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (!isOpen) return;
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onClose]);
+
+  // Handle Enter key for form navigation (only during form steps)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen || isSuccess || showStartScreen) return;
 
-      if (e.key === "Escape") {
-        onClose();
-      } else if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === "Enter" && !e.shiftKey) {
         const activeElement = document.activeElement;
         if (activeElement?.tagName !== "TEXTAREA") {
           e.preventDefault();
@@ -565,27 +576,12 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
       setDirection("forward");
       setCurrentStep((prev) => prev + 1);
     } else {
-      handleSubmit();
+      // Use ref to avoid temporal dead zone - handleSubmit is defined after handleNext
+      handleSubmitRef.current();
     }
   }, [currentStep, totalSteps, formData]);
 
-  // Keep refs updated with latest callbacks (fixes race condition with auto-advance)
-  useEffect(() => {
-    handleNextRef.current = handleNext;
-  }, [handleNext]);
-
-  useEffect(() => {
-    handleSubmitRef.current = handleSubmit;
-  }, [handleSubmit]);
-
-  const handleBack = useCallback(() => {
-    if (currentStep > 0) {
-      setError(null);
-      setDirection("back");
-      setCurrentStep((prev) => prev - 1);
-    }
-  }, [currentStep]);
-
+  // handleSubmit must be defined BEFORE useEffects that reference it
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
@@ -616,6 +612,23 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
       setIsSubmitting(false);
     }
   };
+
+  // Keep refs updated with latest callbacks (fixes race condition with auto-advance)
+  useEffect(() => {
+    handleNextRef.current = handleNext;
+  }, [handleNext]);
+
+  useEffect(() => {
+    handleSubmitRef.current = handleSubmit;
+  }, [handleSubmit]);
+
+  const handleBack = useCallback(() => {
+    if (currentStep > 0) {
+      setError(null);
+      setDirection("back");
+      setCurrentStep((prev) => prev - 1);
+    }
+  }, [currentStep]);
 
   const updateFormData = (field: keyof FormData, value: string | string[]) => {
     setError(null);
@@ -652,7 +665,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
       opacity: 1,
       scale: 1,
       y: 0,
-      transition: { type: "spring", duration: 0.5, bounce: 0.15 },
+      transition: { type: "spring" as const, duration: 0.5, bounce: 0.15 },
     },
     exit: { opacity: 0, scale: 0.95, y: 20, transition: { duration: 0.2 } },
   };
@@ -665,12 +678,12 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
     animate: {
       x: 0,
       opacity: 1,
-      transition: { type: "tween", duration: 0.35, ease: [0.25, 0.1, 0.25, 1] },
+      transition: { type: "tween" as const, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const },
     },
     exit: (dir: Direction) => ({
       x: dir === "forward" ? -80 : 80,
       opacity: 0,
-      transition: { type: "tween", duration: 0.25, ease: [0.42, 0, 1, 1] },
+      transition: { type: "tween" as const, duration: 0.25, ease: [0.42, 0, 1, 1] as const },
     }),
   };
 
@@ -700,6 +713,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
       </motion.div>
 
       <motion.h2
+        id="typeform-modal-title"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -999,30 +1013,42 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          className="fixed inset-0 z-[10001] flex items-center justify-center p-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
-          variants={overlayVariants}
-          initial="hidden"
-          animate="visible"
-          exit="hidden"
-          transition={{ duration: 0.3 }}
+        <FocusTrap
+          active={isOpen}
+          focusTrapOptions={{
+            initialFocus: false,
+            allowOutsideClick: true,
+            returnFocusOnDeactivate: true,
+            escapeDeactivates: false, // We handle escape manually in useEffect
+          }}
         >
-          {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={onClose}
-          />
-
-          {/* Modal */}
-          <motion.div
-            ref={modalRef}
-            className="relative w-full max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-background rounded-2xl shadow-2xl overflow-hidden"
-            variants={modalVariants}
+            className="fixed inset-0 z-[10001] flex items-center justify-center p-4 pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+            variants={overlayVariants}
             initial="hidden"
             animate="visible"
-            exit="exit"
-            onClick={(e) => e.stopPropagation()}
+            exit="hidden"
+            transition={{ duration: 0.3 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="typeform-modal-title"
           >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={onClose}
+            />
+
+            {/* Modal */}
+            <motion.div
+              ref={modalRef}
+              className="relative w-full max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-xl lg:max-w-2xl bg-background rounded-2xl shadow-2xl overflow-hidden"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
             {/* Confetti Canvas - positioned inside modal */}
             {isSuccess && (
               <canvas
@@ -1047,6 +1073,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
             {/* Close Button */}
             <button
               onClick={onClose}
+              aria-label="סגור טופס"
               className="absolute top-4 left-4 w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-foreground/5 hover:bg-foreground/10 flex items-center justify-center transition-colors z-10"
             >
               <X className="w-5 h-5 text-foreground/60" />
@@ -1150,6 +1177,7 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
             </div>
           </motion.div>
         </motion.div>
+        </FocusTrap>
       )}
     </AnimatePresence>
   );

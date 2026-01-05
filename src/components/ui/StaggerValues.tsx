@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, LucideIcon } from "lucide-react";
 
@@ -38,31 +38,43 @@ interface ValueCardProps {
   cardSize: number;
 }
 
-export const StaggerValues: React.FC<StaggerValuesProps> = ({ values, className = "" }) => {
+export const StaggerValues: React.FC<StaggerValuesProps> = memo(({ values, className = "" }) => {
   const [cardSize, setCardSize] = useState(CARD_SIZE_LG);
   const [valueItems, setValueItems] = useState<(ValueItem & { tempId: number })[]>(
     values.map((v, i) => ({ ...v, tempId: i }))
   );
 
-  const handleMove = (position: number) => {
-    const copy = [...valueItems];
+  // Memoized move handler to prevent recreation on each render
+  const handleMove = useCallback((position: number) => {
+    setValueItems(prev => {
+      const copy = [...prev];
 
-    if (position > 0) {
-      for (let i = position; i > 0; i--) {
-        const firstEl = copy.shift();
-        if (!firstEl) return;
-        copy.push({ ...firstEl, tempId: Math.random() });
+      if (position > 0) {
+        for (let i = position; i > 0; i--) {
+          const firstEl = copy.shift();
+          if (!firstEl) return prev;
+          copy.push({ ...firstEl, tempId: Math.random() });
+        }
+      } else {
+        for (let i = position; i < 0; i++) {
+          const lastEl = copy.pop();
+          if (!lastEl) return prev;
+          copy.unshift({ ...lastEl, tempId: Math.random() });
+        }
       }
-    } else {
-      for (let i = position; i < 0; i++) {
-        const lastEl = copy.pop();
-        if (!lastEl) return;
-        copy.unshift({ ...lastEl, tempId: Math.random() });
-      }
-    }
 
-    setValueItems(copy);
-  };
+      return copy;
+    });
+  }, []);
+
+  // Memoized navigation handlers
+  const handlePrev = useCallback(() => {
+    handleMove(1);
+  }, [handleMove]);
+
+  const handleNext = useCallback(() => {
+    handleMove(-1);
+  }, [handleMove]);
 
   useEffect(() => {
     const handleSetCardSize = () => {
@@ -109,31 +121,39 @@ export const StaggerValues: React.FC<StaggerValuesProps> = ({ values, className 
       {/* Navigation Arrows */}
       <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-4">
         <button
-          onClick={() => handleMove(1)}
+          onClick={handlePrev}
           className="group grid h-12 w-12 place-content-center rounded-full border border-primary/20 bg-hero-bg/60 backdrop-blur-sm text-hero-fg/70 transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-110"
-          aria-label="Previous value"
+          aria-label="ערך קודם"
         >
           <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-0.5" />
         </button>
         <button
-          onClick={() => handleMove(-1)}
+          onClick={handleNext}
           className="group grid h-12 w-12 place-content-center rounded-full border border-primary/20 bg-hero-bg/60 backdrop-blur-sm text-hero-fg/70 transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-110"
-          aria-label="Next value"
+          aria-label="ערך הבא"
         >
           <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-0.5" />
         </button>
       </div>
     </div>
   );
-};
+});
 
-const ValueCard: React.FC<ValueCardProps> = ({ position, value, handleMove, cardSize }) => {
+// Display name for debugging
+(StaggerValues as React.FC<StaggerValuesProps>).displayName = 'StaggerValues';
+
+const ValueCard: React.FC<ValueCardProps> = memo(({ position, value, handleMove, cardSize }) => {
   const isActive = position === 0;
+
+  // Memoize click handler to prevent recreation
+  const handleClick = useCallback(() => {
+    handleMove(position);
+  }, [handleMove, position]);
 
   return (
     <motion.div
       initial={false}
-      onClick={() => handleMove(position)}
+      onClick={handleClick}
       className="absolute left-1/2 top-1/2 cursor-pointer"
       animate={{
         width: cardSize,
@@ -224,6 +244,8 @@ const ValueCard: React.FC<ValueCardProps> = ({ position, value, handleMove, card
       </div>
     </motion.div>
   );
-};
+});
+
+ValueCard.displayName = 'ValueCard';
 
 export default StaggerValues;

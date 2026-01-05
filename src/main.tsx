@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
+import ErrorBoundary from "./components/ErrorBoundary.tsx";
 import "./index.css";
 import "lenis/dist/lenis.css";
 import { initTracking } from "./utils/formTracking";
@@ -18,7 +19,16 @@ initTracking();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
-      <App />
+      <ErrorBoundary
+        variant="page"
+        onError={(error, errorInfo) => {
+          // Log to console for debugging
+          console.error('[App Error]', error, errorInfo);
+          // Here you could integrate with error monitoring services like Sentry
+        }}
+      >
+        <App />
+      </ErrorBoundary>
     </HelmetProvider>
   </StrictMode>
 );

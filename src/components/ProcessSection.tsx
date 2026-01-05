@@ -2,6 +2,7 @@ import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-
 import { useRef, useState, useMemo, memo } from "react";
 import { processSteps as defaultProcessSteps, processLabels as defaultProcessLabels, type ProcessStep } from "@/data/processSteps";
 import ProcessStepVisual from "./ProcessStepVisual";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 // Animation variants for content transitions - defined outside component to prevent recreation
 const contentVariants = {
@@ -33,24 +34,24 @@ const StepIndicator = memo(({ step, index, activeStep, isLast }: StepIndicatorPr
       transition={{ duration: 0.2 }}
     >
       <div
-        className={`w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
+        className={`w-11 h-11 sm:w-11 sm:h-11 md:w-11 md:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
           isActive
             ? "bg-primary border-primary"
             : isPast
             ? "bg-primary/20 border-primary/40"
-            : "bg-[#1a1a1a]/5 border-[#1a1a1a]/10"
+            : "bg-nexo-charcoal/5 border-nexo-charcoal/10"
         }`}
       >
         <step.icon
           className={`w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 transition-colors duration-200 ${
-            isActiveOrPast ? "text-white" : "text-[#1a1a1a]/40"
+            isActiveOrPast ? "text-white" : "text-nexo-charcoal/40"
           }`}
         />
       </div>
       {!isLast && (
         <div
           className={`absolute top-1/2 -translate-y-1/2 right-full w-1.5 sm:w-2 h-0.5 transition-colors duration-200 ${
-            isPast ? "bg-primary" : "bg-[#1a1a1a]/10"
+            isPast ? "bg-primary" : "bg-nexo-charcoal/10"
           }`}
         />
       )}
@@ -69,6 +70,7 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const lastStepChangeTime = useRef(0);
+  const prefersReducedMotion = useReducedMotion();
 
   // Use default process steps (service-specific steps removed due to data corruption)
   const { processSteps, processLabels } = useMemo(() => {
@@ -81,7 +83,6 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
-    layoutEffect: false, // Prevent layout thrashing
   });
 
   // Debounced scroll detection - single source of truth
@@ -106,6 +107,16 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
 
   const currentStep = processSteps[activeStep];
 
+  // Reduced motion variants - instant transitions instead of animated
+  const reducedMotionVariants = {
+    initial: { opacity: 1, y: 0, filter: "none" },
+    animate: { opacity: 1, y: 0, filter: "none" },
+    exit: { opacity: 0, y: 0, filter: "none" },
+  };
+
+  // Use reduced motion variants when preference is set
+  const activeVariants = prefersReducedMotion ? reducedMotionVariants : contentVariants;
+
   return (
     <section
       ref={containerRef}
@@ -114,17 +125,17 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
         // Total height: enough scroll for all steps + viewport for last step visibility
         // Each step needs ~50vh of scroll, plus 100vh for the sticky content
         height: `${processSteps.length * 50 + 50}vh`,
-        backgroundColor: '#FAF9F6'
+        backgroundColor: 'var(--nexo-light)'
       }}
       dir="rtl"
     >
       {/* Sticky Container - needs fixed height (not min-height) for proper sticky behavior */}
-      <div className="sticky top-0 h-screen h-[100dvh] overflow-hidden flex items-center justify-center lg:items-center">
+      <div className="sticky top-0 h-screen h-[100dvh] min-h-screen min-h-[100dvh] overflow-hidden flex items-center justify-center lg:items-center">
         {/* Subtle grid background */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: `linear-gradient(to right, #1a1a1a 1px, transparent 1px), linear-gradient(to bottom, #1a1a1a 1px, transparent 1px)`,
+            backgroundImage: `linear-gradient(to right, var(--nexo-charcoal) 1px, transparent 1px), linear-gradient(to bottom, var(--nexo-charcoal) 1px, transparent 1px)`,
             backgroundSize: '60px 60px',
           }}
         />
@@ -154,35 +165,35 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeStep}
-                    variants={contentVariants}
+                    variants={activeVariants}
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    transition={{
+                    transition={prefersReducedMotion ? { duration: 0 } : {
                       duration: 0.35,
                       ease: [0.25, 0.1, 0.25, 1]
                     }}
                   >
-                    <span className="inline-block text-[#1a1a1a] text-xs md:text-sm font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-3 lg:mb-4">
+                    <span className="inline-block text-nexo-charcoal text-xs md:text-sm font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 mb-3 lg:mb-4">
                       {processLabels.stepPrefix} {currentStep.number} {processLabels.stepSuffix}
                     </span>
 
-                    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-6xl 2xl:text-7xl font-black mb-2 lg:mb-3">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-black mb-2 lg:mb-3">
                       <span style={{ color: currentStep.color.primary }}>
                         {currentStep.title}
                       </span>
                     </h2>
 
-                    <h3 className="text-[#2d2d2d] text-base sm:text-lg md:text-xl font-semibold mb-3 lg:mb-5">
+                    <h3 className="text-nexo-graphite text-base sm:text-lg md:text-xl font-semibold mb-3 lg:mb-5">
                       {currentStep.subtitle}
                     </h3>
 
                     {/* Summary */}
-                    <p className="text-[#1a1a1a] text-sm md:text-lg font-semibold mb-3 lg:mb-4">
+                    <p className="text-nexo-charcoal text-sm md:text-lg font-semibold mb-3 lg:mb-4">
                       {currentStep.description.summary}
                     </p>
                     {/* Bullet Points */}
-                    <ul className="space-y-1.5 lg:space-y-2 text-[#3d3d3d] text-sm md:text-lg leading-relaxed lg:leading-[1.7] max-w-lg">
+                    <ul className="space-y-1.5 lg:space-y-2 text-nexo-slate text-sm md:text-lg leading-relaxed lg:leading-[1.7] max-w-lg">
                       {currentStep.description.items.map((item, i) => (
                         <li key={i} className="flex gap-2 sm:gap-3">
                           <span className="text-primary font-bold mt-0.5 sm:mt-1">•</span>
@@ -197,7 +208,7 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
               {/* Enhanced Progress bar - Desktop only (inside content) */}
               <div className="mt-8 hidden lg:block">
                 {/* Track */}
-                <div className="h-2 bg-[#1a1a1a]/10 rounded-full overflow-visible relative">
+                <div className="h-2 bg-nexo-charcoal/10 rounded-full overflow-visible relative">
                   {/* Solid color fill with subtle glow */}
                   <motion.div
                     className="h-full rounded-full absolute inset-y-0 right-0"
@@ -207,14 +218,14 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
                     animate={{
                       width: `${((activeStep + 1) / processSteps.length) * 100}%`,
                     }}
-                    transition={{
+                    transition={prefersReducedMotion ? { duration: 0 } : {
                       width: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
                     }}
                   />
                 </div>
 
                 {/* Labels */}
-                <div className="flex justify-between mt-3 text-xs text-[#404040] font-medium">
+                <div className="flex justify-between mt-3 text-xs text-nexo-steel font-medium">
                   <span>{processLabels.startLabel}</span>
                   <span>{processLabels.endLabel}</span>
                 </div>
@@ -223,7 +234,7 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
 
             {/* Right Side - Visual (Below text on mobile) */}
             <div className="order-2 lg:order-2 flex justify-center items-center flex-1 lg:flex-none">
-              <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-96 lg:h-96">
+              <div className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 xl:w-96 xl:h-96">
                 <ProcessStepVisual
                   activeStep={activeStep}
                   stepNumber={currentStep.number}
@@ -232,10 +243,10 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
             </div>
           </div>
 
-          {/* Mobile Progress Bar - At bottom */}
-          <div className="pt-2 lg:hidden flex-shrink-0">
+          {/* Mobile Progress Bar - At bottom with z-index to stay above notifications */}
+          <div className="pt-2 lg:hidden flex-shrink-0 relative z-20">
             {/* Track */}
-            <div className="h-1.5 sm:h-2 bg-[#1a1a1a]/10 rounded-full overflow-visible relative">
+            <div className="h-1.5 sm:h-2 bg-nexo-charcoal/10 rounded-full overflow-visible relative">
               {/* Solid color fill */}
               <motion.div
                 className="h-full rounded-full absolute inset-y-0 right-0"
@@ -245,14 +256,14 @@ const ProcessSection = memo((_props: ProcessSectionProps) => {
                 animate={{
                   width: `${((activeStep + 1) / processSteps.length) * 100}%`,
                 }}
-                transition={{
+                transition={prefersReducedMotion ? { duration: 0 } : {
                   width: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
                 }}
               />
             </div>
 
             {/* Labels */}
-            <div className="flex justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-[#404040] font-medium">
+            <div className="flex justify-between mt-1.5 sm:mt-2 text-[10px] sm:text-xs text-nexo-steel font-medium">
               <span>{processLabels.startLabel}</span>
               <span>{processLabels.endLabel}</span>
             </div>

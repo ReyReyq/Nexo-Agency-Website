@@ -54,7 +54,6 @@ interface LenisProviderProps {
     orientation?: 'vertical' | 'horizontal';
     gestureOrientation?: 'vertical' | 'horizontal' | 'both';
     smoothWheel?: boolean;
-    smoothTouch?: boolean;
     wheelMultiplier?: number;
     touchMultiplier?: number;
     infinite?: boolean;
@@ -122,7 +121,6 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
       orientation: opts.orientation ?? 'vertical',
       gestureOrientation: opts.gestureOrientation ?? 'vertical',
       smoothWheel: opts.smoothWheel ?? true,
-      smoothTouch: opts.smoothTouch ?? false, // Better mobile performance
       wheelMultiplier: opts.wheelMultiplier ?? 1,
       touchMultiplier: opts.touchMultiplier ?? 2,
       infinite: opts.infinite ?? false,

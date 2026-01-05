@@ -17,7 +17,7 @@ export const strategySubServices: SubServiceDetail[] = [
     subtitle: "הבנה עמוקה של השוק, המתחרים והזדמנויות הצמיחה",
     heroDescription:
       "מחקר שוק מקיף שחושף את התמונה האמיתית של הסביבה העסקית שלכם. אנחנו מנתחים מתחרים, מזהים מגמות ומאתרים הזדמנויות שיעניקו לכם יתרון תחרותי משמעותי בשוק.",
-    heroImage: "/images/sub-services/strategy/market-research-hero.jpg",
+    heroImage: "/images/sub-services/strategy/market-research-hero.webp",
 
     whatIsThis: {
       title: "מה זה מחקר שוק?",
@@ -30,7 +30,7 @@ export const strategySubServices: SubServiceDetail[] = [
         "ניתוח מגמות - זיהוי טרנדים עולים ושינויים צפויים בשוק שישפיעו על העסק שלכם",
         "מיפוי שרשרת הערך - הבנה של כל השחקנים בתעשייה והקשרים ביניהם",
       ],
-      image: "/images/sub-services/strategy/market-research-content.jpg",
+      image: "/images/sub-services/strategy/market-research-content.webp",
       imageAlt: "גרפים וניתוח נתונים עסקיים על מסך מחשב",
     },
 
@@ -192,7 +192,7 @@ export const strategySubServices: SubServiceDetail[] = [
     subtitle: "הערכה מקיפה של הנוכחות הדיגיטלית וזיהוי הזדמנויות לשיפור",
     heroDescription:
       "אודיט דיגיטלי מקצועי שבוחן את כל הנכסים הדיגיטליים שלכם - מהאתר ועד הרשתות החברתיות. אנחנו מזהים פערים, חולשות והזדמנויות, ומספקים תכנית פעולה ברורה לשיפור הביצועים הדיגיטליים.",
-    heroImage: "/images/sub-services/strategy/digital-audit-hero.jpg",
+    heroImage: "/images/sub-services/strategy/digital-audit-hero.webp",
 
     whatIsThis: {
       title: "מה זה אודיט דיגיטלי?",
@@ -205,7 +205,7 @@ export const strategySubServices: SubServiceDetail[] = [
         "ניתוח פערים מול המתחרים - השוואה לשחקנים המובילים בתעשייה",
         "זיהוי הזדמנויות מהירות לשיפור - Quick wins שיניבו תוצאות מיידיות",
       ],
-      image: "/images/sub-services/strategy/digital-audit-content.jpg",
+      image: "/images/sub-services/strategy/digital-audit-content.webp",
       imageAlt: "דשבורד אנליטיקס עם גרפים וסטטיסטיקות ביצועים",
     },
 
@@ -367,7 +367,7 @@ export const strategySubServices: SubServiceDetail[] = [
     subtitle: "תכניות אסטרטגיות להרחבה ולהגדלת נתח השוק",
     heroDescription:
       "בניית אסטרטגיית צמיחה מקיפה שמגדירה את המסלול להצלחה ארוכת טווח. אנחנו מזהים את מנועי הצמיחה המתאימים לעסק שלכם, בונים תכנית פעולה ברורה ומסייעים ביישום שמוביל לתוצאות מדידות.",
-    heroImage: "/images/sub-services/strategy/growth-strategy-hero.jpg",
+    heroImage: "/images/sub-services/strategy/growth-strategy-hero.webp",
 
     whatIsThis: {
       title: "מה זה אסטרטגיית צמיחה?",
@@ -380,7 +380,7 @@ export const strategySubServices: SubServiceDetail[] = [
         "הקצאת משאבים - תקציב, כוח אדם וטכנולוגיה הנדרשים להשגת היעדים",
         "מדדי הצלחה ומעקב - KPIs ברורים ומערכת מעקב לבחינת ההתקדמות",
       ],
-      image: "/images/sub-services/strategy/growth-strategy-content.jpg",
+      image: "/images/sub-services/strategy/growth-strategy-content.webp",
       imageAlt: "צוות עסקי בפגישת תכנון אסטרטגי עם מחשב נייד",
     },
 
@@ -542,7 +542,7 @@ export const strategySubServices: SubServiceDetail[] = [
     subtitle: "הגדלת שיעורי ההמרה ומקסום הערך מכל מבקר",
     heroDescription:
       "אופטימיזציית המרות (CRO) שמהפכת את הביצועים של האתר שלכם. אנחנו מנתחים נתונים, מזהים חסמי המרה ומיישמים שיפורים מבוססי מחקר שמגדילים משמעותית את אחוזי ההמרה ואת ההכנסות מכל מבקר.",
-    heroImage: "/images/sub-services/strategy/conversion-optimization-hero.jpg",
+    heroImage: "/images/sub-services/strategy/conversion-optimization-hero.webp",
 
     whatIsThis: {
       title: "מה זה אופטימיזציית המרות?",
@@ -555,7 +555,7 @@ export const strategySubServices: SubServiceDetail[] = [
         "אופטימיזציה של משפכי המרה - שיפור כל שלב במסע הלקוח מהכניסה לאתר ועד לסגירה",
         "יישום מתמשך - שיפור הדרגתי ומתמשך בהתבסס על נתונים ותוצאות",
       ],
-      image: "/images/sub-services/strategy/conversion-optimization-content.jpg",
+      image: "/images/sub-services/strategy/conversion-optimization-content.webp",
       imageAlt: "מסך עם נתוני אנליטיקס ומדדי המרה",
     },
 

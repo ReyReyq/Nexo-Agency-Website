@@ -1,5 +1,6 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState, useMemo, useCallback } from "react";
+import { useRef, useState, useMemo, useCallback, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Calendar, Clock, ChevronLeft, ChevronRight, CheckCircle, Loader2 } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
@@ -7,7 +8,7 @@ import CustomCursor from "@/components/CustomCursor";
 import Footer from "@/components/Footer";
 import { subscribeToNewsletter, isValidEmail } from "@/utils/newsletterSubscription";
 import {
-  blogPostsMeta,
+  getBlogPostsMeta,
   getAllCategoriesMeta,
   getPostsMetaByCategory,
   getFeaturedPostsMeta,
@@ -16,6 +17,16 @@ import {
   type BlogPostMeta
 } from "@/data/blogPostsMeta";
 
+// BreadcrumbList JSON-LD Schema
+const blogBreadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+    { "@type": "ListItem", "position": 2, "name": "בלוג", "item": "https://nexo.agency/blog" }
+  ]
+};
+
 const Blog = () => {
   const heroRef = useRef(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -23,10 +34,38 @@ const Blog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState("הכל");
 
+  // Blog posts state
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [allPosts, setAllPosts] = useState<BlogPostMeta[]>([]);
+  const [categories, setCategories] = useState<string[]>(["הכל"]);
+
   // Newsletter state
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterStatus, setNewsletterStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [newsletterMessage, setNewsletterMessage] = useState("");
+
+  // Load blog posts on mount
+  useEffect(() => {
+    async function loadBlogPosts() {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const [posts, cats] = await Promise.all([
+          getBlogPostsMeta(),
+          getAllCategoriesMeta()
+        ]);
+        setAllPosts(posts);
+        setCategories(cats);
+      } catch (err) {
+        console.error('Failed to load blog posts:', err);
+        setError('שגיאה בטעינת המאמרים. נסו לרענן את הדף.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadBlogPosts();
+  }, []);
 
   // Newsletter submission handler
   const handleNewsletterSubmit = useCallback(async (e: React.FormEvent) => {
@@ -64,15 +103,17 @@ const Blog = () => {
     return isNaN(page) || page < 1 ? 1 : page;
   }, [searchParams]);
 
-  // Get categories and filtered posts
-  const categories = useMemo(() => getAllCategoriesMeta(), []);
-  const filteredPosts = useMemo(() => getPostsMetaByCategory(activeCategory), [activeCategory]);
+  // Get filtered posts based on category
+  const filteredPosts = useMemo(() => {
+    if (activeCategory === "הכל") return allPosts;
+    return allPosts.filter(post => post.category === activeCategory);
+  }, [activeCategory, allPosts]);
 
   // Get featured article (first featured or first article)
   const featuredArticle = useMemo(() => {
-    const featured = getFeaturedPostsMeta();
+    const featured = allPosts.filter(post => post.featured);
     return featured.length > 0 ? featured[0] : filteredPosts[0];
-  }, [filteredPosts]);
+  }, [filteredPosts, allPosts]);
 
   // Regular articles (excluding featured) with pagination
   const { paginatedArticles, totalPages, hasMore } = useMemo(() => {
@@ -93,8 +134,70 @@ const Blog = () => {
     gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [setSearchParams]);
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <CustomCursor />
+        <GlassNavbar />
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">טוען מאמרים...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <CustomCursor />
+        <GlassNavbar />
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-bold hover:bg-primary/90 transition-colors"
+            >
+              רענן דף
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
+      <main id="main-content">
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>הבלוג של נקסו | NEXO AGENCY</title>
+        <meta name="description" content="מאמרים, מדריכים ותובנות מעולם הדיגיטל, המיתוג והטכנולוגיה. קראו על הטרנדים החמים, טיפים מקצועיים ועוד." />
+        <link rel="canonical" href="https://nexo.agency/blog" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="הבלוג של נקסו | NEXO AGENCY" />
+        <meta property="og:description" content="מאמרים, מדריכים ותובנות מעולם הדיגיטל, המיתוג והטכנולוגיה. קראו על הטרנדים החמים, טיפים מקצועיים ועוד." />
+        <meta property="og:url" content="https://nexo.agency/blog" />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="הבלוג של נקסו | NEXO AGENCY" />
+        <meta name="twitter:description" content="מאמרים, מדריכים ותובנות מעולם הדיגיטל, המיתוג והטכנולוגיה. קראו על הטרנדים החמים, טיפים מקצועיים ועוד." />
+        <meta property="og:image" content="https://nexo.agency/og-image.jpg" />
+        <meta name="twitter:image" content="https://nexo.agency/og-image.jpg" />
+        <link rel="alternate" hreflang="he" href="https://nexo.agency/blog" />
+        <link rel="alternate" hreflang="x-default" href="https://nexo.agency/blog" />
+        <script type="application/ld+json">
+          {JSON.stringify(blogBreadcrumbSchema)}
+        </script>
+      </Helmet>
+
       <CustomCursor />
       <GlassNavbar />
 
@@ -416,6 +519,7 @@ const Blog = () => {
           </motion.div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>

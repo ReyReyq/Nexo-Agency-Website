@@ -1,18 +1,47 @@
 import { motion, useScroll, useSpring } from "framer-motion";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { Calendar, Clock, ArrowLeft, Tag, Share2, Check } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, Tag, Share2, Check, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import DOMPurify from 'dompurify';
 import GlassNavbar from "@/components/GlassNavbar";
 import CustomCursor from "@/components/CustomCursor";
 import Footer from "@/components/Footer";
-import { getBlogPostBySlug, blogPosts, BlogPost } from "@/data/blogPosts";
+import { getBlogPostBySlug, getBlogPosts, type BlogPost } from "@/data/blogPosts";
+
+// Helper to generate srcset for blog images
+// Supports responsive loading for different screen sizes
+const generateBlogSrcSet = (src: string, isHero = false) => {
+  // Only process local images
+  if (!src.startsWith('/images/') && !src.startsWith('/blog/')) return { src };
+
+  const extension = src.substring(src.lastIndexOf('.'));
+  const basePath = src.substring(0, src.lastIndexOf('.'));
+
+  if (isHero) {
+    return {
+      src,
+      srcSet: `${basePath}-sm${extension} 640w, ${basePath}-md${extension} 1024w, ${src} 1200w`,
+      sizes: '100vw',
+    };
+  }
+
+  // Related article thumbnails
+  return {
+    src,
+    srcSet: `${basePath}-sm${extension} 320w, ${basePath}-md${extension} 480w, ${src} 800w`,
+    sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
+  };
+};
 
 const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
-  const [article, setArticle] = useState<BlogPost | undefined>(undefined);
+  const [article, setArticle] = useState<BlogPost | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Progress bar
   const { scrollYProgress } = useScroll();
@@ -22,15 +51,42 @@ const BlogArticle = () => {
     restDelta: 0.001
   });
 
+  // Load blog post on mount or slug change
   useEffect(() => {
-    if (slug) {
-      const post = getBlogPostBySlug(slug);
-      if (post) {
-        setArticle(post);
-      } else {
+    async function loadArticle() {
+      if (!slug) {
         navigate("/blog", { replace: true });
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const post = await getBlogPostBySlug(slug);
+
+        if (!post) {
+          navigate("/blog", { replace: true });
+          return;
+        }
+
+        setArticle(post);
+
+        // Load related articles (same category, excluding current)
+        const allPosts = await getBlogPosts();
+        const related = allPosts
+          .filter(p => p.category === post.category && p.id !== post.id)
+          .slice(0, 3);
+        setRelatedArticles(related);
+      } catch (err) {
+        console.error('Failed to load blog article:', err);
+        setError('שגיאה בטעינת המאמר. נסו לרענן את הדף.');
+      } finally {
+        setIsLoading(false);
       }
     }
+
+    loadArticle();
   }, [slug, navigate]);
 
   const handleCopyLink = async () => {
@@ -54,13 +110,6 @@ const BlogArticle = () => {
       handleCopyLink();
     }
   };
-
-  // Get related articles (same category, excluding current)
-  const relatedArticles = article
-    ? blogPosts
-        .filter(p => p.category === article.category && p.id !== article.id)
-        .slice(0, 3)
-    : [];
 
   // Generate schema for SEO
   const articleSchema = article ? {
@@ -92,13 +141,53 @@ const BlogArticle = () => {
     "keywords": article.tags?.join(", ")
   } : null;
 
-  if (!article) {
+  // BreadcrumbList JSON-LD Schema
+  const breadcrumbSchema = article ? {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+      { "@type": "ListItem", "position": 2, "name": "בלוג", "item": "https://nexo.agency/blog" },
+      { "@type": "ListItem", "position": 3, "name": article.title, "item": `https://nexo.agency/blog/${article.slug}` }
+    ]
+  } : null;
+
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center" role="status" aria-live="polite">
-        <div className="w-12 h-12 border-4 border-border border-t-primary rounded-full animate-spin" aria-hidden="true" />
-        <span className="sr-only">טוען מאמר...</span>
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">טוען מאמר...</p>
+        </div>
       </div>
     );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <CustomCursor />
+        <GlassNavbar />
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-bold hover:bg-primary/90 transition-colors"
+            >
+              רענן דף
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!article) {
+    return null;
   }
 
   return (
@@ -124,17 +213,23 @@ const BlogArticle = () => {
         <meta name="twitter:title" content={article.title} />
         <meta name="twitter:description" content={article.excerpt} />
         <meta name="twitter:image" content={article.image} />
+        <link rel="alternate" hreflang="he" href={`https://nexo.agency/blog/${article.slug}`} />
+        <link rel="alternate" hreflang="x-default" href={`https://nexo.agency/blog/${article.slug}`} />
 
         {/* Schema.org JSON-LD */}
         <script type="application/ld+json">
           {JSON.stringify(articleSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
         </script>
       </Helmet>
 
       <CustomCursor />
       <GlassNavbar />
 
-      {/* Progress Bar */}
+      <main id="main-content">
+        {/* Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-primary z-50 origin-right"
         style={{ scaleX }}
@@ -144,15 +239,23 @@ const BlogArticle = () => {
 
       {/* Hero */}
       <section className="relative min-h-[60vh] flex items-end bg-hero-bg pt-32 pb-16">
-        {/* Background Image */}
+        {/* Background Image - Responsive with srcset */}
         <div className="absolute inset-0">
-          <img
-            src={article.image}
-            alt={`תמונה ראשית - ${article.title}`}
-            className="w-full h-full object-cover opacity-30"
-            width={1200}
-            height={630}
-          />
+          {(() => {
+            const imageSet = generateBlogSrcSet(article.image, true);
+            return (
+              <img
+                src={imageSet.src}
+                srcSet={imageSet.srcSet}
+                sizes={imageSet.sizes}
+                alt={`תמונה ראשית - ${article.title}`}
+                className="w-full h-full object-cover opacity-30"
+                width={1200}
+                height={630}
+                decoding="async"
+              />
+            );
+          })()}
           <div className="absolute inset-0 bg-gradient-to-t from-hero-bg via-hero-bg/80 to-transparent" />
         </div>
 
@@ -260,7 +363,7 @@ const BlogArticle = () => {
                 prose-blockquote:text-foreground prose-blockquote:font-medium
                 prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
               dir="rtl"
-              dangerouslySetInnerHTML={{ __html: article.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(article.content) }}
             />
 
             {/* Tags */}
@@ -283,50 +386,59 @@ const BlogArticle = () => {
         </div>
       </article>
 
-      {/* Related Articles */}
-      {relatedArticles.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-24 bg-muted/30">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-8 sm:mb-10 md:mb-12 text-center">
-              מאמרים נוספים שיעניינו אותך
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-              {relatedArticles.map((relatedPost, index) => (
-                <motion.article
-                  key={relatedPost.id}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="group"
-                >
-                  <Link to={`/blog/${relatedPost.slug}`}>
-                    <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-4">
-                      <img
-                        src={relatedPost.image}
-                        alt={relatedPost.title}
-                        loading="lazy"
-                        width={800}
-                        height={500}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
-                      {relatedPost.category}
-                    </span>
-                    <h3 className="text-xl font-bold text-foreground mt-3 mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                      {relatedPost.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm line-clamp-2">
-                      {relatedPost.excerpt}
-                    </p>
-                  </Link>
-                </motion.article>
-              ))}
+        {/* Related Articles */}
+        {relatedArticles.length > 0 && (
+          <section className="py-12 sm:py-16 md:py-24 bg-muted/30">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-8 sm:mb-10 md:mb-12 text-center">
+                מאמרים נוספים שיעניינו אותך
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+                {relatedArticles.map((relatedPost, index) => (
+                  <motion.article
+                    key={relatedPost.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.1 }}
+                    className="group"
+                  >
+                    <Link to={`/blog/${relatedPost.slug}`}>
+                      <div className="aspect-[16/10] rounded-2xl overflow-hidden mb-4">
+                        {(() => {
+                          const imageSet = generateBlogSrcSet(relatedPost.image);
+                          return (
+                            <img
+                              src={imageSet.src}
+                              srcSet={imageSet.srcSet}
+                              sizes={imageSet.sizes}
+                              alt={relatedPost.title}
+                              loading="lazy"
+                              decoding="async"
+                              width={800}
+                              height={500}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          );
+                        })()}
+                      </div>
+                      <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
+                        {relatedPost.category}
+                      </span>
+                      <h3 className="text-xl font-bold text-foreground mt-3 mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                        {relatedPost.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm line-clamp-2">
+                        {relatedPost.excerpt}
+                      </p>
+                    </Link>
+                  </motion.article>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        )}
+      </main>
 
       <Footer />
     </div>

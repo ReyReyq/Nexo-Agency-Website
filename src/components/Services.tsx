@@ -9,7 +9,7 @@ const services = [
     title: "אתרים שמוכרים בשינה",
     subtitle: "בניית אתרים וחנויות",
     description: "לא סתם אתרים יפים. אתרים שעובדים 24/7 ומביאים לקוחות חדשים כל יום. אנחנו בונים מכונות מכירה דיגיטליות.",
-    image: "/images/services/web-development.jpg",
+    image: "/images/services/web-development.webp",
     stats: { value: "340%", label: "ROI ממוצע" },
   },
   {
@@ -17,7 +17,7 @@ const services = [
     title: "מיתוג שגורם לזכור אותך",
     subtitle: "מיתוג וזהות ויזואלית",
     description: "לא סתם לוגו. שפה ויזואלית שלמה שמשדרת יוקרה, בידול ומקצועיות. המותג שלך ייחרט בזיכרון.",
-    image: "/images/services/branding-design.jpg",
+    image: "/images/services/branding-design.webp",
     stats: { value: "500+", label: "מותגים שעיצבנו" },
   },
   {
@@ -25,7 +25,7 @@ const services = [
     title: "AI שחוסך לך 20 שעות בשבוע",
     subtitle: "פתרונות AI לעסקים",
     description: "אוטומציות ובינה מלאכותית שעובדות בשבילך. צ'אטבוטים, אוטומציות, ומערכות חכמות שמייעלות את העסק.",
-    image: "/images/services/ai-automation.jpg",
+    image: "/images/services/ai-automation.webp",
     stats: { value: "20h", label: "חיסכון שבועי" },
   },
 ];

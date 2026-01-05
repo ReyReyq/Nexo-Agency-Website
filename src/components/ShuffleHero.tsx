@@ -34,48 +34,49 @@ const ShuffleHero = () => {
   );
 };
 
-const shuffle = (array) => {
-  let currentIndex = array.length,
+const shuffle = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  let currentIndex = shuffled.length,
     randomIndex;
 
   while (currentIndex != 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
-    [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    [shuffled[currentIndex], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[currentIndex],
     ];
   }
 
-  return array;
+  return shuffled;
 };
 
 const squareData = [
-  { id: 1, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%281%29.png" },
-  { id: 2, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%282%29.png" },
-  { id: 3, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%283%29.png" },
-  { id: 4, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%284%29.png" },
-  { id: 5, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%285%29.png" },
-  { id: 6, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%286%29.png" },
-  { id: 7, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%287%29.png" },
-  { id: 8, src: "/images/websites-pictures/Gemini%20Generated%20Image%20%288%29.png" },
-  { id: 9, src: "/images/websites-pictures/Google%20Gemini%20Image%20%281%29.png" },
-  { id: 10, src: "/images/websites-pictures/Google%20Gemini%20Image%20%282%29.png" },
-  { id: 11, src: "/images/websites-pictures/Google%20Gemini%20Image%20%283%29.png" },
-  { id: 12, src: "/images/websites-pictures/Google%20Gemini%20Image%20%284%29.png" },
-  { id: 13, src: "/images/websites-pictures/Google%20Gemini%20Image%20%285%29.png" },
-  { id: 14, src: "/images/websites-pictures/Google%20Gemini%20Image%20%286%29.png" },
-  { id: 15, src: "/images/websites-pictures/Google%20Gemini%20Image%20%287%29.png" },
-  { id: 16, src: "/images/websites-pictures/Google%20Gemini%20Image%20%288%29.png" },
+  { id: 1, src: "/images/websites-pictures/Gemini Generated Image (1).webp" },
+  { id: 2, src: "/images/websites-pictures/Gemini Generated Image (2).webp" },
+  { id: 3, src: "/images/websites-pictures/Gemini Generated Image (3).webp" },
+  { id: 4, src: "/images/websites-pictures/Gemini Generated Image (4).webp" },
+  { id: 5, src: "/images/websites-pictures/Gemini Generated Image (5).webp" },
+  { id: 6, src: "/images/websites-pictures/Gemini Generated Image (6).webp" },
+  { id: 7, src: "/images/websites-pictures/Gemini Generated Image (7).webp" },
+  { id: 8, src: "/images/websites-pictures/Gemini Generated Image (8).webp" },
+  { id: 9, src: "/images/websites-pictures/Google Gemini Image (1).webp" },
+  { id: 10, src: "/images/websites-pictures/Google Gemini Image (2).webp" },
+  { id: 11, src: "/images/websites-pictures/Google Gemini Image (3).webp" },
+  { id: 12, src: "/images/websites-pictures/Google Gemini Image (4).webp" },
+  { id: 13, src: "/images/websites-pictures/Google Gemini Image (5).webp" },
+  { id: 14, src: "/images/websites-pictures/Google Gemini Image (6).webp" },
+  { id: 15, src: "/images/websites-pictures/Google Gemini Image (7).webp" },
+  { id: 16, src: "/images/websites-pictures/Google Gemini Image (8).webp" },
 ];
 
 const generateSquares = () => {
-  return shuffle(squareData).map((sq) => (
+  return shuffle(squareData).map((sq: { id: number; src: string }) => (
     <motion.div
       key={sq.id}
       layout
-      transition={{ duration: 1.5, type: "spring" }}
+      transition={{ duration: 1.5, type: "spring" as const }}
       className="w-full h-full"
       style={{
         backgroundImage: `url(${sq.src})`,
@@ -86,13 +87,15 @@ const generateSquares = () => {
 };
 
 const ShuffleGrid = () => {
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [squares, setSquares] = useState(generateSquares());
 
   useEffect(() => {
     shuffleSquares();
 
-    return () => clearTimeout(timeoutRef.current);
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
   }, []);
 
   const shuffleSquares = () => {
@@ -103,7 +106,7 @@ const ShuffleGrid = () => {
 
   return (
     <div className="grid grid-cols-4 grid-rows-4 h-[280px] sm:h-[350px] md:h-[450px] gap-1">
-      {squares.map((sq) => sq)}
+      {squares.map((sq: React.ReactElement) => sq)}
     </div>
   );
 };

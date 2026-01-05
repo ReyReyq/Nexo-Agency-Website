@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { getPrefersReducedMotion } from "@/hooks/use-reduced-motion";
 
 export function Spotlight({
   className,
@@ -8,10 +9,23 @@ export function Spotlight({
   className?: string;
   fill?: string;
 }) {
+  // Disable on mobile/touch devices - pointer follows mouse which doesn't work on touch
+  const isMobile = typeof window !== 'undefined' &&
+    (window.matchMedia('(max-width: 768px)').matches ||
+     'ontouchstart' in window);
+
+  // Disable when reduced motion is preferred - it's a decorative animation
+  const prefersReducedMotion = typeof window !== 'undefined' && getPrefersReducedMotion();
+
+  if (isMobile || prefersReducedMotion) {
+    return null;
+  }
+
   return (
     <svg
       className={cn(
-        "pointer-events-none absolute z-[1] h-[169%] w-[138%] lg:w-[84%] opacity-0 animate-spotlight",
+        // Hidden on mobile to prevent pink overlay covering content on touch devices
+        "pointer-events-none absolute z-[1] h-[169%] w-[138%] lg:w-[84%] opacity-0 animate-spotlight hidden md:block",
         className
       )}
       xmlns="http://www.w3.org/2000/svg"

@@ -16,7 +16,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
     name: "שיווק באינסטגרם",
     subtitle: "בניית נוכחות מותגית חזקה בפלטפורמה הוויזואלית המובילה",
     heroDescription: "אסטרטגיית אינסטגרם מקיפה שמשלבת תוכן ויזואלי מרהיב, סטוריז מעוררי עניין ורילס ויראליים. הפכו את העוקבים שלכם ללקוחות נאמנים עם נוכחות מותגית שמדברת את השפה של הדור החדש.",
-    heroImage: "/images/sub-services/social-media/instagram-hero.jpg",
+    heroImage: "/images/sub-services/social-media/instagram-hero.webp",
 
     whatIsThis: {
       title: "מה זה שיווק באינסטגרם?",
@@ -28,7 +28,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
         "ניהול קהילה - תגובות, הודעות וביקורות שמחזקות את הקשר עם הלקוחות",
         "שיתופי פעולה עם משפיענים - קמפיינים עם אנשים מתאימים שמרחיבים את החשיפה"
       ],
-      image: "/images/sub-services/social-media/instagram-content.jpg",
+      image: "/images/sub-services/social-media/instagram-content.webp",
       imageAlt: "אפליקציית אינסטגרם על מסך סמארטפון - שיווק ברשתות חברתיות",
     },
 
@@ -165,7 +165,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
     name: "שיווק בפייסבוק",
     subtitle: "מנפים את הפלטפורמה הגדולה בעולם לצמיחת העסק",
     heroDescription: "אסטרטגיית פייסבוק מקיפה שמשלבת ניהול עמודים מקצועי, בניית קהילות פעילות וקמפיינים ממומנים ממוקדים. הגיעו למיליוני ישראלים בפלטפורמה שכולם נמצאים בה.",
-    heroImage: "/images/sub-services/social-media/facebook-hero.jpg",
+    heroImage: "/images/sub-services/social-media/facebook-hero.webp",
 
     whatIsThis: {
       title: "מה זה שיווק בפייסבוק?",
@@ -177,7 +177,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
         "מסנג'ר וצ'אטבוטים - תקשורת ישירה ומהירה עם לקוחות פוטנציאליים",
         "קמפיינים ממומנים - פרסום ממוקד עם יכולות טרגוט מתקדמות ביותר"
       ],
-      image: "/images/sub-services/social-media/facebook-content.jpg",
+      image: "/images/sub-services/social-media/facebook-content.webp",
       imageAlt: "ניהול עמוד פייסבוק עסקי - פרסום ושיווק דיגיטלי",
     },
 
@@ -314,7 +314,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
     name: "שיווק בלינקדאין",
     subtitle: "הפלטפורמה המובילה לשיווק B2B ובניית קשרים עסקיים",
     heroDescription: "אסטרטגיית לינקדאין מקצועית שמציבה אתכם כמומחים בתחום, בונה קשרים עסקיים איכותיים ומייצרת לידים B2B. הפכו את הפרופיל שלכם למגנט ללקוחות פוטנציאליים ושותפים עסקיים.",
-    heroImage: "/images/sub-services/social-media/linkedin-hero.jpg",
+    heroImage: "/images/sub-services/social-media/linkedin-hero.webp",
 
     whatIsThis: {
       title: "מה זה שיווק בלינקדאין?",
@@ -326,7 +326,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
         "לידים B2B - הגעה ישירה למקבלי החלטות בחברות יעד",
         "מותג אישי וארגוני - בניית מוניטין ארוך טווח שמושך הזדמנויות"
       ],
-      image: "/images/sub-services/social-media/linkedin-content.jpg",
+      image: "/images/sub-services/social-media/linkedin-content.webp",
       imageAlt: "לינקדאין לעסקים - בניית קשרים מקצועיים ושיווק B2B",
     },
 
@@ -463,7 +463,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
     name: "שיווק בטיקטוק",
     subtitle: "הפלטפורמה הוויראלית שמגיעה למיליונים בקליק",
     heroDescription: "אסטרטגיית טיקטוק יצירתית שמנצלת את האלגוריתם החזק ביותר ברשתות החברתיות. צרו תוכן ויראלי שמגיע לקהלים חדשים, בונה מודעות למותג ומביא לקוחות מהדור החדש.",
-    heroImage: "/images/sub-services/social-media/tiktok-hero.jpg",
+    heroImage: "/images/sub-services/social-media/tiktok-hero.webp",
 
     whatIsThis: {
       title: "מה זה שיווק בטיקטוק?",
@@ -475,7 +475,7 @@ export const socialMediaSubServices: SubServiceDetail[] = [
         "קהל צעיר ומעורב - הדור החדש שמשפיע על החלטות רכישה",
         "יצירתיות וחדשנות - פלטפורמה שמתגמלת רעיונות מקוריים ואותנטיות"
       ],
-      image: "/images/sub-services/social-media/tiktok-content.jpg",
+      image: "/images/sub-services/social-media/tiktok-content.webp",
       imageAlt: "אפליקציית טיקטוק - יצירת תוכן וידאו ויראלי ושיווק דיגיטלי",
     },
 

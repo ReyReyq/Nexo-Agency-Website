@@ -266,7 +266,7 @@ export const caseStudies: CaseStudy[] = [
     // Gallery
     gallery: [
       {
-        src: "/portfolio/simplyhebrew/simply-hebrew-fullscreen.png",
+        src: "/portfolio/simplyhebrew/simply-hebrew-fullscreen.webp",
         alt: "SimplyHebrew Homepage",
         caption: "עמוד הבית - עיצוב נקי עם קריאה לפעולה ברורה"
       }
@@ -314,7 +314,7 @@ export const caseStudies: CaseStudy[] = [
     website: "https://teenvestsor.com",
 
     // Hero
-    heroImage: "/portfolio/teenvestsor/teenvestsor-hero.png",
+    heroImage: "/portfolio/teenvestsor/teenvestsor-hero.webp",
     tagline: "הצעד הראשון לעצמאות פיננסית",
 
     // Overview
@@ -435,22 +435,22 @@ export const caseStudies: CaseStudy[] = [
     // Gallery
     gallery: [
       {
-        src: "/portfolio/teenvestsor/teenvestsor-hero.png",
+        src: "/portfolio/teenvestsor/teenvestsor-hero.webp",
         alt: "Teenvestsor Hero Section",
         caption: "עמוד הבית - הירו עם גרדיאנט דינמי וקריאה לפעולה ברורה"
       },
       {
-        src: "/portfolio/teenvestsor/teenvestsor-features.png",
+        src: "/portfolio/teenvestsor/teenvestsor-features.webp",
         alt: "Teenvestsor Features",
         caption: "סקשן היתרונות - כרטיסים עם אייקונים ומסרים ממוקדים"
       },
       {
-        src: "/portfolio/teenvestsor/teenvestsor-instructors.png",
+        src: "/portfolio/teenvestsor/teenvestsor-instructors.webp",
         alt: "Teenvestsor Instructors",
         caption: "המרצים - תמונות אמיתיות של משפיענים מוכרים"
       },
       {
-        src: "/portfolio/teenvestsor/teenvestsor-fullpage.png",
+        src: "/portfolio/teenvestsor/teenvestsor-fullpage.webp",
         alt: "Teenvestsor Full Page",
         caption: "הדף המלא - עיצוב רספונסיבי ומודרני"
       }
@@ -613,17 +613,17 @@ export const caseStudies: CaseStudy[] = [
     // Gallery - Real screenshots from sioneofficial.com
     gallery: [
       {
-        src: "/portfolio/sione/sione-homepage-hero.png",
+        src: "/portfolio/sione/sione-homepage-hero.webp",
         alt: "SIONÉ Homepage Hero",
         caption: "עמוד הבית - דימויי Positano עם הטייפ The Art of Timeless Refinement"
       },
       {
-        src: "/portfolio/sione/sione-products.png",
+        src: "/portfolio/sione/sione-products.webp",
         alt: "SIONÉ Products Page",
         caption: "קטלוג מוצרים - שמות איטלקיים כמו Aureo, Capri, Como"
       },
       {
-        src: "/portfolio/sione/sione-fullpage.png",
+        src: "/portfolio/sione/sione-fullpage.webp",
         alt: "SIONÉ Full Homepage",
         caption: "עמוד הבית המלא - Best Sellers, Old Money Collection, Our Philosophy"
       }
@@ -676,7 +676,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     duration: "6 שבועות",
     services: ["עיצוב UX/UI", "פיתוח React", "אינטגרציות API"],
-    heroImage: "/images/services/digital-marketing.jpg",
+    heroImage: "/images/services/digital-marketing.webp",
     tagline: "Fashion Forward, Technology Driven",
     overview: "חנות אונליין מתקדמת לאופנה עם חוויית משתמש ייחודית.",
     challenge: "ליצור פלטפורמה שתבדל את המותג בשוק תחרותי.",
@@ -687,7 +687,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     gallery: [
       {
-        src: "/images/services/digital-marketing.jpg",
+        src: "/images/services/digital-marketing.webp",
         alt: "Fashion Hub Homepage"
       }
     ],
@@ -710,7 +710,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     duration: "10 שבועות",
     services: ["עיצוב מערכת", "פיתוח Full-Stack", "אינטגרציות B2B"],
-    heroImage: "/images/services/business-strategy.jpg",
+    heroImage: "/images/services/business-strategy.webp",
     tagline: "Connecting Business, Driving Growth",
     overview: "פורטל B2B מתקדם לניהול שותפויות עסקיות.",
     challenge: "לבנות מערכת שתפשט תהליכים מורכבים בין עסקים.",
@@ -721,7 +721,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     gallery: [
       {
-        src: "/images/services/business-strategy.jpg",
+        src: "/images/services/business-strategy.webp",
         alt: "TechConnect Dashboard"
       }
     ],
@@ -744,7 +744,7 @@ export const caseStudies: CaseStudy[] = [
     year: "2024",
     duration: "12 שבועות",
     services: ["עיצוב אפליקציה", "פיתוח React Native", "אבטחת מידע"],
-    heroImage: "/images/services/business-strategy.jpg",
+    heroImage: "/images/services/business-strategy.webp",
     tagline: "Smart Finance, Simple Life",
     overview: "אפליקציית פיננסים אישית עם ממשק אינטואיטיבי ותובנות חכמות.",
     challenge: "להפוך ניהול פיננסי למשימה פשוטה ונגישה לכולם.",
@@ -755,7 +755,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     gallery: [
       {
-        src: "/images/services/business-strategy.jpg",
+        src: "/images/services/business-strategy.webp",
         alt: "FinFlow App"
       }
     ],

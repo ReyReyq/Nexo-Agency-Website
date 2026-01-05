@@ -4,6 +4,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { handleCorsAndCsrf } from './_csrf';
+import { applyRateLimit } from './_rate-limit';
 
 interface NewsletterPayload {
   email: string;
@@ -77,19 +79,20 @@ function isValidEmail(email: string): boolean {
  * Main handler
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  // Handle CORS and CSRF protection
+  // This validates Origin/Referer headers to prevent cross-site request forgery
+  if (!handleCorsAndCsrf(req, res)) {
+    return; // Request was handled (preflight response or CSRF error)
   }
 
   // Only accept POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Apply rate limiting (3 requests per minute per IP)
+  if (!applyRateLimit(req, res, 'newsletter')) {
+    return; // Request was rate limited
   }
 
   try {

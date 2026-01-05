@@ -47,17 +47,16 @@ const ServicesSection = () => {
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
 
   return (
-    <ClickSpark sparkColor="#FF1493" sparkSize={20} sparkRadius={40} sparkCount={10}>
+    <ClickSpark sparkColor="hsl(var(--primary-bright))" sparkSize={20} sparkRadius={40} sparkCount={10}>
       <section
         id="services"
         ref={sectionRef}
-        className="min-h-screen py-20 md:py-32 relative overflow-hidden"
-        style={{ backgroundColor: "#FAF9F6" }}
+        className="min-h-screen py-16 sm:py-20 md:py-32 relative overflow-hidden bg-nexo-light"
       >
         {/* Spotlight Effect - Subtle pink accent on left side */}
       <Spotlight
         className="-top-40 left-0 md:left-80 md:-top-20 opacity-30"
-        fill="#FF1493"
+        fill="hsl(var(--primary-bright))"
       />
 
       {/* Animated Ribbon Background */}
@@ -92,7 +91,7 @@ const ServicesSection = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.2, duration: 0.8 }}
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-[1.15] mb-6 text-[#1a1a1a]"
+                className="text-fluid-2xl sm:text-fluid-3xl md:text-fluid-4xl lg:text-fluid-5xl font-black leading-[1.15] mb-6 text-nexo-charcoal"
               >
                 אנחנו בונים לכם את התשתית
                 <br />
@@ -104,7 +103,7 @@ const ServicesSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.3, duration: 0.8 }}
-                className="text-sm sm:text-base md:text-lg leading-[1.8] mb-10 text-[#3d3d3d] max-w-[400px]"
+                className="text-fluid-sm sm:text-fluid-base md:text-fluid-lg leading-[1.8] mb-10 text-nexo-slate max-w-[400px]"
               >
                 לא עוד אתרים יפים שלא עובדים. אנחנו בונים מערכות שמייצרות תוצאות אמיתיות לעסק שלכם.
               </motion.p>

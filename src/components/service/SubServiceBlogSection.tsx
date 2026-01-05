@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useMemo, memo } from "react";
+import { useRef, useMemo, memo, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowLeft, Clock, BookOpen } from "lucide-react";
+import { ArrowLeft, Clock, BookOpen, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { blogPosts, type BlogPost } from "@/data/blogPosts";
+import { getBlogPosts, type BlogPost } from "@/data/blogPosts";
 import { type SubServiceDetail as SubServiceDetailType } from "@/data/subServices";
 import { type Service } from "@/data/services";
 
@@ -149,6 +149,8 @@ const ArticleCard = memo(({ post, index, isInView, accentColor }: ArticleCardPro
           <img
             src={post.image}
             alt={post.title}
+            width={600}
+            height={375}
             loading="lazy"
             decoding="async"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -209,20 +211,39 @@ interface SubServiceBlogSectionProps {
 const SubServiceBlogSection = memo(({ subService, parentService }: SubServiceBlogSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, IN_VIEW_OPTIONS);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load blog posts on mount
+  useEffect(() => {
+    async function loadPosts() {
+      try {
+        const posts = await getBlogPosts();
+        setAllPosts(posts);
+      } catch (error) {
+        console.error('Failed to load blog posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadPosts();
+  }, []);
 
   // Filter blog posts based on sub-service mapping
   const relatedPosts = useMemo(() => {
+    if (allPosts.length === 0) return [];
+
     const mapping = subServiceToBlogMapping[subService.id];
 
     if (!mapping) {
       // Fallback: return first 3 posts if no mapping exists
-      return blogPosts.slice(0, 3);
+      return allPosts.slice(0, 3);
     }
 
     const { categories, tags } = mapping;
 
     // Score posts based on relevance
-    const scoredPosts = blogPosts.map((post) => {
+    const scoredPosts = allPosts.map((post) => {
       let score = 0;
 
       // Category match gives higher score
@@ -258,15 +279,33 @@ const SubServiceBlogSection = memo(({ subService, parentService }: SubServiceBlo
     }
 
     // If not enough, supplement with other posts (avoiding duplicates)
-    const remaining = blogPosts.filter(
+    const remaining = allPosts.filter(
       (post) => !relevant.some((r) => r.id === post.id)
     );
 
     return [...relevant, ...remaining].slice(0, 3);
-  }, [subService.id]);
+  }, [subService.id, allPosts]);
 
   // Memoize animation states
   const animateState = isInView ? ANIMATE_VISIBLE : ANIMATE_EMPTY;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className="py-20 md:py-28 bg-muted/30" dir="rtl">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Don't render if no posts
+  if (relatedPosts.length === 0) {
+    return null;
+  }
 
   return (
     <section

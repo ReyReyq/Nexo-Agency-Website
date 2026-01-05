@@ -1,8 +1,8 @@
 // Blog metadata for listing pages
-// This file auto-generates metadata from blogPosts for better bundle performance
-// The Blog listing page uses this lightweight metadata instead of full content
+// This file provides lightweight metadata for the blog listing page
+// Full content is loaded on-demand for individual article pages
 
-import { blogPosts, type BlogPost } from './blogPosts';
+import { getBlogPosts, type BlogPost } from './blogPosts';
 
 export interface BlogPostMeta {
   id: string;
@@ -22,7 +22,7 @@ export interface BlogPostMeta {
   tags?: string[];
 }
 
-// Auto-generate metadata from full blog posts (strips content for performance)
+// Extract metadata from full blog post (strips content for performance)
 const extractMeta = (post: BlogPost): BlogPostMeta => ({
   id: post.id,
   title: post.title,
@@ -41,38 +41,86 @@ const extractMeta = (post: BlogPost): BlogPostMeta => ({
   tags: post.tags
 });
 
-// Export all blog posts metadata (auto-generated from blogPosts)
-export const blogPostsMeta: BlogPostMeta[] = blogPosts.map(extractMeta);
+// Cache for metadata
+let cachedMeta: BlogPostMeta[] | null = null;
+let metaFetchPromise: Promise<BlogPostMeta[]> | null = null;
 
-// Helper function to get metadata by slug
-export const getBlogPostMetaBySlug = (slug: string): BlogPostMeta | undefined => {
-  return blogPostsMeta.find(post => post.slug === slug || post.id === slug);
-};
+/**
+ * Fetch all blog posts metadata
+ */
+export async function getBlogPostsMeta(): Promise<BlogPostMeta[]> {
+  if (cachedMeta) {
+    return cachedMeta;
+  }
 
-// Helper function to get featured posts metadata
-export const getFeaturedPostsMeta = (): BlogPostMeta[] => {
-  return blogPostsMeta.filter(post => post.featured);
-};
+  if (metaFetchPromise) {
+    return metaFetchPromise;
+  }
 
-// Helper function to get posts metadata by category
-export const getPostsMetaByCategory = (category: string): BlogPostMeta[] => {
-  if (category === "הכל") return blogPostsMeta;
-  return blogPostsMeta.filter(post => post.category === category);
-};
+  metaFetchPromise = getBlogPosts()
+    .then(posts => {
+      cachedMeta = posts.map(extractMeta);
+      metaFetchPromise = null;
+      return cachedMeta;
+    })
+    .catch(error => {
+      metaFetchPromise = null;
+      throw error;
+    });
 
-// Get all unique categories
-export const getAllCategoriesMeta = (): string[] => {
-  const categories = new Set(blogPostsMeta.map(post => post.category));
+  return metaFetchPromise;
+}
+
+/**
+ * Get metadata by slug
+ */
+export async function getBlogPostMetaBySlug(slug: string): Promise<BlogPostMeta | undefined> {
+  const meta = await getBlogPostsMeta();
+  return meta.find(post => post.slug === slug || post.id === slug);
+}
+
+/**
+ * Get featured posts metadata
+ */
+export async function getFeaturedPostsMeta(): Promise<BlogPostMeta[]> {
+  const meta = await getBlogPostsMeta();
+  return meta.filter(post => post.featured);
+}
+
+/**
+ * Get posts metadata by category
+ */
+export async function getPostsMetaByCategory(category: string): Promise<BlogPostMeta[]> {
+  const meta = await getBlogPostsMeta();
+  if (category === "הכל") return meta;
+  return meta.filter(post => post.category === category);
+}
+
+/**
+ * Get all unique categories
+ */
+export async function getAllCategoriesMeta(): Promise<string[]> {
+  const meta = await getBlogPostsMeta();
+  const categories = new Set(meta.map(post => post.category));
   return ["הכל", ...Array.from(categories)];
-};
+}
 
 // Pagination helper
 export const POSTS_PER_PAGE = 12;
 
-export const getPaginatedPostsMeta = (
+export interface PaginatedResult {
+  posts: BlogPostMeta[];
+  totalPages: number;
+  hasMore: boolean;
+}
+
+/**
+ * Get paginated posts metadata
+ */
+export function getPaginatedPostsMeta(
   posts: BlogPostMeta[],
   page: number
-): { posts: BlogPostMeta[]; totalPages: number; hasMore: boolean } => {
+): PaginatedResult {
   const start = (page - 1) * POSTS_PER_PAGE;
   const end = start + POSTS_PER_PAGE;
   const paginatedPosts = posts.slice(start, end);
@@ -83,4 +131,17 @@ export const getPaginatedPostsMeta = (
     totalPages,
     hasMore: page < totalPages
   };
-};
+}
+
+/**
+ * Clear the cache
+ */
+export function clearBlogMetaCache(): void {
+  cachedMeta = null;
+  metaFetchPromise = null;
+}
+
+// Legacy sync exports for backward compatibility
+// Components should migrate to async versions
+
+export const blogPostsMeta: BlogPostMeta[] = [];

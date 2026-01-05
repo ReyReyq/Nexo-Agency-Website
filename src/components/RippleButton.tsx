@@ -21,29 +21,30 @@ const SIZE_CLASSES = {
   lg: "h-[104px] px-12 text-lg",
 } as const;
 
+// Using design tokens where available
 const COLOR_CONFIG = {
   primary: {
     base: "bg-primary",
-    ripple1: "bg-[hsl(328,100%,60%)]",
-    ripple2: "bg-[hsl(328,100%,65%)]",
+    ripple1: "bg-primary-bright/90",
+    ripple2: "bg-primary-bright/80",
     text: "text-white",
   },
   secondary: {
-    base: "bg-[#8330c2]",
-    ripple1: "bg-[#933bd7]",
-    ripple2: "bg-[#9e4cdc]",
+    base: "bg-brand-purple",
+    ripple1: "bg-brand-purple-light/90",
+    ripple2: "bg-brand-purple-light",
     text: "text-white",
   },
   dark: {
-    base: "bg-[#1a1a1a]",
-    ripple1: "bg-[#2a2a2a]",
-    ripple2: "bg-[#3a3a3a]",
+    base: "bg-nexo-charcoal",
+    ripple1: "bg-nexo-graphite",
+    ripple2: "bg-nexo-slate",
     text: "text-white",
   },
   charcoal: {
-    base: "bg-[#2d3748]",
-    ripple1: "bg-[#3d4a5c]",
-    ripple2: "bg-[#4a5568]",
+    base: "bg-nexo-graphite",
+    ripple1: "bg-nexo-slate",
+    ripple2: "bg-nexo-steel",
     text: "text-white",
   },
 } as const;
@@ -106,6 +107,7 @@ const RippleButton = memo(({
     <motion.button
       className={cn(
         "relative inline-flex items-center justify-center rounded-full border-none cursor-pointer overflow-hidden",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-charcoal",
         sizeClass,
         colors.text,
         className

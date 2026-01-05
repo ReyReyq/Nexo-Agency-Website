@@ -81,7 +81,7 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-[380px] md:h-[380px] -translate-x-8 sm:-translate-x-12 md:-translate-x-24 lg:-translate-x-32"
+            className="relative z-10 w-full max-w-[380px] aspect-square -translate-x-8 sm:-translate-x-12 md:-translate-x-24 lg:-translate-x-32"
           >
             <Suspense fallback={<ComponentLoader />}>
               <FallingText
@@ -147,21 +147,21 @@ const ProcessStepVisual = memo(({ activeStep, stepNumber }: ProcessStepVisualPro
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 flex items-center justify-center scale-[0.48] sm:scale-[0.56] md:scale-[0.72] lg:scale-100 origin-center"
+            className="relative z-10 flex items-center justify-center scale-[0.4] sm:scale-[0.5] md:scale-[0.65] lg:scale-[0.8] xl:scale-100 origin-center"
           >
             <Suspense fallback={<ComponentLoader />}>
               <IconCloud images={devToolImages} />
             </Suspense>
           </motion.div>
         ) : activeStep === 4 ? (
-          // Step 5: Launch - Animated notification feed
+          // Step 5: Launch - Animated notification feed with height constraint to prevent overflow
           <motion.div
             key="launch-notifications"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: ANIMATION_DURATION, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative z-10 w-48 sm:w-56 md:w-[340px]"
+            className="relative z-10 w-48 sm:w-56 md:w-[340px] max-h-[200px] sm:max-h-[280px] md:max-h-[350px] overflow-hidden"
           >
             <Suspense fallback={<ComponentLoader />}>
               <LaunchNotifications />

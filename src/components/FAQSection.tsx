@@ -102,12 +102,12 @@ const FAQSection = () => {
   const [selectedTab, setSelectedTab] = useState(TABS[0]);
 
   return (
-    <section className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden" style={{ backgroundColor: '#FAF9F6' }}>
+    <section className="relative py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden bg-nexo-light">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #1a1a1a 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, var(--nexo-charcoal) 1px, transparent 0)`,
           backgroundSize: '40px 40px',
         }}
       />
@@ -131,13 +131,13 @@ const FAQSection = () => {
           />
 
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4">
-            <span className="text-[#1a1a1a]">שאלות </span>
+            <span className="text-nexo-charcoal">שאלות </span>
             <span className="text-primary">
               נפוצות
             </span>
           </h2>
 
-          <p className="text-[#4a4a4a] text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
+          <p className="text-nexo-steel text-base sm:text-lg md:text-xl max-w-2xl mx-auto">
             כל מה שרציתם לדעת על העבודה איתנו - במקום אחד
           </p>
         </motion.div>
@@ -156,11 +156,11 @@ const FAQSection = () => {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="text-center mt-12"
         >
-          <p className="text-[#6a6a6a] text-base mb-4">
+          <p className="text-nexo-ash text-base mb-4">
             לא מצאתם תשובה לשאלה שלכם?
           </p>
           <a
-            href="#contact"
+            href="/contact#contact-form"
             className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-all"
           >
             <span>דברו איתנו ישירות</span>
@@ -187,37 +187,51 @@ const Tabs = memo(({ selected, setSelected }: TabsProps) => {
       transition={{ duration: 0.5, delay: 0.2 }}
       className="relative z-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-10"
       dir="rtl"
+      role="tablist"
+      aria-label="קטגוריות שאלות נפוצות"
     >
-      {TABS.map((tab) => (
-        <button
-          onClick={() => setSelected(tab)}
-          className={`
-            relative overflow-hidden whitespace-nowrap rounded-full px-4 sm:px-5 py-2.5 sm:py-3
-            text-sm md:text-base font-medium transition-colors duration-300 min-h-[44px]
-            ${selected === tab
-              ? "text-white"
-              : "bg-white text-[#4a4a4a] hover:text-primary border border-[#e5e5e5] hover:border-primary/30"
-            }
-          `}
-          key={tab}
-        >
-          <span className="relative z-10">{tab}</span>
-          <AnimatePresence>
-            {selected === tab && (
-              <motion.span
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{
-                  duration: 0.4,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="absolute inset-0 z-0 bg-primary rounded-full"
-              />
-            )}
-          </AnimatePresence>
-        </button>
-      ))}
+      {TABS.map((tab, index) => {
+        const tabId = `faq-tab-${tab.replace(/\s+/g, '-')}`;
+        const panelId = `faq-tabpanel-${tab.replace(/\s+/g, '-')}`;
+        const isSelected = selected === tab;
+
+        return (
+          <button
+            id={tabId}
+            role="tab"
+            aria-selected={isSelected}
+            aria-controls={panelId}
+            tabIndex={isSelected ? 0 : -1}
+            onClick={() => setSelected(tab)}
+            className={`
+              relative overflow-hidden whitespace-nowrap rounded-full px-4 sm:px-5 py-2.5 sm:py-3
+              text-sm md:text-base font-medium transition-colors duration-300 min-h-[44px]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-light
+              ${isSelected
+                ? "text-white"
+                : "bg-white text-nexo-steel hover:text-primary border border-nexo-mist hover:border-primary/30"
+              }
+            `}
+            key={tab}
+          >
+            <span className="relative z-10">{tab}</span>
+            <AnimatePresence>
+              {isSelected && (
+                <motion.span
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="absolute inset-0 z-0 bg-primary rounded-full"
+                />
+              )}
+            </AnimatePresence>
+          </button>
+        );
+      })}
     </motion.div>
   );
 });
@@ -248,8 +262,14 @@ const Questions = memo(({ selected }: QuestionsProps) => {
     <div className="mx-auto max-w-3xl">
       <AnimatePresence mode="wait">
         {questionsEntries.map(([tab]) => {
+          const tabId = `faq-tab-${tab.replace(/\s+/g, '-')}`;
+          const panelId = `faq-tabpanel-${tab.replace(/\s+/g, '-')}`;
+
           return selected === tab ? (
             <motion.div
+              id={panelId}
+              role="tabpanel"
+              aria-labelledby={tabId}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -260,16 +280,21 @@ const Questions = memo(({ selected }: QuestionsProps) => {
               key={tab}
               onAnimationStart={() => setOpenIndex(-1)}
             >
-              {currentQuestions.map((q, idx) => (
-                <Question
-                  key={idx}
-                  title={q.question}
-                  isOpen={openIndex === idx}
-                  onToggle={() => handleToggle(idx)}
-                >
-                  {q.answer}
-                </Question>
-              ))}
+              {currentQuestions.map((q, idx) => {
+                // Create URL-safe ID from tab name for accordion items
+                const accordionId = `${tab.replace(/\s+/g, '-')}-${idx}`;
+                return (
+                  <Question
+                    key={idx}
+                    id={accordionId}
+                    title={q.question}
+                    isOpen={openIndex === idx}
+                    onToggle={() => handleToggle(idx)}
+                  >
+                    {q.answer}
+                  </Question>
+                );
+              })}
             </motion.div>
           ) : null;
         })}
@@ -297,7 +322,7 @@ const questionChevronVariants = {
   },
   closed: {
     rotate: "0deg",
-    color: "#1a1a1a",
+    color: "var(--nexo-charcoal)",
   },
 };
 
@@ -340,19 +365,25 @@ interface QuestionProps {
   children: React.ReactNode;
   isOpen: boolean;
   onToggle: () => void;
+  id: string;
 }
 
-const Question = memo(({ title, children, isOpen, onToggle }: QuestionProps) => {
+const Question = memo(({ title, children, isOpen, onToggle, id }: QuestionProps) => {
   const [ref, { height }] = useMeasure();
+  const triggerId = `faq-trigger-${id}`;
+  const panelId = `faq-panel-${id}`;
 
   return (
     <motion.div
       animate={isOpen ? "open" : "closed"}
-      className="border-b border-[#e5e5e5]"
+      className="border-b border-nexo-mist"
     >
       <button
+        id={triggerId}
+        aria-expanded={isOpen}
+        aria-controls={panelId}
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-3 sm:gap-4 py-4 sm:py-5 md:py-6 min-h-[44px]"
+        className="flex w-full items-center justify-between gap-3 sm:gap-4 py-4 sm:py-5 md:py-6 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-light rounded-lg"
         dir="rtl"
       >
         <motion.span
@@ -363,16 +394,20 @@ const Question = memo(({ title, children, isOpen, onToggle }: QuestionProps) => 
           {title}
         </motion.span>
         <motion.span variants={questionChevronVariants}>
-          <ChevronDown className="text-2xl w-6 h-6" />
+          <ChevronDown className="text-2xl w-6 h-6" aria-hidden="true" />
         </motion.span>
       </button>
       <motion.div
+        id={panelId}
+        role="region"
+        aria-labelledby={triggerId}
+        aria-hidden={!isOpen}
         initial={false}
         animate={{
           height: isOpen ? height : "0px",
           marginBottom: isOpen ? "24px" : "0px",
         }}
-        className="overflow-hidden text-[#4a4a4a]"
+        className="overflow-hidden text-nexo-steel"
       >
         <p ref={ref} className="text-sm sm:text-base md:text-lg leading-relaxed" dir="rtl">
           {children}

@@ -317,11 +317,11 @@ const Contact = () => {
                 className={`p-4 rounded-xl border-2 text-right transition-all ${
                   formData.budget === option.value
                     ? "border-primary bg-primary/10"
-                    : "border-[#e5e5e5] hover:border-primary/50 bg-white"
+                    : "border-nexo-mist hover:border-primary/50 bg-white"
                 }`}
               >
-                <p className="font-bold text-[#1a1a1a]">{option.label}</p>
-                <p className="text-sm text-[#6a6a6a]">{option.description}</p>
+                <p className="font-bold text-nexo-charcoal">{option.label}</p>
+                <p className="text-sm text-nexo-ash">{option.description}</p>
               </motion.button>
             ))}
           </div>
@@ -344,11 +344,11 @@ const Contact = () => {
                 className={`p-4 rounded-xl border-2 text-center transition-all ${
                   formData.source === option.value
                     ? "border-primary bg-primary/10"
-                    : "border-[#e5e5e5] hover:border-primary/50 bg-white"
+                    : "border-nexo-mist hover:border-primary/50 bg-white"
                 }`}
               >
                 <span className="text-2xl mb-2 block">{option.icon}</span>
-                <p className="text-sm font-medium text-[#1a1a1a]">{option.label}</p>
+                <p className="text-sm font-medium text-nexo-charcoal">{option.label}</p>
               </motion.button>
             ))}
           </div>
@@ -356,44 +356,78 @@ const Contact = () => {
 
       case "message":
         return (
-          <textarea
-            value={formData.message}
-            onChange={(e) => handleInputChange("message", e.target.value)}
-            placeholder="פרטים על הפרויקט, מטרות, לו״ז..."
-            rows={4}
-            className="w-full max-w-md mx-auto px-6 py-4 text-lg bg-white border-2 border-[#e5e5e5] rounded-2xl focus:border-primary focus:outline-none resize-none text-[#1a1a1a] placeholder:text-[#a0a0a0] text-right"
-          />
+          <div className="relative w-full max-w-md mx-auto">
+            <label htmlFor="message" className="sr-only">הודעה</label>
+            <textarea
+              id="message"
+              name="message"
+              aria-label="הודעה"
+              aria-invalid={error?.field === "message" ? "true" : "false"}
+              aria-describedby={error?.field === "message" ? "message-error" : undefined}
+              value={formData.message}
+              onChange={(e) => handleInputChange("message", e.target.value)}
+              placeholder="פרטים על הפרויקט, מטרות, לו״ז..."
+              rows={4}
+              className="w-full px-6 py-4 text-lg bg-white border-2 border-nexo-mist rounded-2xl focus:border-primary focus:outline-none resize-none text-nexo-charcoal placeholder:text-nexo-silver text-right"
+            />
+            {error?.field === "message" && (
+              <span id="message-error" role="alert" className="text-red-500 text-sm mt-1 block text-right">
+                {error.message}
+              </span>
+            )}
+          </div>
         );
 
       default:
+        const fieldLabels: Record<string, string> = {
+          name: "שם מלא",
+          phone: "טלפון",
+          email: "אימייל",
+        };
+        const isRequired = field === "name" || field === "phone";
+        const hasError = error?.field === field;
         return (
-          <input
-            ref={inputRef}
-            type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
-            value={formData[field as keyof FormData]}
-            onChange={(e) => handleInputChange(field, e.target.value)}
-            placeholder={
-              field === "name" ? "הקלידו את שמכם..."
-                : field === "phone" ? "05X-XXX-XXXX"
-                : field === "email" ? "example@email.com"
-                : ""
-            }
-            className={`w-full max-w-md mx-auto px-6 py-4 min-h-[44px] text-xl bg-white border-2 rounded-2xl focus:outline-none text-[#1a1a1a] placeholder:text-[#a0a0a0] text-right transition-colors ${
-              error ? "border-red-500" : "border-[#e5e5e5] focus:border-primary"
-            }`}
-            dir={field === "email" ? "ltr" : "rtl"}
-          />
+          <div className="relative w-full max-w-md mx-auto">
+            <label htmlFor={field} className="sr-only">{fieldLabels[field] || field}</label>
+            <input
+              ref={inputRef}
+              id={field}
+              name={field}
+              aria-label={fieldLabels[field] || field}
+              aria-required={isRequired}
+              aria-invalid={hasError ? "true" : "false"}
+              aria-describedby={hasError ? `${field}-error` : undefined}
+              type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
+              value={formData[field as keyof FormData]}
+              onChange={(e) => handleInputChange(field, e.target.value)}
+              placeholder={
+                field === "name" ? "הקלידו את שמכם..."
+                  : field === "phone" ? "05X-XXX-XXXX"
+                  : field === "email" ? "example@email.com"
+                  : ""
+              }
+              className={`w-full px-6 py-4 min-h-[44px] text-xl bg-white border-2 rounded-2xl focus:outline-none text-nexo-charcoal placeholder:text-nexo-silver text-right transition-colors ${
+                hasError ? "border-red-500" : "border-nexo-mist focus:border-primary"
+              }`}
+              dir={field === "email" ? "ltr" : "rtl"}
+            />
+            {hasError && (
+              <span id={`${field}-error`} role="alert" className="text-red-500 text-sm mt-1 block text-right">
+                {error.message}
+              </span>
+            )}
+          </div>
         );
     }
   };
 
   return (
-    <section id="contact" className="bg-[#FAFAFA] py-24 md:py-32 relative overflow-hidden">
+    <section id="contact" className="bg-nexo-section py-24 md:py-32 relative overflow-hidden">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-[0.02]"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #1a1a1a 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, var(--nexo-charcoal) 1px, transparent 0)`,
           backgroundSize: '40px 40px',
         }}
       />
@@ -414,18 +448,18 @@ const Contact = () => {
             className="h-1 bg-primary mx-auto mb-6"
           />
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1a1a1a] leading-[1] mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-nexo-charcoal leading-[1] mb-6">
             בואו נדבר על
             <br />
             <span className="text-primary">הפרויקט שלכם</span>
           </h2>
 
-          <p className="text-[#6a6a6a] text-lg md:text-xl max-w-xl mx-auto">
+          <p className="text-nexo-ash text-lg md:text-xl max-w-xl mx-auto">
             השאירו פרטים ונחזור אליכם תוך 24 שעות עם הצעה מותאמת
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto items-start">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 max-w-6xl mx-auto items-start">
           {/* Left Side - Embedded Form */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -449,9 +483,9 @@ const Contact = () => {
                   >
                     <Check className="w-12 h-12 text-emerald-500" />
                   </motion.div>
-                  <h3 className="text-2xl font-black text-[#1a1a1a] mb-2">תודה רבה!</h3>
-                  <p className="text-[#6a6a6a] mb-6">קיבלנו את הפרטים שלך ונחזור אליך בהקדם</p>
-                  <div className="flex items-center justify-center gap-2 text-sm text-[#6a6a6a]">
+                  <h3 className="text-2xl font-black text-nexo-charcoal mb-2">תודה רבה!</h3>
+                  <p className="text-nexo-ash mb-6">קיבלנו את הפרטים שלך ונחזור אליך בהקדם</p>
+                  <div className="flex items-center justify-center gap-2 text-sm text-nexo-ash">
                     <Clock className="w-4 h-4" />
                     <span>בדרך כלל תוך כמה שעות</span>
                   </div>
@@ -471,11 +505,11 @@ const Contact = () => {
                   >
                     <Rocket className="w-10 h-10 text-primary" />
                   </motion.div>
-                  <h2 className="text-2xl md:text-3xl font-black text-[#1a1a1a] mb-3">בואו נכיר!</h2>
-                  <p className="text-[#6a6a6a] mb-2 max-w-sm mx-auto">
+                  <h2 className="text-2xl md:text-3xl font-black text-nexo-charcoal mb-3">בואו נכיר!</h2>
+                  <p className="text-nexo-ash mb-2 max-w-sm mx-auto">
                     כמה שאלות קצרות שיעזרו לנו להבין את הפרויקט שלכם ולהכין הצעה מותאמת אישית
                   </p>
-                  <p className="text-[#a0a0a0] text-sm mb-8">פחות מדקה</p>
+                  <p className="text-nexo-silver text-sm mb-8">פחות מדקה</p>
                   <motion.button
                     onClick={() => setShowStartScreen(false)}
                     whileHover={{ scale: 1.05 }}
@@ -484,13 +518,13 @@ const Contact = () => {
                   >
                     בואו נתחיל
                   </motion.button>
-                  <p className="text-[#c0c0c0] text-xs mt-6">לחצו Enter להתחיל</p>
+                  <p className="text-nexo-smoke text-xs mt-6">לחצו Enter להתחיל</p>
                 </motion.div>
               ) : (
                 // Form Steps
                 <>
                   {/* Progress Bar */}
-                  <div className="h-1 bg-[#e5e5e5] rounded-full mb-8 overflow-hidden">
+                  <div className="h-1 bg-nexo-mist rounded-full mb-8 overflow-hidden">
                     <motion.div
                       className="h-full bg-primary"
                       initial={{ width: 0 }}
@@ -501,7 +535,7 @@ const Contact = () => {
 
                   {/* Step Counter */}
                   <div className="text-center mb-2">
-                    <span className="text-sm text-[#6a6a6a]">
+                    <span className="text-sm text-nexo-ash">
                       שאלה {currentStep + 1} מתוך {totalSteps}
                     </span>
                   </div>
@@ -518,21 +552,23 @@ const Contact = () => {
                       transition={{ duration: 0.3 }}
                       className={`text-center flex-1 flex flex-col justify-center ${shake ? "animate-shake" : ""}`}
                     >
-                      <h3 className="text-2xl md:text-3xl font-black text-[#1a1a1a] mb-2">
+                      <h3 className="text-2xl md:text-3xl font-black text-nexo-charcoal mb-2">
                         {currentStepData.title}
                       </h3>
-                      <p className="text-[#6a6a6a] mb-8">{currentStepData.subtitle}</p>
+                      <p className="text-nexo-ash mb-8">{currentStepData.subtitle}</p>
 
                       {renderStepContent()}
 
-                      {/* Error Message */}
-                      {error && (
+                      {/* Error Message - for submit errors only (field errors are shown inline) */}
+                      {error && error.field === "submit" && (
                         <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
+                          role="alert"
+                          aria-live="assertive"
                           className="flex items-center justify-center gap-2 mt-4 text-red-500"
                         >
-                          <AlertCircle className="w-4 h-4" />
+                          <AlertCircle className="w-4 h-4" aria-hidden="true" />
                           <span className="text-sm">{error.message}</span>
                         </motion.div>
                       )}
@@ -540,14 +576,15 @@ const Contact = () => {
                   </AnimatePresence>
 
                   {/* Navigation */}
-                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-[#e5e5e5]">
+                  <div className="flex items-center justify-between mt-8 pt-6 border-t border-nexo-mist">
                     <button
                       onClick={handleBack}
                       disabled={currentStep === 0}
+                      aria-label="הקודם"
                       className={`flex items-center gap-2 px-4 min-h-[44px] rounded-lg transition-all ${
                         currentStep === 0
                           ? "opacity-0 pointer-events-none"
-                          : "text-[#6a6a6a] hover:text-[#1a1a1a]"
+                          : "text-nexo-ash hover:text-nexo-charcoal"
                       }`}
                     >
                       <ArrowRight className="w-5 h-5" />
@@ -588,7 +625,7 @@ const Contact = () => {
                   </div>
 
                   {/* Keyboard Hint */}
-                  <p className="text-center text-[#c0c0c0] text-xs mt-4">
+                  <p className="text-center text-nexo-smoke text-xs mt-4">
                     לחצו Enter להמשיך
                   </p>
                 </>
@@ -606,10 +643,10 @@ const Contact = () => {
           >
             {/* Intro text */}
             <div className="mb-10">
-              <h3 className="text-2xl md:text-3xl font-black text-[#1a1a1a] mb-4">
+              <h3 className="text-2xl md:text-3xl font-black text-nexo-charcoal mb-4">
                 נשמח לשמוע מכם
               </h3>
-              <p className="text-[#6a6a6a] text-lg leading-relaxed">
+              <p className="text-nexo-ash text-lg leading-relaxed">
                 מעדיפים ליצור קשר ישירות? אתם מוזמנים לפנות אלינו בכל אחת מהדרכים הבאות.
                 אנחנו כאן לענות על כל שאלה ולעזור לכם להתחיל.
               </p>
@@ -620,31 +657,31 @@ const Contact = () => {
               <motion.a
                 href="mailto:sales@nexoagency.com"
                 whileHover={{ x: -10, scale: 1.02 }}
-                className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-[#e5e5e5] hover:border-primary/50 hover:shadow-lg transition-all"
+                className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-nexo-mist hover:border-primary/50 hover:shadow-lg transition-all"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                   <Mail className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-[#6a6a6a] text-sm mb-1">אימייל</p>
-                  <p className="text-[#1a1a1a] text-lg font-bold">sales@nexoagency.com</p>
+                  <p className="text-nexo-ash text-sm mb-1">אימייל</p>
+                  <p className="text-nexo-charcoal text-lg font-bold">sales@nexoagency.com</p>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-[#c0c0c0] group-hover:text-primary transition-colors" />
+                <ArrowUpRight className="w-5 h-5 text-nexo-smoke group-hover:text-primary transition-colors" />
               </motion.a>
 
               <motion.a
                 href="tel:+972533622423"
                 whileHover={{ x: -10, scale: 1.02 }}
-                className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-[#e5e5e5] hover:border-primary/50 hover:shadow-lg transition-all"
+                className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-nexo-mist hover:border-primary/50 hover:shadow-lg transition-all"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                   <Phone className="w-6 h-6 text-primary group-hover:text-white transition-colors" />
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-[#6a6a6a] text-sm mb-1">טלפון</p>
-                  <p className="text-[#1a1a1a] text-lg font-bold">053-362-2423</p>
+                  <p className="text-nexo-ash text-sm mb-1">טלפון</p>
+                  <p className="text-nexo-charcoal text-lg font-bold">053-362-2423</p>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-[#c0c0c0] group-hover:text-primary transition-colors" />
+                <ArrowUpRight className="w-5 h-5 text-nexo-smoke group-hover:text-primary transition-colors" />
               </motion.a>
 
               <motion.a
@@ -652,16 +689,16 @@ const Contact = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ x: -10, scale: 1.02 }}
-                className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-[#e5e5e5] hover:border-emerald-500/50 hover:shadow-lg transition-all"
+                className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-nexo-mist hover:border-emerald-500/50 hover:shadow-lg transition-all"
               >
                 <div className="w-14 h-14 rounded-xl bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
                   <MessageCircle className="w-6 h-6 text-emerald-500 group-hover:text-white transition-colors" />
                 </div>
                 <div className="flex-1 text-right">
-                  <p className="text-[#6a6a6a] text-sm mb-1">וואטסאפ</p>
-                  <p className="text-[#1a1a1a] text-lg font-bold">שלחו הודעה מיידית</p>
+                  <p className="text-nexo-ash text-sm mb-1">וואטסאפ</p>
+                  <p className="text-nexo-charcoal text-lg font-bold">שלחו הודעה מיידית</p>
                 </div>
-                <ArrowUpRight className="w-5 h-5 text-[#c0c0c0] group-hover:text-emerald-500 transition-colors" />
+                <ArrowUpRight className="w-5 h-5 text-nexo-smoke group-hover:text-emerald-500 transition-colors" />
               </motion.a>
             </div>
           </motion.div>

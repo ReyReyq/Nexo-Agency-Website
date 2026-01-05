@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import createGlobe, { COBEOptions } from "cobe";
 
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 // Default config with Israel as a prominent marker
 const GLOBE_CONFIG: COBEOptions = {
@@ -50,6 +52,30 @@ export function Globe({
   const globeRef = useRef<ReturnType<typeof createGlobe> | null>(null);
   const phiRef = useRef(0);
   const [isReady, setIsReady] = useState(false);
+  const isMobile = useIsMobile();
+  const prefersReducedMotion = useReducedMotion();
+
+  // Performance: Render a static globe image on mobile or when reduced motion is preferred
+  if (isMobile || prefersReducedMotion) {
+    return (
+      <div
+        className={cn(
+          "relative mx-auto aspect-[1/1] w-full h-full flex items-center justify-center",
+          className
+        )}
+      >
+        {/* Static globe visualization for mobile - CSS-based gradient sphere */}
+        <div
+          className="w-full h-full rounded-full opacity-80"
+          style={{
+            background: `radial-gradient(circle at 30% 30%, rgba(100, 100, 100, 0.8) 0%, rgba(50, 50, 50, 0.6) 30%, rgba(30, 30, 30, 0.4) 60%, transparent 70%),
+                        radial-gradient(circle at 70% 70%, rgba(255, 20, 147, 0.3) 0%, transparent 30%)`,
+            boxShadow: "inset 0 0 60px rgba(255, 20, 147, 0.2), 0 0 40px rgba(255, 20, 147, 0.1)",
+          }}
+        />
+      </div>
+    );
+  }
 
   // Use ResizeObserver to get reliable dimensions
   useEffect(() => {

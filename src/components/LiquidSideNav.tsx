@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useCallback, memo, useRef } from "react";
+import FocusTrap from "focus-trap-react";
 
 interface LiquidSideNavProps {
   isOpen: boolean;
@@ -50,13 +51,26 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.nav
-          className="fixed inset-0 z-50 bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
-          initial="closed"
-          animate="open"
-          exit="closed"
-          variants={navVariants}
+        <FocusTrap
+          active={isOpen}
+          focusTrapOptions={{
+            initialFocus: false,
+            allowOutsideClick: true,
+            returnFocusOnDeactivate: true,
+            escapeDeactivates: true,
+            onDeactivate: handleClose,
+          }}
         >
+          <motion.nav
+            className="fixed inset-0 z-50 bg-white pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
+            initial="closed"
+            animate="open"
+            exit="closed"
+            variants={navVariants}
+            role="dialog"
+            aria-modal="true"
+            aria-label="תפריט ניווט"
+          >
           {/* Background gradient overlay */}
           <motion.div
             className="absolute inset-0 opacity-5"
@@ -70,10 +84,11 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
 
           {/* Close Button */}
           <motion.button
-            className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 text-2xl md:text-3xl bg-white text-[#1a1a1a] hover:text-primary border border-transparent hover:border-primary transition-colors p-3 md:p-4 rounded-full z-10 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 text-2xl md:text-3xl bg-white text-nexo-charcoal hover:text-primary border border-transparent hover:border-primary transition-colors p-3 md:p-4 rounded-full z-10 min-w-[44px] min-h-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             whileHover={{ rotate: "90deg", scale: 1.05 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleClose}
+            aria-label="סגור תפריט"
           >
             <X className="w-5 h-5 md:w-6 md:h-6" />
           </motion.button>
@@ -85,7 +100,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Link to="/" onClick={handleClose} className="min-h-[44px] flex items-center">
+            <Link to="/" onClick={handleClose} className="min-h-[44px] flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded-lg" aria-label="Nexo - חזרה לדף הבית">
               <img
                 src="/logo.svg"
                 alt="Nexo"
@@ -98,13 +113,15 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
           </motion.div>
 
           {/* Navigation Links */}
-          <motion.div
+          <motion.ul
             variants={linkWrapperVariants}
             initial="closed"
             animate="open"
             exit="closed"
-            className="flex flex-col gap-2 sm:gap-3 md:gap-4 absolute bottom-8 sm:bottom-12 md:bottom-16 right-4 sm:right-6 md:right-8 lg:right-12 text-right p-4 sm:p-6 md:p-8"
+            className="flex flex-col gap-2 sm:gap-3 md:gap-4 absolute bottom-8 sm:bottom-12 md:bottom-16 right-4 sm:right-6 md:right-8 lg:right-12 text-right p-4 sm:p-6 md:p-8 list-none"
             dir="rtl"
+            role="list"
+            aria-label="קישורי ניווט"
           >
             {navLinks.map((link) => (
               <NavLink
@@ -115,12 +132,13 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
                 onClick={handleClose}
               />
             ))}
-          </motion.div>
+          </motion.ul>
 
           {/* Email at bottom left */}
           <motion.a
             href="mailto:sales@nexoagency.com"
-            className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-4 sm:left-6 md:left-8 lg:left-12 text-[#1a1a1a]/60 hover:text-primary transition-colors text-sm md:text-base font-medium min-h-[44px] flex items-center"
+            aria-label="שלח אימייל אל sales@nexoagency.com"
+            className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-4 sm:left-6 md:left-8 lg:left-12 text-nexo-charcoal/60 hover:text-primary transition-colors text-sm md:text-base font-medium min-h-[44px] flex items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
@@ -128,6 +146,7 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
             sales@nexoagency.com
           </motion.a>
         </motion.nav>
+        </FocusTrap>
       )}
     </AnimatePresence>
   );
@@ -143,13 +162,14 @@ interface NavLinkProps {
 
 const NavLink = memo(({ text, href, isActive, onClick }: NavLinkProps) => {
   return (
-    <motion.div variants={navLinkVariants}>
+    <motion.li variants={navLinkVariants} role="listitem">
       <Link
         to={href}
         onClick={onClick}
+        aria-current={isActive ? "page" : undefined}
         className={`
-          inline-block z-10 w-fit font-black text-2xl sm:text-3xl md:text-5xl lg:text-7xl transition-colors min-h-[44px] flex items-center
-          ${isActive ? "text-primary" : "text-[#1a1a1a] hover:text-primary"}
+          inline-block z-10 w-fit font-black text-2xl sm:text-3xl md:text-5xl lg:text-7xl transition-colors min-h-[44px] flex items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white
+          ${isActive ? "text-primary" : "text-nexo-charcoal hover:text-primary"}
         `}
       >
         <motion.span
@@ -167,7 +187,7 @@ const NavLink = memo(({ text, href, isActive, onClick }: NavLinkProps) => {
           {text}
         </motion.span>
       </Link>
-    </motion.div>
+    </motion.li>
   );
 });
 
@@ -181,7 +201,7 @@ const navVariants = {
     borderBottomLeftRadius: "0vw",
     opacity: 1,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       damping: 50,
       stiffness: 180,
     },
@@ -192,7 +212,7 @@ const navVariants = {
     borderBottomLeftRadius: "50vw",
     opacity: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       damping: 40,
       stiffness: 250,
     },
@@ -219,7 +239,7 @@ const navLinkVariants = {
     x: 0,
     opacity: 1,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       damping: 30,
       stiffness: 120,
     },
@@ -228,7 +248,7 @@ const navLinkVariants = {
     x: 50,
     opacity: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       damping: 20,
       stiffness: 200,
     },

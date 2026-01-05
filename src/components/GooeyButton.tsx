@@ -34,34 +34,34 @@ const GooeyButton = ({
     lg: "h-[70px] min-w-[200px] text-lg",
   };
 
-  // Color configurations matching your theme
+  // Color configurations matching your theme - using design tokens
   const colorConfig = {
     primary: {
       base: "bg-primary", // Neon pink
-      wave1: "bg-[#a474ff]", // Purple
-      wave2: "bg-[#17f1d1]", // Cyan
+      wave1: "bg-brand-violet", // Purple
+      wave2: "bg-brand-cyan", // Cyan
       wave3: "bg-primary", // Back to primary
       text: "text-white",
     },
     secondary: {
-      base: "bg-[#1a1a1a]", // Dark
+      base: "bg-nexo-charcoal", // Dark
       wave1: "bg-primary", // Primary pink
-      wave2: "bg-[#a474ff]", // Purple
-      wave3: "bg-[#1a1a1a]", // Dark
+      wave2: "bg-brand-violet", // Purple
+      wave3: "bg-nexo-charcoal", // Dark
       text: "text-white",
     },
     accent: {
-      base: "bg-[#FFAB70]", // Orange
-      wave1: "bg-[#a474ff]", // Purple
-      wave2: "bg-[#17f1d1]", // Cyan
-      wave3: "bg-[#FFAB70]", // Orange
+      base: "bg-brand-orange", // Orange
+      wave1: "bg-brand-violet", // Purple
+      wave2: "bg-brand-cyan", // Cyan
+      wave3: "bg-brand-orange", // Orange
       text: "text-black",
     },
     purple: {
-      base: "bg-[#8330c2]", // Purple
-      wave1: "bg-[#9e4cdc]", // Lighter purple
-      wave2: "bg-[#17f1d1]", // Cyan
-      wave3: "bg-[#8330c2]", // Purple
+      base: "bg-brand-purple", // Purple
+      wave1: "bg-brand-purple-light", // Lighter purple
+      wave2: "bg-brand-cyan", // Cyan
+      wave3: "bg-brand-purple", // Purple
       text: "text-white",
     },
   };
@@ -72,6 +72,7 @@ const GooeyButton = ({
     <button
       className={cn(
         "group relative inline-block overflow-hidden rounded-full cursor-pointer border-none",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-nexo-charcoal",
         sizeClasses[size],
         colors.text,
         className

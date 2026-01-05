@@ -2,6 +2,26 @@ import { useRef, useEffect } from 'react';
 import { Renderer, Program, Triangle, Mesh } from 'ogl';
 import { useVisibilityPause } from '@/hooks/useVisibilityPause';
 
+// WebGL uniform values
+interface RippleGridUniforms {
+  iTime: { value: number };
+  iResolution: { value: number[] };
+  enableRainbow: { value: boolean };
+  gridColor: { value: [number, number, number] };
+  rippleIntensity: { value: number };
+  gridSize: { value: number };
+  gridThickness: { value: number };
+  fadeDistance: { value: number };
+  vignetteStrength: { value: number };
+  glowIntensity: { value: number };
+  opacity: { value: number };
+  gridRotation: { value: number };
+  mouseInteraction: { value: boolean };
+  mousePosition: { value: number[] };
+  mouseInfluence: { value: number };
+  mouseInteractionRadius: { value: number };
+}
+
 type Props = {
   enableRainbow?: boolean;
   gridColor?: string;
@@ -145,7 +165,7 @@ const RippleGrid: React.FC<Props> = ({
   const mousePositionRef = useRef({ x: 0.5, y: 0.5 });
   const targetMouseRef = useRef({ x: 0.5, y: 0.5 });
   const mouseInfluenceRef = useRef(0);
-  const uniformsRef = useRef<any>(null);
+  const uniformsRef = useRef<RippleGridUniforms | null>(null);
   const rendererRef = useRef<Renderer | null>(null);
   const meshRef = useRef<Mesh | null>(null);
   const rafRef = useRef<number>(0);

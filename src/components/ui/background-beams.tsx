@@ -2,6 +2,8 @@
 import React, { useRef, useMemo } from "react";
 import { motion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 // Performance: Reduce from 62 to 12 animated beams for better frame rates
 // The rest are rendered as static paths with the base gradient
@@ -73,6 +75,14 @@ export const BackgroundBeams = React.memo(
     const containerRef = useRef<HTMLDivElement>(null);
     // Use amount: "some" for better performance - triggers when 10% is visible
     const isInView = useInView(containerRef, { margin: "100px", amount: 0.1 });
+    const isMobile = useIsMobile();
+    const prefersReducedMotion = useReducedMotion();
+
+    // Performance: Skip rendering on mobile or when reduced motion is preferred
+    // Animated SVG gradients are expensive
+    if (isMobile || prefersReducedMotion) {
+      return null;
+    }
 
     // Memoize animation variants to prevent recreation on every render
     const animateVariant = useMemo(() => ({

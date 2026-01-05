@@ -2,15 +2,11 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef, memo } from "react";
-import { Instagram, Facebook, Linkedin, Phone, Heart, LucideIcon } from "lucide-react";
+import { Phone, Heart, LucideIcon } from "lucide-react";
 
-// Static social links - defined outside component to avoid recreation
-const SOCIAL_LINKS: { icon: LucideIcon; href: string; label: string }[] = [
-  { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram" },
-  { icon: Facebook, href: "https://facebook.com/nexo.agency", label: "Facebook" },
-  { icon: Linkedin, href: "https://linkedin.com/company/nexo-agency", label: "LinkedIn" },
-  { icon: Phone, href: "tel:+972533622423", label: "Phone" },
-];
+// Static contact link - Phone only
+const CONTACT_LINK: { icon: LucideIcon; href: string; label: string } =
+  { icon: Phone, href: "tel:+972533622423", label: "Phone" };
 
 // Nexo Logo SVG - memoized and defined outside component to prevent recreation on each render
 const NexoLogo = memo(() => (
@@ -31,7 +27,7 @@ const Footer = () => {
 
   return (
     <>
-    <footer ref={ref} className="bg-[#0a0a0a] text-white py-12 md:py-16">
+    <footer ref={ref} className="bg-nexo-dark text-white py-12 md:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-10">
@@ -46,33 +42,26 @@ const Footer = () => {
             <p className="text-white/40 text-sm mt-2">סוכנות דיגיטלית ליצירת חוויות</p>
           </motion.div>
 
-          {/* Social Links */}
+          {/* Quick Contact */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex items-center gap-4"
           >
-            <span className="text-white/40 text-sm hidden md:block">עקבו אחרינו</span>
-            <div className="flex gap-3">
-              {SOCIAL_LINKS.map((social, i) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.3, delay: 0.2 + i * 0.05 }}
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-4 h-4" />
-                </motion.a>
-              ))}
-            </div>
+            <span className="text-white/40 text-sm hidden md:block">התקשרו אלינו</span>
+            <motion.a
+              href={CONTACT_LINK.href}
+              className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              aria-label="טלפון"
+            >
+              <CONTACT_LINK.icon className="w-4 h-4" />
+            </motion.a>
           </motion.div>
 
           {/* Contact Info */}
@@ -120,7 +109,7 @@ const Footer = () => {
     </footer>
 
     {/* Credit Section - RTL for Hebrew */}
-    <div className="bg-[#050505] border-t border-white/5 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]" dir="rtl">
+    <div className="bg-nexo-dark border-t border-white/5 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]" dir="rtl">
       <motion.a
         href="/"
         initial={{ opacity: 0 }}

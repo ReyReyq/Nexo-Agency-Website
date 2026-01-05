@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo, useCallback, FC, ReactNode, useState } from 'react';
+import { useEffect, useRef, useMemo, useCallback, FC, ReactNode, useState, memo } from 'react';
 import { gsap } from 'gsap';
 
 interface GridMotionProps {
@@ -13,7 +13,7 @@ const NUM_ROWS = 4;
 const ITEMS_PER_ROW = 7;
 const MOBILE_BREAKPOINT = 768;
 
-const GridMotion: FC<GridMotionProps> = ({
+const GridMotion: FC<GridMotionProps> = memo(({
   items = [],
   gradientColor = 'rgba(250, 249, 246, 0.8)',
   mobileRows = 2,
@@ -137,7 +137,7 @@ const GridMotion: FC<GridMotionProps> = ({
                   // Each cell fills its grid space
                   <div key={itemIndex} className="w-full">
                     {typeof content === 'string' && content.startsWith('http') ? (
-                      <div className="w-full aspect-[4/3] overflow-hidden rounded-xl bg-white/60 backdrop-blur-sm border border-[#e5e5e5]/50 shadow-sm">
+                      <div className="w-full aspect-[4/3] overflow-hidden rounded-xl bg-white/60 backdrop-blur-sm border border-nexo-mist/50 shadow-sm">
                         <div
                           className="w-full h-full bg-cover bg-center"
                           style={{ backgroundImage: `url(${content})` }}
@@ -156,6 +156,8 @@ const GridMotion: FC<GridMotionProps> = ({
       </section>
     </div>
   );
-};
+});
+
+GridMotion.displayName = 'GridMotion';
 
 export default GridMotion;

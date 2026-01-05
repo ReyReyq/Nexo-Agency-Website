@@ -2,31 +2,30 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, lazy, Suspense, useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import RippleButton from "./RippleButton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Lazy load PixelTrail - heavy Three.js/WebGL component
 const PixelTrail = lazy(() => import("./ui/PixelTrail"));
 
 // Memoized PixelTrail config to prevent unnecessary re-renders
+// Note: Using CSS variable string - component should parse or use getComputedStyle
 const PIXEL_TRAIL_CONFIG = {
   gridSize: 50,
   trailSize: 0.12,
   maxAge: 400,
   interpolate: 8,
-  color: "#FF1493",
+  color: "hsl(328 100% 54%)", // --primary-bright equivalent
 } as const;
 
 const AboutDarkSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-
-  // Memoize scroll options to prevent re-subscription on each render
-  const scrollOptions = useMemo(() => ({
-    target: sectionRef,
-    offset: ["start start", "end start"] as const,
-    layoutEffect: false, // Prevent layout thrashing
-  }), []);
+  const isMobile = useIsMobile();
 
   // Scroll-linked animations for parallax effect
-  const { scrollYProgress } = useScroll(scrollOptions);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
 
   // Memoize transform input/output arrays to prevent recreation
   const scaleInput = useMemo(() => [0, 1], []);
@@ -41,7 +40,7 @@ const AboutDarkSection = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[80vh] md:min-h-screen w-full overflow-hidden bg-hero-bg"
+      className="relative min-h-[80vh] md:min-h-screen md:min-h-[100dvh] w-full overflow-hidden bg-hero-bg"
     >
       {/* Background Image with parallax zoom - z-0 */}
       {/* Optimized with WebP format for full-width hero background */}
@@ -50,8 +49,8 @@ const AboutDarkSection = () => {
         className="absolute inset-0 bg-cover bg-center z-0"
       >
         <img
-          src="/images/gallery/team-office-meeting.jpg"
-          alt="Team collaboration"
+          src="/images/gallery/team-office-meeting.webp"
+          alt="עבודת צוות"
           loading="lazy"
           decoding="async"
           width={1920}
@@ -62,19 +61,21 @@ const AboutDarkSection = () => {
       </motion.div>
 
       {/* PixelTrail Layer - z-10, receives all mouse events */}
-      {/* Lazy loaded to reduce initial bundle size - Three.js is heavy */}
-      <div className="absolute inset-0 z-10">
-        <Suspense fallback={null}>
-          <PixelTrail
-            gridSize={PIXEL_TRAIL_CONFIG.gridSize}
-            trailSize={PIXEL_TRAIL_CONFIG.trailSize}
-            maxAge={PIXEL_TRAIL_CONFIG.maxAge}
-            interpolate={PIXEL_TRAIL_CONFIG.interpolate}
-            color={PIXEL_TRAIL_CONFIG.color}
-            gooeyFilter={gooeyFilterConfig}
-          />
-        </Suspense>
-      </div>
+      {/* Disabled on mobile for performance - Three.js/WebGL is too heavy */}
+      {!isMobile && (
+        <div className="absolute inset-0 z-10">
+          <Suspense fallback={null}>
+            <PixelTrail
+              gridSize={PIXEL_TRAIL_CONFIG.gridSize}
+              trailSize={PIXEL_TRAIL_CONFIG.trailSize}
+              maxAge={PIXEL_TRAIL_CONFIG.maxAge}
+              interpolate={PIXEL_TRAIL_CONFIG.interpolate}
+              color={PIXEL_TRAIL_CONFIG.color}
+              gooeyFilter={gooeyFilterConfig}
+            />
+          </Suspense>
+        </div>
+      )}
 
       {/* Content - z-20, pointer-events-none except for interactive elements */}
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24 flex items-center h-full pointer-events-none">

@@ -7,47 +7,86 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
 
+// Helper to generate srcset for portfolio images
+// Naming convention: image.webp -> image-sm.webp (400w), image-md.webp (600w)
+const generatePortfolioSrcSet = (src: string, isLarge = false) => {
+  if (!src.startsWith('/portfolio/')) return { src };
+
+  const extension = src.substring(src.lastIndexOf('.'));
+  const basePath = src.substring(0, src.lastIndexOf('.'));
+
+  // Large cards (featured) get larger srcset
+  if (isLarge) {
+    return {
+      src,
+      srcSet: `${basePath}-sm${extension} 480w, ${basePath}-md${extension} 800w, ${src} 1200w`,
+      sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px',
+    };
+  }
+
+  // Standard cards
+  return {
+    src,
+    srcSet: `${basePath}-sm${extension} 320w, ${basePath}-md${extension} 480w, ${src} 640w`,
+    sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px',
+  };
+};
+
+// Helper for marquee images
+const generateMarqueeSrcSet = (src: string) => {
+  if (!src.startsWith('/images/websites-pictures/')) return { src };
+
+  const extension = src.substring(src.lastIndexOf('.'));
+  const basePath = src.substring(0, src.lastIndexOf('.'));
+
+  return {
+    src,
+    srcSet: `${basePath}-sm${extension} 280w, ${src} 360w`,
+    sizes: '(max-width: 768px) 280px, 360px',
+  };
+};
+
 // Website showcase images for marquee - equally distributed (18 each)
 const websiteImages = {
   row1: [
-    "/images/websites-pictures/Gemini Generated Image (1).png",
-    "/images/websites-pictures/Gemini Generated Image (2).png",
-    "/images/websites-pictures/Gemini Generated Image (3).png",
-    "/images/websites-pictures/Gemini Generated Image (4).png",
-    "/images/websites-pictures/Gemini Generated Image (5).png",
-    "/images/websites-pictures/Gemini Generated Image (6).png",
-    "/images/websites-pictures/Gemini Generated Image (7).png",
-    "/images/websites-pictures/Gemini Generated Image (8).png",
-    "/images/websites-pictures/Gemini Generated Image.png",
-    "/images/websites-pictures/Gemini_Generated_Image_ubgf3rubgf3rubgf.png",
-    "/images/websites-pictures/Gemini_Generated_Image_1rnbic1rnbic1rnb.png",
-    "/images/websites-pictures/Gemini_Generated_Image_q4yb80q4yb80q4yb.png",
-    "/images/websites-pictures/Gemini_Generated_Image_rr1pmlrr1pmlrr1p.png",
-    "/images/websites-pictures/Gemini_Generated_Image_jvgltxjvgltxjvgl.png",
-    "/images/websites-pictures/Gemini_Generated_Image_ld0r21ld0r21ld0r.png",
-    "/images/websites-pictures/Google Gemini Generated Image.png",
-    "/images/websites-pictures/Google Gemini Image (1).png",
-    "/images/websites-pictures/Google Gemini Image (2).png",
+    "/images/websites-pictures/Gemini Generated Image (1).webp",
+    "/images/websites-pictures/Gemini Generated Image (2).webp",
+    "/images/websites-pictures/Gemini Generated Image (3).webp",
+    "/images/websites-pictures/Gemini Generated Image (4).webp",
+    "/images/websites-pictures/Gemini Generated Image (5).webp",
+    "/images/websites-pictures/Gemini Generated Image (6).webp",
+    "/images/websites-pictures/Gemini Generated Image (7).webp",
+    "/images/websites-pictures/Gemini Generated Image (8).webp",
+    "/images/websites-pictures/Gemini Generated Image.webp",
+    "/images/websites-pictures/Gemini_Generated_Image_ubgf3rubgf3rubgf.webp",
+    "/images/websites-pictures/Gemini_Generated_Image_1rnbic1rnbic1rnb.webp",
+    "/images/websites-pictures/Gemini_Generated_Image_q4yb80q4yb80q4yb.webp",
+    "/images/websites-pictures/Gemini_Generated_Image_rr1pmlrr1pmlrr1p.webp",
+    "/images/websites-pictures/Gemini_Generated_Image_jvgltxjvgltxjvgl.webp",
+    "/images/websites-pictures/Gemini_Generated_Image_ld0r21ld0r21ld0r.webp",
+    "/images/websites-pictures/Google Gemini Generated Image.webp",
+    "/images/websites-pictures/Google Gemini Image (1).webp",
+    "/images/websites-pictures/Google Gemini Image (2).webp",
   ],
   row2: [
-    "/images/websites-pictures/Google Gemini Image (3).png",
-    "/images/websites-pictures/Google Gemini Image (4).png",
-    "/images/websites-pictures/Google Gemini Image (5).png",
-    "/images/websites-pictures/Google Gemini Image (6).png",
-    "/images/websites-pictures/Google Gemini Image (7).png",
-    "/images/websites-pictures/Google Gemini Image (8).png",
-    "/images/websites-pictures/Google Gemini Image (9).png",
-    "/images/websites-pictures/Google Gemini Image (10).png",
-    "/images/websites-pictures/Google Gemini Image (11).png",
-    "/images/websites-pictures/Google Gemini Image (12).png",
-    "/images/websites-pictures/Google Gemini Image (13).png",
-    "/images/websites-pictures/Google Gemini Image (14).png",
-    "/images/websites-pictures/Google Gemini Image (15).png",
-    "/images/websites-pictures/Google Gemini Image (16).png",
-    "/images/websites-pictures/Google Gemini Image.png",
-    "/images/websites-pictures/Gemini Generated Image (3).png",
-    "/images/websites-pictures/Gemini Generated Image (5).png",
-    "/images/websites-pictures/Gemini Generated Image (7).png",
+    "/images/websites-pictures/Google Gemini Image (3).webp",
+    "/images/websites-pictures/Google Gemini Image (4).webp",
+    "/images/websites-pictures/Google Gemini Image (5).webp",
+    "/images/websites-pictures/Google Gemini Image (6).webp",
+    "/images/websites-pictures/Google Gemini Image (7).webp",
+    "/images/websites-pictures/Google Gemini Image (8).webp",
+    "/images/websites-pictures/Google Gemini Image (9).webp",
+    "/images/websites-pictures/Google Gemini Image (10).webp",
+    "/images/websites-pictures/Google Gemini Image (11).webp",
+    "/images/websites-pictures/Google Gemini Image (12).webp",
+    "/images/websites-pictures/Google Gemini Image (13).webp",
+    "/images/websites-pictures/Google Gemini Image (14).webp",
+    "/images/websites-pictures/Google Gemini Image (15).webp",
+    "/images/websites-pictures/Google Gemini Image (16).webp",
+    "/images/websites-pictures/Google Gemini Image.webp",
+    "/images/websites-pictures/Gemini Generated Image (3).webp",
+    "/images/websites-pictures/Gemini Generated Image (5).webp",
+    "/images/websites-pictures/Gemini Generated Image (7).webp",
   ],
 };
 
@@ -73,7 +112,7 @@ const projects = [
     client: "SIONÉ Official",
     category: "E-Commerce",
     description: "חנות אונליין יוקרתית עם חוויית קנייה פרימיום ועיצוב אלגנטי",
-    image: "/portfolio/sione/sione-homepage-hero.png",
+    image: "/portfolio/sione/sione-homepage-hero.webp",
     link: "/portfolio/sione",
     tags: ["E-Commerce", "Fashion", "Premium"],
     Icon: ShoppingBag,
@@ -86,7 +125,7 @@ const projects = [
     client: "TeenVestor",
     category: "FinTech",
     description: "פלטפורמת לימוד השקעות לבני נוער עם קורסים אינטראקטיביים",
-    image: "/portfolio/teenvestsor/teenvestsor-hero.png",
+    image: "/portfolio/teenvestsor/teenvestsor-hero.webp",
     link: "/portfolio/teenvestsor",
     tags: ["FinTech", "Education", "Courses"],
     Icon: TrendingUp,
@@ -122,7 +161,7 @@ const PortfolioSection = memo(function PortfolioSection() {
   return (
     <section
       id="portfolio"
-      className="relative py-28 md:py-40 overflow-hidden bg-[#FAFAFA]"
+      className="relative py-28 md:py-40 overflow-hidden bg-nexo-section"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 md:px-12 relative z-10">
         {/* Section Header */}
@@ -142,7 +181,7 @@ const PortfolioSection = memo(function PortfolioSection() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="w-16 h-1 bg-primary mb-6 origin-right"
               />
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-nexo-charcoal leading-[0.9] tracking-tight">
                 הפרויקטים
                 <br />
                 <span className="text-primary">שלנו</span>
@@ -154,7 +193,7 @@ const PortfolioSection = memo(function PortfolioSection() {
               initial={fadeInUp.initial}
               animate={isHeaderInView ? fadeInUp.animate : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-[#6a6a6a] text-lg md:text-xl max-w-sm leading-relaxed"
+              className="text-nexo-ash text-lg md:text-xl max-w-sm leading-relaxed"
               dir="rtl"
             >
               עבודות נבחרות שמציגות את הגישה שלנו לעיצוב ופיתוח דיגיטלי
@@ -180,17 +219,24 @@ const PortfolioSection = memo(function PortfolioSection() {
               "transition-all duration-500"
             )}
           >
-            {/* Background Image */}
+            {/* Background Image - Featured large card */}
             <div className="absolute inset-0">
-              <img
-                src={memoizedProjects[0].image}
-                alt={memoizedProjects[0].title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-                width={800}
-                height={640}
-              />
+              {(() => {
+                const imageSet = generatePortfolioSrcSet(memoizedProjects[0].image, true);
+                return (
+                  <img
+                    src={imageSet.src}
+                    srcSet={imageSet.srcSet}
+                    sizes={imageSet.sizes}
+                    alt={memoizedProjects[0].title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                    width={800}
+                    height={640}
+                  />
+                );
+              })()}
               <div className={cn(
                 "absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent",
                 "transition-opacity duration-500"
@@ -199,7 +245,7 @@ const PortfolioSection = memo(function PortfolioSection() {
 
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
-              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
                 {memoizedProjects[0].category}
               </span>
             </div>
@@ -259,21 +305,28 @@ const PortfolioSection = memo(function PortfolioSection() {
           >
             {/* Background Image */}
             <div className="absolute inset-0">
-              <img
-                src={memoizedProjects[1].image}
-                alt={memoizedProjects[1].title}
-                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-                width={600}
-                height={320}
-              />
+              {(() => {
+                const imageSet = generatePortfolioSrcSet(memoizedProjects[1].image);
+                return (
+                  <img
+                    src={imageSet.src}
+                    srcSet={imageSet.srcSet}
+                    sizes={imageSet.sizes}
+                    alt={memoizedProjects[1].title}
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                    width={600}
+                    height={320}
+                  />
+                );
+              })()}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             </div>
 
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
-              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
                 {memoizedProjects[1].category}
               </span>
             </div>
@@ -319,21 +372,28 @@ const PortfolioSection = memo(function PortfolioSection() {
           >
             {/* Background Image */}
             <div className="absolute inset-0">
-              <img
-                src={memoizedProjects[2].image}
-                alt={memoizedProjects[2].title}
-                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-                width={600}
-                height={320}
-              />
+              {(() => {
+                const imageSet = generatePortfolioSrcSet(memoizedProjects[2].image);
+                return (
+                  <img
+                    src={imageSet.src}
+                    srcSet={imageSet.srcSet}
+                    sizes={imageSet.sizes}
+                    alt={memoizedProjects[2].title}
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
+                    width={600}
+                    height={320}
+                  />
+                );
+              })()}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
             </div>
 
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
-              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
                 {memoizedProjects[2].category}
               </span>
             </div>
@@ -375,7 +435,7 @@ const PortfolioSection = memo(function PortfolioSection() {
           <Button
             asChild
             size="lg"
-            className="group px-8 py-6 text-base font-bold rounded-full bg-[#1a1a1a] hover:bg-primary transition-colors duration-300"
+            className="group px-8 py-6 text-base font-bold rounded-full bg-nexo-charcoal hover:bg-primary transition-colors duration-300"
           >
             <a href="/portfolio" className="flex items-center gap-3 min-h-[44px]">
               <span>צפייה בכל הפרויקטים</span>
@@ -398,6 +458,8 @@ const PortfolioSection = memo(function PortfolioSection() {
                 <img
                   src={src}
                   alt={`Website showcase ${index + 1}`}
+                  width={360}
+                  height={225}
                   loading="lazy"
                   decoding="async"
                   className="w-full h-full object-cover"
@@ -417,6 +479,8 @@ const PortfolioSection = memo(function PortfolioSection() {
               <img
                 src={src}
                 alt={`Website showcase ${index + 10}`}
+                width={360}
+                height={225}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover"

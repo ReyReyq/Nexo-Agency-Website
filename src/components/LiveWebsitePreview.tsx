@@ -96,8 +96,10 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
   [url]);
 
   // Memoize dark background detection to prevent recalculation on every render
+  // Note: Fallback uses nexo-light (var(--nexo-light)) color value
+  // Hardcoded hex needed for luminance calculation
   const isDarkBackground = useMemo(() => {
-    const bg = brandColors?.background || '#FAF9F6';
+    const bg = brandColors?.background || '#FAF9F6'; // fallback to nexo-light
     // Convert hex to RGB and calculate relative luminance
     const hex = bg.replace('#', '');
     const r = parseInt(hex.slice(0, 2), 16) / 255;
@@ -255,7 +257,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
             >
               {/* Browser Frame */}
               <div
-                className="bg-[#2a2a2a] rounded-2xl overflow-hidden shadow-2xl shadow-black/20 transition-all duration-500"
+                className="bg-nexo-graphite rounded-2xl overflow-hidden shadow-2xl shadow-black/20 transition-all duration-500"
                 dir="ltr"
                 style={{
                   maxWidth: device === 'desktop' ? '100%' : device === 'tablet' ? '768px' : '375px',
@@ -263,8 +265,8 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                 }}
               >
                 {/* Browser Header */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-[#333] border-b border-white/5">
-                  {/* Traffic Lights */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-nexo-slate border-b border-white/5">
+                  {/* Traffic Lights - Standard macOS colors, intentionally hardcoded */}
                   <div className="flex gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
                     <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
@@ -273,7 +275,7 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
 
                   {/* URL Bar */}
                   <div className="flex-1 mx-4">
-                    <div className="bg-[#1a1a1a] rounded-lg px-4 py-1.5 text-sm text-white/50 font-mono flex items-center justify-center gap-2">
+                    <div className="bg-nexo-charcoal rounded-lg px-4 py-1.5 text-sm text-white/50 font-mono flex items-center justify-center gap-2">
                       <svg className="w-3.5 h-3.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                       </svg>

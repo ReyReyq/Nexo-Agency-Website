@@ -250,7 +250,7 @@ const AIPhotographyTextSection = ({ aiModels }: AIPhotographySectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-12 sm:py-16 md:py-20 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden"
+      className="min-h-screen py-12 sm:py-16 md:py-20 bg-nexo-light text-foreground relative overflow-hidden lg:hidden"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -372,7 +372,7 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-12 sm:py-16 md:py-20 bg-[#FAF9F6] text-foreground relative overflow-hidden lg:hidden flex items-center justify-center"
+      className="min-h-screen py-12 sm:py-16 md:py-20 bg-nexo-light text-foreground relative overflow-hidden lg:hidden flex items-center justify-center"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -392,11 +392,11 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
         {/* Gradient Overlays */}
         <div
           className="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, #FAF9F6, transparent)' }}
+          style={{ background: 'linear-gradient(to bottom, var(--nexo-light), transparent)' }}
         />
         <div
           className="absolute inset-x-0 bottom-0 h-20 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(to top, #FAF9F6, transparent)' }}
+          style={{ background: 'linear-gradient(to top, var(--nexo-light), transparent)' }}
         />
 
         {/* Marquee Container */}
@@ -424,6 +424,10 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
                 <img
                   src={image.src}
                   alt={image.alt}
+                  width={160}
+                  height={208}
+                  loading="lazy"
+                  decoding="async"
                   className="w-40 h-52 object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div
@@ -457,6 +461,10 @@ const AIPhotographyImagesSection = ({ aiModels }: AIPhotographySectionProps) => 
                 <img
                   src={image.src}
                   alt={image.alt}
+                  width={160}
+                  height={208}
+                  loading="lazy"
+                  decoding="async"
                   className="w-40 h-52 object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div
@@ -499,7 +507,7 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden hidden lg:block"
+      className="min-h-screen py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 bg-nexo-light text-foreground relative overflow-hidden hidden lg:block"
     >
       {/* HUGE Background Number */}
       <motion.div
@@ -602,11 +610,11 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
             {/* Gradient Overlays */}
             <div
               className="absolute inset-x-0 top-0 h-20 z-10 pointer-events-none"
-              style={{ background: 'linear-gradient(to bottom, #FAF9F6, transparent)' }}
+              style={{ background: 'linear-gradient(to bottom, var(--nexo-light), transparent)' }}
             />
             <div
               className="absolute inset-x-0 bottom-0 h-20 z-10 pointer-events-none"
-              style={{ background: 'linear-gradient(to top, #FAF9F6, transparent)' }}
+              style={{ background: 'linear-gradient(to top, var(--nexo-light), transparent)' }}
             />
 
             {/* Marquee Container */}
@@ -634,6 +642,10 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                     <img
                       src={image.src}
                       alt={image.alt}
+                      width={208}
+                      height={256}
+                      loading="lazy"
+                      decoding="async"
                       className="w-52 h-64 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div
@@ -667,6 +679,10 @@ const AIPhotographySection = ({ aiModels }: AIPhotographySectionProps) => {
                     <img
                       src={image.src}
                       alt={image.alt}
+                      width={208}
+                      height={256}
+                      loading="lazy"
+                      decoding="async"
                       className="w-52 h-64 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div
@@ -708,7 +724,7 @@ const StepSection = ({ step, index, brandIdentity }: StepSectionProps) => {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 bg-[#FAF9F6] text-foreground relative overflow-hidden"
+      className="min-h-screen py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 bg-nexo-light text-foreground relative overflow-hidden"
     >
       {/* HUGE Background Number - Editorial style - positioned behind everything */}
       <motion.div
@@ -954,7 +970,7 @@ const WebsitePreviewSection = () => {
   return (
     <section
       ref={ref}
-      className="py-12 sm:py-16 md:py-20 lg:py-24 bg-[#FAF9F6] text-foreground relative overflow-hidden"
+      className="py-12 sm:py-16 md:py-20 lg:py-24 bg-nexo-light text-foreground relative overflow-hidden"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-14 items-center">
@@ -1060,7 +1076,7 @@ const WebsitePreviewSection = () => {
             >
               {/* Browser Frame - LTR for proper browser UI */}
               <div
-                className={`bg-[#2a2a2a] rounded-2xl overflow-hidden shadow-2xl transition-shadow duration-300 ${
+                className={`bg-nexo-graphite rounded-2xl overflow-hidden shadow-2xl transition-shadow duration-300 ${
                   isScrollActive ? 'shadow-primary/20 ring-2 ring-primary/30' : 'shadow-black/20'
                 }`}
                 dir="ltr"
@@ -1068,8 +1084,8 @@ const WebsitePreviewSection = () => {
                 onMouseLeave={handleDeactivateScroll}
               >
                 {/* Browser Header */}
-                <div className="flex items-center gap-2 px-4 py-3 bg-[#333] border-b border-white/5">
-                  {/* Traffic Lights - on the left */}
+                <div className="flex items-center gap-2 px-4 py-3 bg-nexo-slate border-b border-white/5">
+                  {/* Traffic Lights - Standard macOS colors, intentionally hardcoded */}
                   <div className="flex gap-2">
                     <div className="w-3 h-3 rounded-full bg-[#ff5f57]" />
                     <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
@@ -1077,7 +1093,7 @@ const WebsitePreviewSection = () => {
                   </div>
                   {/* URL Bar - centered, LTR */}
                   <div className="flex-1 mx-4">
-                    <div className="bg-[#1a1a1a] rounded-lg px-4 py-1.5 text-sm text-white/50 font-mono flex items-center justify-center gap-2">
+                    <div className="bg-nexo-charcoal rounded-lg px-4 py-1.5 text-sm text-white/50 font-mono flex items-center justify-center gap-2">
                       <svg className="w-3.5 h-3.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                       </svg>
@@ -1100,8 +1116,12 @@ const WebsitePreviewSection = () => {
                   }}
                 >
                   <img
-                    src="/portfolio/sione/sione-fullpage.png"
+                    src="/portfolio/sione/sione-fullpage.webp"
                     alt="SIONÉ Website Full Homepage"
+                    width={1440}
+                    height={4500}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full pointer-events-none select-none"
                     draggable={false}
                   />
@@ -1153,7 +1173,7 @@ const CaseStudyWorkflow = ({
   return (
     <div className="relative">
       {/* ========== INTRO SECTION (sticky) ========== */}
-      <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 0 }}>
+      <div className="sticky top-0 bg-nexo-light" style={{ zIndex: 0 }}>
         <section
           ref={introRef}
           className="min-h-screen text-foreground flex items-center justify-center overflow-hidden py-12 sm:py-16 md:py-20 relative"
@@ -1231,51 +1251,51 @@ const CaseStudyWorkflow = ({
       </div>
 
       {/* ========== STEP 1: גילוי (Discovery) ========== */}
-      <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 10 }}>
+      <div className="sticky top-0 bg-nexo-light" style={{ zIndex: 10 }}>
         <StepSection step={workflowSteps[0]} index={0} />
       </div>
 
       {/* ========== STEP 2: אסטרטגיה (Strategy) ========== */}
-      <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 20 }}>
+      <div className="sticky top-0 bg-nexo-light" style={{ zIndex: 20 }}>
         <StepSection step={workflowSteps[1]} index={1} />
       </div>
 
       {/* ========== STEP 3: עיצוב (Design) - includes Brand Identity ========== */}
-      <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 30 }}>
+      <div className="sticky top-0 bg-nexo-light" style={{ zIndex: 30 }}>
         <StepSection step={workflowSteps[2]} index={2} brandIdentity={brandIdentity} />
       </div>
 
       {/* ========== STEP 4: צילומי AI (AI Photography) ========== */}
       {/* Mobile: Split into two separate slides (text first, then images) */}
       {aiModels && (
-        <div className="sticky top-0 bg-[#FAF9F6] lg:hidden" style={{ zIndex: 40 }}>
+        <div className="sticky top-0 bg-nexo-light lg:hidden" style={{ zIndex: 40 }}>
           <AIPhotographyTextSection aiModels={aiModels} />
         </div>
       )}
       {aiModels && (
-        <div className="sticky top-0 bg-[#FAF9F6] lg:hidden" style={{ zIndex: 41 }}>
+        <div className="sticky top-0 bg-nexo-light lg:hidden" style={{ zIndex: 41 }}>
           <AIPhotographyImagesSection aiModels={aiModels} />
         </div>
       )}
       {/* Desktop: Keep as one combined section */}
       {aiModels && (
-        <div className="sticky top-0 bg-[#FAF9F6] hidden lg:block" style={{ zIndex: 40 }}>
+        <div className="sticky top-0 bg-nexo-light hidden lg:block" style={{ zIndex: 40 }}>
           <AIPhotographySection aiModels={aiModels} />
         </div>
       )}
 
       {/* ========== STEP 5: פיתוח (Development) ========== */}
-      <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 50 }}>
+      <div className="sticky top-0 bg-nexo-light" style={{ zIndex: 50 }}>
         <StepSection step={workflowSteps[3]} index={3} />
       </div>
 
       {/* ========== STEP 6: השקה (Launch) ========== */}
-      <div className="sticky top-0 bg-[#FAF9F6]" style={{ zIndex: 60 }}>
+      <div className="sticky top-0 bg-nexo-light" style={{ zIndex: 30 }}>
         <StepSection step={workflowSteps[4]} index={4} />
       </div>
 
       {/* ========== CONCLUSION SECTION ========== */}
-      <div className="relative bg-primary" style={{ zIndex: 65 }}>
+      <div className="relative bg-primary" style={{ zIndex: 30 }}>
         <section className="py-12 sm:py-16 md:py-20 lg:py-28 xl:py-36 text-white">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center" dir="rtl">
             <motion.div

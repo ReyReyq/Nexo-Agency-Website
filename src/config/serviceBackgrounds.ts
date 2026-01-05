@@ -13,7 +13,8 @@ export interface OrbProps {
 
 export interface BackgroundConfig {
   type: BackgroundType;
-  props: Record<string, any>;
+  // Props vary by background type - using unknown for type safety at call sites
+  props: Record<string, unknown>;
 }
 
 export const serviceBackgrounds: Record<string, BackgroundConfig> = {

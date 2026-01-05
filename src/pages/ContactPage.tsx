@@ -1,22 +1,22 @@
 "use client";
 
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { useRef, useState, useCallback, useEffect, useMemo } from "react";
-import { Send, Instagram, Facebook, Linkedin, Phone, Mail, ArrowUpRight, MessageCircle, Clock, ArrowLeft, ArrowRight, Check, Rocket, AlertCircle, Heart } from "lucide-react";
+import { useRef, useState, useCallback, useEffect, useMemo, lazy, Suspense } from "react";
+import { Helmet } from "react-helmet-async";
+import { Send, Phone, Mail, ArrowUpRight, MessageCircle, Clock, ArrowLeft, ArrowRight, Check, Rocket, AlertCircle, Heart } from "lucide-react";
 import GlassNavbar from "@/components/GlassNavbar";
 import FAQSection from "@/components/FAQSection";
 import PortfolioSection from "@/components/PortfolioSection";
-import { Globe } from "@/components/ui/globe";
+import ErrorBoundary, { SectionErrorFallback } from "@/components/ErrorBoundary";
 import confetti from "canvas-confetti";
+
+// Lazy load heavy WebGL Globe component for better performance
+const Globe = lazy(() => import("@/components/ui/globe").then(mod => ({ default: mod.Globe })));
 import { Link } from "react-router-dom";
 import { submitContactForm, type FormData as SubmissionFormData } from "@/utils/formSubmission";
 
-const socialLinks = [
-  { icon: Instagram, href: "https://instagram.com/nexo.agency", label: "Instagram", color: "hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500" },
-  { icon: Facebook, href: "https://facebook.com/nexo.agency", label: "Facebook", color: "hover:bg-blue-600" },
-  { icon: Linkedin, href: "https://linkedin.com/company/nexo-agency", label: "LinkedIn", color: "hover:bg-blue-700" },
-  { icon: MessageCircle, href: "https://wa.me/972533622423", label: "WhatsApp", color: "hover:bg-green-500" },
-];
+// WhatsApp contact link
+const whatsappLink = { href: "https://wa.me/972533622423", label: "WhatsApp" };
 
 
 // Form types and config
@@ -56,6 +56,40 @@ const steps = [
   { id: "message", title: "ספרו לנו קצת על הפרויקט", subtitle: "מה אתם מחפשים? מה האתגר?", required: false },
   { id: "source", title: "איך שמעתם עלינו?", subtitle: "סתם סקרנים 😊", required: false },
 ];
+
+// JSON-LD Structured Data Schema for LocalBusiness
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "NEXO AGENCY",
+  "alternateName": "נקסו",
+  "url": "https://nexo.agency",
+  "telephone": "+972-53-362-2423",
+  "email": "sales@nexoagency.com",
+  "description": "סוכנות דיגיטל מובילה בישראל - עיצוב אתרים, פיתוח, שיווק דיגיטלי ומיתוג",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "IL",
+    "addressLocality": "Israel"
+  },
+  "priceRange": "$$",
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+    "opens": "09:00",
+    "closes": "18:00"
+  }
+};
+
+// BreadcrumbList JSON-LD Schema
+const contactBreadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+    { "@type": "ListItem", "position": 2, "name": "צור קשר", "item": "https://nexo.agency/contact" }
+  ]
+};
 
 const ContactPage = () => {
   const heroRef = useRef(null);
@@ -371,47 +405,111 @@ const ContactPage = () => {
 
       case "message":
         return (
-          <textarea
-            value={formData.message}
-            onChange={(e) => handleInputChange("message", e.target.value)}
-            placeholder="פרטים על הפרויקט, מטרות, לו״ז..."
-            rows={4}
-            className="w-full max-w-md mx-auto px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-muted/50 border-2 border-border rounded-2xl focus:border-primary focus:outline-none resize-none text-foreground placeholder:text-muted-foreground text-right"
-          />
+          <div className="relative w-full max-w-md mx-auto">
+            <label htmlFor="message" className="sr-only">הודעה</label>
+            <textarea
+              id="message"
+              name="message"
+              aria-label="הודעה"
+              aria-invalid={error?.field === "message" ? "true" : "false"}
+              aria-describedby={error?.field === "message" ? "message-error" : undefined}
+              value={formData.message}
+              onChange={(e) => handleInputChange("message", e.target.value)}
+              placeholder="פרטים על הפרויקט, מטרות, לו״ז..."
+              rows={4}
+              className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg bg-muted/50 border-2 border-border rounded-2xl focus:border-primary focus:outline-none resize-none text-foreground placeholder:text-muted-foreground text-right"
+            />
+            {error?.field === "message" && (
+              <span id="message-error" role="alert" className="text-red-500 text-sm mt-1 block text-right">
+                {error.message}
+              </span>
+            )}
+          </div>
         );
 
       default:
+        const fieldLabels: Record<string, string> = {
+          name: "שם מלא",
+          phone: "טלפון",
+          email: "אימייל",
+        };
+        const isRequired = field === "name" || field === "phone";
+        const hasError = error?.field === field;
         return (
-          <input
-            ref={inputRef}
-            type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
-            value={formData[field as keyof FormData]}
-            onChange={(e) => handleInputChange(field, e.target.value)}
-            placeholder={
-              field === "name" ? "הקלידו את שמכם..."
-                : field === "phone" ? "05X-XXX-XXXX"
-                : field === "email" ? "example@email.com"
-                : ""
-            }
-            className={`w-full max-w-md mx-auto px-4 sm:px-6 py-3 sm:py-4 min-h-[44px] text-lg sm:text-xl bg-muted/50 border-2 rounded-2xl focus:outline-none text-foreground placeholder:text-muted-foreground text-right transition-colors ${
-              error ? "border-red-500" : "border-border focus:border-primary"
-            }`}
-            dir={field === "email" ? "ltr" : "rtl"}
-          />
+          <div className="relative w-full max-w-md mx-auto">
+            <label htmlFor={field} className="sr-only">{fieldLabels[field] || field}</label>
+            <input
+              ref={inputRef}
+              id={field}
+              name={field}
+              aria-label={fieldLabels[field] || field}
+              aria-required={isRequired}
+              aria-invalid={hasError ? "true" : "false"}
+              aria-describedby={hasError ? `${field}-error` : undefined}
+              type={field === "email" ? "email" : field === "phone" ? "tel" : "text"}
+              value={formData[field as keyof FormData]}
+              onChange={(e) => handleInputChange(field, e.target.value)}
+              placeholder={
+                field === "name" ? "הקלידו את שמכם..."
+                  : field === "phone" ? "05X-XXX-XXXX"
+                  : field === "email" ? "example@email.com"
+                  : ""
+              }
+              className={`w-full px-4 sm:px-6 py-3 sm:py-4 min-h-[44px] text-lg sm:text-xl bg-muted/50 border-2 rounded-2xl focus:outline-none text-foreground placeholder:text-muted-foreground text-right transition-colors ${
+                hasError ? "border-red-500" : "border-border focus:border-primary"
+              }`}
+              dir={field === "email" ? "ltr" : "rtl"}
+            />
+            {hasError && (
+              <span id={`${field}-error`} role="alert" className="text-red-500 text-sm mt-1 block text-right">
+                {error.message}
+              </span>
+            )}
+          </div>
         );
     }
   }, [currentStepData?.id, formData.budget, formData.source, formData.message, formData, error, handleInputChange, handleSelectionWithAutoAdvance]);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <GlassNavbar />
+    <>
+      <Helmet>
+        <title>צור קשר - נקסו | NEXO AGENCY</title>
+        <meta name="description" content="צרו קשר עם נקסו. נשמח לשמוע על הפרויקט שלכם ולהציע פתרון מותאם אישית." />
+        <link rel="canonical" href="https://nexo.agency/contact" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="צור קשר - נקסו" />
+        <meta property="og:description" content="צרו קשר עם נקסו. נשמח לשמוע על הפרויקט שלכם ולהציע פתרון מותאם אישית." />
+        <meta property="og:url" content="https://nexo.agency/contact" />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="צור קשר - נקסו" />
+        <meta name="twitter:description" content="צרו קשר עם נקסו. נשמח לשמוע על הפרויקט שלכם ולהציע פתרון מותאם אישית." />
+        <meta property="og:image" content="https://nexo.agency/og-image.jpg" />
+        <meta name="twitter:image" content="https://nexo.agency/og-image.jpg" />
+        <link rel="alternate" hreflang="he" href="https://nexo.agency/contact" />
+        <link rel="alternate" hreflang="x-default" href="https://nexo.agency/contact" />
+        <script type="application/ld+json">
+          {JSON.stringify(localBusinessSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(contactBreadcrumbSchema)}
+        </script>
+      </Helmet>
 
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <GlassNavbar />
+
+      <main id="main-content">
       {/* Hero Section - Clean and Fast */}
       <section className="min-h-screen min-h-[100dvh] flex items-center bg-hero-bg relative overflow-hidden">
-        {/* Globe Background - Centered */}
+        {/* Globe Background - Centered with lazy loading */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[600px] md:h-[600px] lg:w-[800px] lg:h-[800px] opacity-60">
-            <Globe className="w-full h-full" />
+          <div className="w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] opacity-60">
+            <ErrorBoundary fallback={<SectionErrorFallback />}>
+              <Suspense fallback={<div className="animate-pulse bg-muted h-full w-full rounded-full" />}>
+                <Globe className="w-full h-full" />
+              </Suspense>
+            </ErrorBoundary>
           </div>
         </div>
         {/* Gradient Overlays */}
@@ -425,13 +523,13 @@ const ContactPage = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-5xl mx-auto text-center"
           >
-            <h1 className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.95] mb-6 sm:mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-hero-fg leading-[0.95] mb-6 sm:mb-8">
               בואו נבנה משהו
               <br />
               <span className="text-gradient">מדהים ביחד.</span>
             </h1>
 
-            <p className="text-hero-fg/60 text-base sm:text-xl md:text-2xl leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-12">
+            <p className="text-hero-fg/60 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-12">
               יש לכם רעיון שמחכה לצאת לאור? אנחנו כאן כדי להפוך אותו למציאות דיגיטלית שמייצרת תוצאות.
             </p>
 
@@ -477,7 +575,7 @@ const ContactPage = () => {
 
 
       {/* Contact Section with Embedded Form */}
-      <section id="contact-form" ref={contactRef} className="py-16 sm:py-24 md:py-32 bg-background">
+      <section id="contact-form" ref={contactRef} className="py-16 sm:py-24 md:py-32 bg-background scroll-mt-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 md:gap-16 max-w-6xl mx-auto">
             {/* Left - Contact Info */}
@@ -486,10 +584,10 @@ const ContactPage = () => {
               animate={isContactInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7 }}
             >
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-4">
                 דברו איתנו ישירות
               </h2>
-              <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8">
+              <p className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6 sm:mb-8">
                 צוות מרוחק, תוצאות קרובות. אנחנו זמינים בכל ערוץ שנוח לכם.
               </p>
 
@@ -540,23 +638,19 @@ const ContactPage = () => {
                 </a>
               </div>
 
-              {/* Social */}
+              {/* Quick WhatsApp */}
               <div>
-                <p className="text-muted-foreground text-sm mb-4">עקבו אחרינו</p>
-                <div className="flex gap-2 sm:gap-3">
-                  {socialLinks.map((social, index) => (
-                    <a
-                      key={index}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`w-11 h-11 sm:w-12 sm:h-12 min-h-[44px] min-w-[44px] rounded-xl border border-border flex items-center justify-center text-muted-foreground hover:text-white hover:border-transparent transition-all ${social.color}`}
-                      aria-label={social.label}
-                    >
-                      <social.icon className="w-5 h-5" />
-                    </a>
-                  ))}
-                </div>
+                <p className="text-muted-foreground text-sm mb-4">צרו קשר מהיר</p>
+                <a
+                  href={whatsappLink.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-600 hover:bg-green-500 hover:text-white hover:border-transparent transition-all min-h-[44px]"
+                  aria-label={whatsappLink.label}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  <span className="font-medium">שלחו הודעה בוואטסאפ</span>
+                </a>
               </div>
             </motion.div>
 
@@ -660,14 +754,16 @@ const ContactPage = () => {
 
                         {renderStepContent()}
 
-                        {/* Error Message */}
-                        {error && (
+                        {/* Error Message - for submit errors only (field errors are shown inline) */}
+                        {error && error.field === "submit" && (
                           <motion.div
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
+                            role="alert"
+                            aria-live="assertive"
                             className="flex items-center justify-center gap-2 mt-4 text-red-500"
                           >
-                            <AlertCircle className="w-4 h-4" />
+                            <AlertCircle className="w-4 h-4" aria-hidden="true" />
                             <span className="text-sm">{error.message}</span>
                           </motion.div>
                         )}
@@ -679,6 +775,7 @@ const ContactPage = () => {
                       <button
                         onClick={handleBack}
                         disabled={currentStep === 0}
+                        aria-label="הקודם"
                         className={`flex items-center gap-2 px-3 sm:px-4 py-2 min-h-[44px] rounded-lg transition-all ${
                           currentStep === 0
                             ? "opacity-0 pointer-events-none"
@@ -769,6 +866,7 @@ const ContactPage = () => {
           </motion.div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <footer className="bg-hero-bg border-t border-hero-fg/10 py-6 sm:py-8">
@@ -804,9 +902,10 @@ const ContactPage = () => {
               <span className="text-xs font-semibold tracking-wider">Nexo</span>
             </a>
           </div>
-        </div>
-      </footer>
-    </div>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 };
 

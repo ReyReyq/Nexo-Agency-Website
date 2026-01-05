@@ -4,6 +4,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { handleCorsAndCsrf } from './_csrf';
+import { applyRateLimit } from './_rate-limit';
 
 interface FormData {
   name: string;
@@ -55,6 +57,19 @@ const sourceLabels: Record<string, string> = {
   'portfolio': 'תיק עבודות',
   'other': 'אחר',
 };
+
+/**
+ * Validate Israeli phone number
+ */
+function isValidIsraeliPhone(phone: string): boolean {
+  // Remove spaces, dashes, and parentheses
+  const cleaned = phone.replace(/[-\s()]/g, '');
+  // Israeli mobile: 05X-XXXXXXX (10 digits starting with 05)
+  // Israeli landline: 0X-XXXXXXX (9 digits starting with 0)
+  const mobileRegex = /^05\d{8}$/;
+  const landlineRegex = /^0[2-9]\d{7}$/;
+  return mobileRegex.test(cleaned) || landlineRegex.test(cleaned);
+}
 
 /**
  * Create record in Airtable
@@ -286,19 +301,20 @@ async function sendNotificationEmail(payload: SubmissionPayload): Promise<boolea
  * Main handler
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  // Handle CORS and CSRF protection
+  // This validates Origin/Referer headers to prevent cross-site request forgery
+  if (!handleCorsAndCsrf(req, res)) {
+    return; // Request was handled (preflight response or CSRF error)
   }
 
   // Only accept POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Apply rate limiting (5 requests per minute per IP)
+  if (!applyRateLimit(req, res, 'submit-form')) {
+    return; // Request was rate limited
   }
 
   try {
@@ -307,6 +323,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Validate required fields
     if (!payload.formData?.name || !payload.formData?.phone) {
       return res.status(400).json({ error: 'Name and phone are required' });
+    }
+
+    // Validate Israeli phone number
+    if (payload.formData.phone && !isValidIsraeliPhone(payload.formData.phone)) {
+      return res.status(400).json({ error: 'מספר טלפון לא תקין' });
     }
 
     // Submit to both services in parallel

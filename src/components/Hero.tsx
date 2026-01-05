@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useThrottleCallback } from "@/hooks/useThrottleCallback";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 
 // Spring configuration - defined outside component to prevent recreating on each render
@@ -18,6 +19,10 @@ const heroImages = [
   "/images/hero/team-collaboration.webp",
 ];
 
+// Hero images use single high-quality source
+// Note: srcset was removed because responsive variants (-sm, -md) don't exist
+// The browser will scale down the 1920w image as needed
+
 // Distance threshold in pixels before changing image
 const MOUSE_DISTANCE_THRESHOLD = 800;
 
@@ -33,7 +38,7 @@ const lineVariants = {
     transition: {
       duration: 0.8,
       delay: i * 0.12,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   }),
 };
@@ -46,7 +51,7 @@ const fadeUpVariants = {
     transition: {
       duration: 0.7,
       delay,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   }),
 };
@@ -55,11 +60,13 @@ const Hero = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const mousePositionRef = useRef({ x: 0, y: 0 });
   const accumulatedDistanceRef = useRef(0);
   const isInitializedRef = useRef(false);
+  const prefersReducedMotion = useReducedMotion();
 
   // Magnetic button effect
   const mouseX = useMotionValue(0);
@@ -73,18 +80,33 @@ const Hero = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Check for mobile viewport to disable parallax
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end start"],
-    layoutEffect: false, // Prevent layout thrashing - use passive scroll measurement
+    offset: ["start start", "end start"] as const,
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.3]);
-  const textY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  // Disable parallax effects when reduced motion is preferred
+  const imageScale = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.3]);
+  const textY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, 150]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], prefersReducedMotion ? [1, 1] : [1, 0]);
 
   // Mouse movement handler for image changes
+  // Disabled when reduced motion is preferred - no image cycling
   const handleMouseMove = useCallback((e: MouseEvent) => {
+    // Skip image cycling when reduced motion is preferred
+    if (prefersReducedMotion) return;
+
     // Check if mouse is within hero section
     if (!sectionRef.current) return;
 
@@ -121,7 +143,7 @@ const Hero = () => {
 
     // Update reference position
     mousePositionRef.current = currentPos;
-  }, []);
+  }, [prefersReducedMotion]);
 
   // Throttle the mouse move handler to ~60fps
   const throttledMouseMove = useThrottleCallback(handleMouseMove, 16);
@@ -132,15 +154,13 @@ const Hero = () => {
     return () => window.removeEventListener("mousemove", throttledMouseMove);
   }, [throttledMouseMove]);
 
-  const scrollToContact = useCallback(() => {
-    const element = document.querySelector("#contact");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+  const navigateToContact = useCallback(() => {
+    // Navigate to contact page and scroll to the form section
+    window.location.href = "/contact#contact-form";
   }, []);
 
   // Magnetic button handler - memoized to prevent unnecessary re-renders
-  const handleButtonMouseMove = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleButtonMouseMove = useCallback((e: React.MouseEvent) => {
     if (!buttonRef.current) return;
     const rect = buttonRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -168,7 +188,7 @@ const Hero = () => {
       {/* Spotlight Effect - Positioned at top-right */}
       <Spotlight
         className="-top-40 right-0 md:right-60 md:-top-20"
-        fill="#FF1493"
+        fill="hsl(var(--primary-bright))"
       />
 
       {/* Background Image with Parallax */}
@@ -181,13 +201,12 @@ const Hero = () => {
             exit={{ opacity: 0 }}
             transition={{ duration: currentImage === 0 ? 0 : 0.5 }}
             className="absolute inset-0"
-            style={{ scale: imageScale }}
+            style={isMobile ? undefined : { scale: imageScale }}
           >
-            {/* Hero images: Above the fold - no lazy loading needed, but add dimensions for layout stability */}
-            {/* TODO: Consider converting external Unsplash URLs to local optimized images for better performance */}
+            {/* Hero images: Above the fold - no lazy loading, high priority fetch */}
             <img
               src={heroImages[currentImage]}
-              alt="Creative work"
+              alt="עבודה יצירתית"
               width={1920}
               height={1080}
               decoding="async"
@@ -203,26 +222,29 @@ const Hero = () => {
       </div>
 
       {/* Background Beams Effect - Subtle animated beams */}
-      <BackgroundBeams className="opacity-30" />
+      {/* Disabled on mobile for performance - complex SVG animations are expensive */}
+      {!isMobile && <BackgroundBeams className="opacity-30" />}
 
       {/* Content - Bottom Right with text reveal animations */}
       <motion.div
-        style={{ y: textY, opacity }}
+        style={isMobile ? { opacity } : { y: textY, opacity }}
         className="relative z-10 container mx-auto px-4 sm:px-6 md:px-12 lg:px-16 pb-16 sm:pb-24 md:pb-32"
       >
         <div className="max-w-4xl ml-auto text-right" dir="rtl">
-          {/* Stacked Headlines with reveal animation */}
+          {/* Stacked Headlines with reveal animation - Single h1 for SEO */}
+          <h1 className="sr-only">הופכים חזון למציאות דיגיטלית.</h1>
           {heroHeadlines.map((line, index) => (
             <div key={index} className="overflow-hidden">
-              <motion.h1
+              <motion.span
                 custom={index}
                 initial="hidden"
                 animate={hasAnimated ? "visible" : "hidden"}
                 variants={lineVariants}
-                className="text-[clamp(2.5rem,12vw,6rem)] sm:text-[clamp(3rem,10vw,7rem)] md:text-[clamp(4rem,10vw,8rem)] lg:text-[clamp(5rem,9vw,10rem)] font-black text-hero-fg leading-[0.85] tracking-[-0.02em]"
+                aria-hidden="true"
+                className="block text-fluid-hero sm:text-[clamp(3rem,10vw,7rem)] md:text-[clamp(4rem,10vw,8rem)] lg:text-[clamp(5rem,9vw,10rem)] font-black text-hero-fg leading-[0.85] tracking-[-0.02em]"
               >
                 {line}
-              </motion.h1>
+              </motion.span>
             </div>
           ))}
 
@@ -232,7 +254,7 @@ const Hero = () => {
             initial="hidden"
             animate={hasAnimated ? "visible" : "hidden"}
             variants={fadeUpVariants}
-            className="text-hero-fg/70 text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
+            className="text-hero-fg/70 text-fluid-base sm:text-fluid-lg md:text-fluid-xl lg:text-fluid-2xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
           >
             סוכנות דיגיטל שמובילה מותגים לצמיחה אמיתית. אסטרטגיה, עיצוב ופיתוח - הכל תחת קורת גג אחת.
           </motion.p>
@@ -253,7 +275,7 @@ const Hero = () => {
               className="inline-block"
             >
               <ShimmerButton
-                onClick={scrollToContact}
+                onClick={navigateToContact}
                 shimmerColor="rgba(255, 255, 255, 0.5)"
                 shimmerSize="0.1em"
                 shimmerDuration="2.5s"

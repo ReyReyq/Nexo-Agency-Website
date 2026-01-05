@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo, memo, useCallback, lazy, Suspense, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, useInView } from "framer-motion";
 import {
   ArrowLeft,
@@ -12,6 +13,7 @@ import GlassNavbar from "@/components/GlassNavbar";
 import Footer from "@/components/Footer";
 import ServiceHeroBackground from "@/components/ServiceHeroBackground";
 import Magnet from "@/components/Magnet";
+import ErrorBoundary, { SectionErrorFallback } from "@/components/ErrorBoundary";
 import { cn } from "@/lib/utils";
 import {
   getServiceBySlug,
@@ -283,17 +285,17 @@ SubServicesSection.displayName = 'SubServicesSection';
 
 // Service images for bento cards
 const serviceImages: Record<string, string> = {
-  "web-development": "/images/services/web-development.jpg",
-  "ecommerce": "/images/services/ecommerce.jpg",
-  "branding": "/images/services/branding-design.jpg",
-  "ai-automation": "/images/services/ai-automation.jpg",
-  "digital-marketing": "/images/services/digital-marketing.jpg",
-  "seo": "/images/services/seo-optimization.jpg",
-  "social-media": "/images/services/social-media-marketing.jpg",
-  "ai-images": "/images/services/ai-images.jpg",
-  "strategy": "/images/services/business-strategy.jpg",
-  "app-development": "/images/services/app-development.jpg",
-  "custom-development": "/images/services/custom-development.jpg",
+  "web-development": "/images/services/web-development.webp",
+  "ecommerce": "/images/services/ecommerce.webp",
+  "branding": "/images/services/branding-design.webp",
+  "ai-automation": "/images/services/ai-automation.webp",
+  "digital-marketing": "/images/services/digital-marketing.webp",
+  "seo": "/images/services/seo-optimization.webp",
+  "social-media": "/images/services/social-media-marketing.webp",
+  "ai-images": "/images/services/ai-images.webp",
+  "strategy": "/images/services/business-strategy.webp",
+  "app-development": "/images/services/app-development.webp",
+  "custom-development": "/images/services/custom-development.webp",
 };
 
 // Bento card sizes for 3 cards layout
@@ -447,7 +449,7 @@ const VIEWPORT_ONCE = { once: true };
 
 // Loading fallback for lazy components
 const SectionLoader = memo(() => (
-  <div className="min-h-[50vh] flex items-center justify-center bg-[#FAF9F6]">
+  <div className="min-h-[50vh] flex items-center justify-center bg-nexo-light">
     <div className="w-10 h-10 border-3 border-primary/30 border-t-primary rounded-full animate-spin" />
   </div>
 ));
@@ -541,46 +543,120 @@ const ServiceDetail = () => {
     return null;
   }
 
+  // JSON-LD Structured Data Schema for Service
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": service.name,
+    "description": service.description || `${service.name} - שירותי נקסו`,
+    "provider": {
+      "@type": "Organization",
+      "name": "NEXO AGENCY",
+      "url": "https://nexo.agency"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "Israel"
+    },
+    "url": `https://nexo.agency/services/${service.slug}`
+  };
+
+  // BreadcrumbList JSON-LD Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+      { "@type": "ListItem", "position": 2, "name": "שירותים", "item": "https://nexo.agency/services" },
+      { "@type": "ListItem", "position": 3, "name": service.name, "item": `https://nexo.agency/services/${service.slug}` }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-x-clip">
+      {/* SEO Meta Tags and JSON-LD Structured Data */}
+      <Helmet>
+        <title>{service.name} | NEXO AGENCY</title>
+        <meta name="description" content={service.description || `${service.name} - שירותי נקסו`} />
+        <link rel="canonical" href={`https://nexo.agency/services/${service.slug}`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={`${service.name} | NEXO AGENCY`} />
+        <meta property="og:description" content={service.description || `${service.name} - שירותי נקסו`} />
+        <meta property="og:url" content={`https://nexo.agency/services/${service.slug}`} />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${service.name} | NEXO AGENCY`} />
+        <meta name="twitter:description" content={service.description || `${service.name} - שירותי נקסו`} />
+        <meta property="og:image" content="https://nexo.agency/og-image.jpg" />
+        <meta name="twitter:image" content="https://nexo.agency/og-image.jpg" />
+        <link rel="alternate" hreflang="he" href={`https://nexo.agency/services/${service.slug}`} />
+        <link rel="alternate" hreflang="x-default" href={`https://nexo.agency/services/${service.slug}`} />
+        <script type="application/ld+json">
+          {JSON.stringify(serviceSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      </Helmet>
+
       <GlassNavbar />
-      <ServiceHero service={service} />
 
-      {/* Sub-Services Grid - Our services in the field */}
-      <Suspense fallback={<div className="h-96 bg-white" />}>
-        <SubServicesGridSection service={service} />
-      </Suspense>
+      <main id="main-content">
+        {/* Hero with animated background - wrapped in ErrorBoundary for WebGL safety */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <ServiceHero service={service} />
+        </ErrorBoundary>
 
-      {/* Differentiators Section - Why choose us (Bento Grid) */}
-      <Suspense fallback={<div className="h-96 bg-background" />}>
-        <DifferentiatorsSection service={service} />
-      </Suspense>
+        {/* Sub-Services Grid - Our services in the field */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<div className="h-96 bg-white" />}>
+            <SubServicesGridSection service={service} />
+          </Suspense>
+        </ErrorBoundary>
 
-      {/* Case Study Highlight - Success story */}
-      <Suspense fallback={<div className="h-96 bg-background" />}>
-        <CaseStudyHighlight service={service} />
-      </Suspense>
+        {/* Differentiators Section - Why choose us (Bento Grid) */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<div className="h-96 bg-background" />}>
+            <DifferentiatorsSection service={service} />
+          </Suspense>
+        </ErrorBoundary>
 
-      {/* How it Works - Process Section with scroll-driven animation */}
-      <Suspense fallback={<SectionLoader />}>
-        <ProcessSection serviceId={service.slug} />
-      </Suspense>
+        {/* Case Study Highlight - Success story */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<div className="h-96 bg-background" />}>
+            <CaseStudyHighlight service={service} />
+          </Suspense>
+        </ErrorBoundary>
 
-      {/* FAQ Section - Common questions (same as homepage) */}
-      <Suspense fallback={<SectionLoader />}>
-        <FAQSection />
-      </Suspense>
+        {/* How it Works - Process Section with scroll-driven animation */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<SectionLoader />}>
+            <ProcessSection serviceId={service.slug} />
+          </Suspense>
+        </ErrorBoundary>
 
-      {/* Related Services - Other services */}
-      <RelatedServicesSection service={service} />
+        {/* FAQ Section - Common questions (same as homepage) */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<SectionLoader />}>
+            <FAQSection />
+          </Suspense>
+        </ErrorBoundary>
 
-      {/* Service Blog Section - Related articles */}
-      <Suspense fallback={<div className="h-96 bg-background" />}>
-        <ServiceBlogSection service={service} />
-      </Suspense>
+        {/* Related Services - Other services */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <RelatedServicesSection service={service} />
+        </ErrorBoundary>
 
-      {/* CTA Section */}
-      <CTASection service={service} />
+        {/* Service Blog Section - Related articles */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<div className="h-96 bg-background" />}>
+            <ServiceBlogSection service={service} />
+          </Suspense>
+        </ErrorBoundary>
+
+        {/* CTA Section */}
+        <CTASection service={service} />
+      </main>
 
       <Footer />
     </div>

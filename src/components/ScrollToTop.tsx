@@ -19,7 +19,7 @@ export function ScrollToTop() {
     const timeoutId = setTimeout(() => {
       if (hash) {
         // If there's a hash, scroll to that element
-        const element = document.querySelector(hash);
+        const element = document.querySelector(hash) as HTMLElement | null;
         if (element) {
           if (lenis) {
             lenis.scrollTo(element, { offset: 0, duration: 0.8, immediate: false });

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
+  <url><loc>https://nexo.agency/</loc><lastmod>2026-01-05</lastmod><priority>1.0</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://nexo.agency/about</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services</loc><lastmod>2026-01-05</lastmod><priority>0.9</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/portfolio</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog</loc><lastmod>2026-01-05</lastmod><priority>0.9</priority><changefreq>weekly</changefreq></url>
+  <url><loc>https://nexo.agency/contact</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Main Service Pages -->
+  <url><loc>https://nexo.agency/services/web-development</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ecommerce</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/branding</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ai-automation</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/digital-marketing</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Secondary Service Pages -->
+  <url><loc>https://nexo.agency/services/seo</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/social-media</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/strategy</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/app-development</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/custom-development</loc><lastmod>2026-01-05</lastmod><priority>0.8</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Web Development Sub-Services -->
+  <url><loc>https://nexo.agency/services/web-development/landing-pages</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/web-development/wordpress</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/web-development/web-apps</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/web-development/corporate-sites</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/web-development/catalog-sites</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- E-commerce Sub-Services -->
+  <url><loc>https://nexo.agency/services/ecommerce/shopify</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ecommerce/woocommerce</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ecommerce/payments</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ecommerce/inventory</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Branding Sub-Services -->
+  <url><loc>https://nexo.agency/services/branding/logo-design</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/branding/visual-identity</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/branding/brand-book</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/branding/copywriting</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- AI Automation Sub-Services -->
+  <url><loc>https://nexo.agency/services/ai-automation/chatbots</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ai-automation/automation</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/ai-automation/ai-content</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Digital Marketing Sub-Services -->
+  <url><loc>https://nexo.agency/services/digital-marketing/google-ads</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/digital-marketing/meta-ads</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/digital-marketing/email-marketing</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/digital-marketing/influencer</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- SEO Sub-Services -->
+  <url><loc>https://nexo.agency/services/seo/technical-seo</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/seo/local-seo</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/seo/content-seo</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/seo/link-building</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Social Media Sub-Services -->
+  <url><loc>https://nexo.agency/services/social-media/instagram-marketing</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/social-media/facebook-marketing</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/social-media/linkedin-marketing</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/social-media/tiktok-marketing</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Strategy Sub-Services -->
+  <url><loc>https://nexo.agency/services/strategy/market-research</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/strategy/digital-audit</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/strategy/growth-strategy</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/strategy/conversion-optimization</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- App Development Sub-Services -->
+  <url><loc>https://nexo.agency/services/app-development/ios-apps</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/app-development/android-apps</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/app-development/cross-platform</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/app-development/pwa</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Custom Development Sub-Services -->
+  <url><loc>https://nexo.agency/services/custom-development/saas-development</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/custom-development/api-development</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/custom-development/dashboard-systems</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/services/custom-development/automation-systems</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Portfolio Case Studies -->
+  <url><loc>https://nexo.agency/portfolio/simplyhebrew</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/portfolio/teenvestsor</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/portfolio/sione</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/portfolio/fashion-hub</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/portfolio/techconnect</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/portfolio/finflow</loc><lastmod>2026-01-05</lastmod><priority>0.7</priority><changefreq>monthly</changefreq></url>
+
+  <!-- Blog Articles -->
+  <url><loc>https://nexo.agency/blog/seo-guide-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/new-website-seo-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/common-seo-mistakes</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/keyword-research-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/seo-pricing-guide-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/local-seo-guide-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/organic-vs-paid-seo-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ux-ui-design-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/video-marketing-guide-business-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/website-redesign-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/website-speed-optimization-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/website-pricing-guide-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/wordpress-vs-wix-comparison-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/landing-page-guide-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/business-website-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/responsive-design-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/website-maintenance-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/website-development-cost-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/app-development-guide-business-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/instagram-marketing-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/social-media-management-pricing</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/influencer-marketing-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/podcast-marketing-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/tiktok-marketing-guide-business-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/digital-marketing-small-business-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/video-marketing-complete-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/marketing-funnel-complete-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/google-analytics-4-setup-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/google-ads-guide-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/facebook-ads-guide-business-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/linkedin-b2b-marketing-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/google-vs-facebook-ads-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/email-marketing-guide-business-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/email-marketing-automation-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/whatsapp-chatbot-guide-business-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/chatbot-implementation-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ai-automation-business-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/crm-integration-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ai-automation-business-roi-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/digital-strategy-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/content-marketing-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/content-marketing-strategy-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/shopify-vs-woocommerce-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/virtual-store-complete-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/shopify-vs-woocommerce-israel-comparison</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/business-branding-complete-guide-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/logo-design-cost-israel-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/logo-design-pricing-process-tips</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ai-business-2024</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/design-trends-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/branding-mistakes</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/website-conversion</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/digital-trends-2024</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ux-psychology</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ecommerce-growth</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/ai-development</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/digital-marketing-guide</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/advanced-ux-design</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/seo-strategies-2025</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://nexo.agency/blog/digital-branding</loc><lastmod>2026-01-05</lastmod><priority>0.6</priority><changefreq>monthly</changefreq></url>
+</urlset>

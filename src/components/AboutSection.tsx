@@ -46,8 +46,7 @@ const AboutSection = () => {
     >
       {/* Section with Cream Background - full height to fill sticky container */}
       <div
-        className="h-screen pt-8 md:pt-12 pb-16 md:pb-24 relative flex items-center justify-center overflow-visible"
-        style={{ backgroundColor: "#FAF9F6" }}
+        className="h-screen h-[100dvh] pt-8 md:pt-12 pb-16 md:pb-24 relative flex items-center justify-center overflow-visible bg-nexo-light"
       >
         {/* Ribbon Background - without top ribbons */}
         <AboutRibbonBackground />
@@ -68,7 +67,7 @@ const AboutSection = () => {
                   position: 'relative',
                   fontSize: 'clamp(2.25rem, 5vw, 3.75rem)',
                   lineHeight: 1.1,
-                  color: '#1a1a1a'
+                  color: 'var(--nexo-charcoal)'
                 }}
               >
                 <VariableProximity
@@ -104,7 +103,7 @@ const AboutSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[#3d3d3d] text-lg leading-relaxed mb-10"
+              className="text-nexo-slate text-lg leading-relaxed mb-10"
             >
               לא סתם אתרים יפים. מערכות חכמות שמייצרות לקוחות, חוסכות זמן ומגדילות רווחים - אוטומטית.
             </motion.p>
@@ -126,9 +125,9 @@ const AboutSection = () => {
                       <IconComponent className="w-7 h-7 text-primary transition-transform duration-300 group-hover:scale-110" />
                     </div>
                     {/* Title */}
-                    <span className="text-[#1a1a1a] font-bold text-sm md:text-base block mb-1.5">{value.title}</span>
+                    <span className="text-nexo-charcoal font-bold text-sm md:text-base block mb-1.5">{value.title}</span>
                     {/* Description */}
-                    <p className="text-[#666666] text-xs md:text-sm leading-relaxed">{value.desc}</p>
+                    <p className="text-nexo-ash text-xs md:text-sm leading-relaxed">{value.desc}</p>
                   </motion.div>
                 );
               })}

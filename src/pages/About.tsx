@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useMemo, memo } from "react";
+import { Helmet } from "react-helmet-async";
 import { Lightbulb, Eye, Heart, Sparkles, Ear, Users, RefreshCw, TrendingUp, Rocket, Target, Building2, BarChart3, ArrowLeft, Zap, Gauge, Fingerprint, Flame } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
@@ -12,6 +13,16 @@ import StaggerValues from "@/components/ui/StaggerValues";
 const VIEWPORT_ONCE = { once: true } as const;
 const FADE_UP_INITIAL = { opacity: 0, y: 40 } as const;
 const FADE_UP_ANIMATE = { opacity: 1, y: 0 } as const;
+
+// BreadcrumbList JSON-LD Schema
+const aboutBreadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+    { "@type": "ListItem", "position": 2, "name": "אודות", "item": "https://nexo.agency/about" }
+  ]
+};
 
 // Values data
 const values = [
@@ -147,9 +158,35 @@ ClientProfileCard.displayName = 'ClientProfileCard';
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      <CustomCursor />
-      <GlassNavbar />
+    <>
+      <Helmet>
+        <title>אודות נקסו - הסיפור שלנו | NEXO AGENCY</title>
+        <meta name="description" content="הכירו את הצוות שמאחורי נקסו. סוכנות דיגיטל עם חזון להוביל עסקים להצלחה דיגיטלית." />
+        <link rel="canonical" href="https://nexo.agency/about" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="אודות נקסו - הסיפור שלנו" />
+        <meta property="og:description" content="הכירו את הצוות שמאחורי נקסו. סוכנות דיגיטל עם חזון להוביל עסקים להצלחה דיגיטלית." />
+        <meta property="og:url" content="https://nexo.agency/about" />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="אודות נקסו - הסיפור שלנו" />
+        <meta name="twitter:description" content="הכירו את הצוות שמאחורי נקסו. סוכנות דיגיטל עם חזון להוביל עסקים להצלחה דיגיטלית." />
+        <meta property="og:image" content="https://nexo.agency/og-image.jpg" />
+        <meta name="twitter:image" content="https://nexo.agency/og-image.jpg" />
+        <link rel="alternate" hreflang="he" href="https://nexo.agency/about" />
+        <link rel="alternate" hreflang="x-default" href="https://nexo.agency/about" />
+        <script type="application/ld+json">
+          {JSON.stringify(aboutBreadcrumbSchema)}
+        </script>
+      </Helmet>
+
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <CustomCursor />
+        <GlassNavbar />
+
+      <main id="main-content">
+      {/* Screen-reader accessible H1 for SEO */}
+      <h1 className="sr-only">אודות נקסו - סוכנות דיגיטל מובילה בישראל</h1>
 
       {/* Hero with Shuffle Grid */}
       <ShuffleHero />
@@ -365,9 +402,11 @@ const About = () => {
           </motion.div>
         </div>
       </section>
+      </main>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </>
   );
 };
 

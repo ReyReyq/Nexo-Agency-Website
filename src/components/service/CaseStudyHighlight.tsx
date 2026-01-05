@@ -41,7 +41,7 @@ const projects = [
     client: "SIONÉ Official",
     category: "E-Commerce",
     description: "חנות אונליין יוקרתית עם חוויית קנייה פרימיום ועיצוב אלגנטי",
-    image: "/portfolio/sione/sione-homepage-hero.png",
+    image: "/portfolio/sione/sione-homepage-hero.webp",
     link: "/portfolio/sione",
     tags: ["E-Commerce", "Fashion", "Premium"],
     Icon: ShoppingBag,
@@ -54,7 +54,7 @@ const projects = [
     client: "TeenVestor",
     category: "FinTech",
     description: "פלטפורמת לימוד השקעות לבני נוער עם קורסים אינטראקטיביים",
-    image: "/portfolio/teenvestsor/teenvestsor-hero.png",
+    image: "/portfolio/teenvestsor/teenvestsor-hero.webp",
     link: "/portfolio/teenvestsor",
     tags: ["FinTech", "Education", "Courses"],
     Icon: TrendingUp,
@@ -100,7 +100,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
   return (
     <section
       className={cn(
-        "relative py-28 md:py-40 overflow-hidden bg-[#FAFAFA]",
+        "relative py-28 md:py-40 overflow-hidden bg-nexo-section",
         className
       )}
     >
@@ -131,7 +131,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
                   סיפורי הצלחה
                 </span>
               </div>
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-[#1a1a1a] leading-[0.9] tracking-tight">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-nexo-charcoal leading-[0.9] tracking-tight">
                 תוצאות שמדברות
                 <br />
                 <span style={{ color: service.accentColor }}>בעד עצמן</span>
@@ -143,7 +143,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
               initial={fadeInUp.initial}
               animate={isHeaderInView ? fadeInUp.animate : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-[#6a6a6a] text-lg md:text-xl max-w-sm leading-relaxed"
+              className="text-nexo-ash text-lg md:text-xl max-w-sm leading-relaxed"
               dir="rtl"
             >
               עבודות נבחרות שמציגות את הגישה שלנו לעיצוב ופיתוח דיגיטלי
@@ -188,7 +188,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
 
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
-              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
                 {memoizedProjects[0].category}
               </span>
             </div>
@@ -265,7 +265,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
 
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
-              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
                 {memoizedProjects[1].category}
               </span>
             </div>
@@ -328,7 +328,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
 
             {/* Category Badge */}
             <div className="absolute top-5 right-5 z-10">
-              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-[#1a1a1a] rounded-full shadow-sm">
+              <span className="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
                 {memoizedProjects[2].category}
               </span>
             </div>
@@ -373,7 +373,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
           <Button
             asChild
             size="lg"
-            className="group px-8 py-6 text-base font-bold rounded-full bg-[#1a1a1a] hover:bg-primary transition-colors duration-300"
+            className="group px-8 py-6 text-base font-bold rounded-full bg-nexo-charcoal hover:bg-primary transition-colors duration-300"
           >
             <a href="/portfolio" className="flex items-center gap-3">
               <span>צפייה בכל הפרויקטים</span>

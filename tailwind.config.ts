@@ -18,6 +18,7 @@ export default {
         display: ['Clash Display', 'Heebo', 'sans-serif'],
       },
       fontSize: {
+        // Fluid typography using clamp() for responsive scaling
         'fluid-xs': 'clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)',
         'fluid-sm': 'clamp(0.875rem, 0.8rem + 0.35vw, 1rem)',
         'fluid-base': 'clamp(1rem, 0.9rem + 0.5vw, 1.125rem)',
@@ -28,6 +29,13 @@ export default {
         'fluid-4xl': 'clamp(2.25rem, 1.75rem + 2.5vw, 3rem)',
         'fluid-5xl': 'clamp(3rem, 2rem + 5vw, 4rem)',
         'fluid-hero': 'clamp(2.5rem, 2rem + 4vw, 5rem)',
+      },
+      containers: {
+        'xs': '20rem',
+        'sm': '24rem',
+        'md': '28rem',
+        'lg': '32rem',
+        'xl': '36rem',
       },
       spacing: {
         'safe-top': 'env(safe-area-inset-top)',
@@ -72,6 +80,8 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          // Bright variant for decorative elements on dark backgrounds only
+          bright: "hsl(var(--primary-bright))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -111,11 +121,50 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Common project colors - replace arbitrary hex values with these
+        nexo: {
+          dark: "#0a0a0a",      // Near black - footer, darkest bg
+          charcoal: "#1a1a1a", // Very dark gray - text, buttons, borders
+          graphite: "#2a2a2a", // Dark gray - hover states
+          slate: "#3d3d3d",    // Dark gray - body text
+          steel: "#4a4a4a",    // Medium-dark gray - secondary text
+          ash: "#6a6a6a",      // Medium gray - muted text
+          silver: "#9a9a9a",   // Light gray - placeholder text
+          smoke: "#c0c0c0",    // Very light gray - subtle elements
+          mist: "#e5e5e5",     // Border gray
+          light: "#FAF9F6",    // Off-white/cream - light backgrounds
+          section: "#FAFAFA",  // Light section bg
+        },
+        brand: {
+          purple: "#8330c2",    // Primary purple accent
+          "purple-light": "#9e4cdc", // Lighter purple
+          violet: "#a474ff",   // Light violet
+          cyan: "#17f1d1",     // Cyan/teal accent
+          orange: "#FFAB70",   // Orange accent
+        },
+        // Accessible color variants - use when contrast is critical
+        accessible: {
+          // Note: The default --primary is now WCAG AA compliant (4.6:1) in light mode
+          // These variants are for special cases requiring even higher contrast
+          // For WCAG AAA (7:1 contrast), use on light backgrounds
+          "primary-aaa": "#9E006F",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      // Standardized transition timing functions
+      // Usage: ease-nexo-default, ease-nexo-smooth, etc.
+      transitionTimingFunction: {
+        'nexo-default': 'cubic-bezier(0.4, 0, 0.2, 1)',     // Standard smooth ease-out
+        'nexo-smooth': 'cubic-bezier(0.25, 0.1, 0.25, 1)',  // Natural ease
+        'nexo-snappy': 'cubic-bezier(0.4, 0, 0, 1)',        // Fast, responsive
+        'nexo-enter': 'cubic-bezier(0, 0, 0.2, 1)',         // Entrance animations
+        'nexo-exit': 'cubic-bezier(0.4, 0, 1, 1)',          // Exit animations
+        'nexo-expressive': 'cubic-bezier(0.16, 1, 0.3, 1)', // Dramatic, hero sections
+        'nexo-gentle': 'cubic-bezier(0.22, 1, 0.36, 1)',    // Subtle UI changes
       },
       keyframes: {
         "accordion-down": {
@@ -125,18 +174,6 @@ export default {
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
-        },
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-20px)" },
-        },
-        "text-reveal": {
-          "0%": { transform: "translateY(100%)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        "slide-up": {
-          "0%": { transform: "translateY(40px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
         },
         marquee: {
           from: { transform: "translateX(0)" },
@@ -175,38 +212,15 @@ export default {
             transform: "translate(-50%, -40%) scale(1)",
           },
         },
-        "spin-slow": {
-          "0%": { transform: "rotate(0deg)" },
-          "100%": { transform: "rotate(360deg)" },
-        },
-        "border-beam": {
-          "0%": {
-            backgroundPosition: "0% 50%",
-            opacity: "0.5"
-          },
-          "50%": {
-            backgroundPosition: "100% 50%",
-            opacity: "1"
-          },
-          "100%": {
-            backgroundPosition: "0% 50%",
-            opacity: "0.5"
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        float: "float 6s ease-in-out infinite",
-        "text-reveal": "text-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-        "slide-up": "slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         marquee: "marquee var(--duration) linear infinite",
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
         "shimmer-slide": "shimmer-slide var(--speed) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
         spotlight: "spotlight 2s ease 0.75s 1 forwards",
-        "spin-slow": "spin-slow 8s linear infinite",
-        "border-beam": "border-beam 4s ease infinite",
       },
     },
   },

@@ -1,11 +1,15 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, lazy, Suspense, memo, useMemo, useCallback } from "react";
+import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import GlassNavbar from "@/components/GlassNavbar";
 import Footer from "@/components/Footer";
-import { Globe } from "@/components/ui/globe";
+import ErrorBoundary, { SectionErrorFallback } from "@/components/ErrorBoundary";
 import { cn } from "@/lib/utils";
+
+// Lazy load heavy WebGL Globe component for better performance
+const Globe = lazy(() => import("@/components/ui/globe").then(mod => ({ default: mod.Globe })));
 import {
   getMainServices,
   getSecondaryServices,
@@ -42,16 +46,16 @@ const sizeClasses: Record<CardSize, string> = {
 
 // New images for services (different from other pages)
 const serviceImages: Record<string, string> = {
-  "web-development": "/images/services/web-development.jpg",
-  "ecommerce": "/images/services/ecommerce.jpg",
-  "branding": "/images/services/branding-design.jpg",
-  "ai-automation": "/images/services/ai-automation.jpg",
-  "digital-marketing": "/images/services/digital-marketing.jpg",
-  "seo": "/images/services/seo-optimization.jpg",
-  "social-media": "/images/services/social-media-marketing.jpg",
-  "strategy": "/images/services/business-strategy.jpg",
-  "app-development": "/images/services/app-development.jpg",
-  "custom-development": "/images/services/custom-development.jpg",
+  "web-development": "/images/services/web-development.webp",
+  "ecommerce": "/images/services/ecommerce.webp",
+  "branding": "/images/services/branding-design.webp",
+  "ai-automation": "/images/services/ai-automation.webp",
+  "digital-marketing": "/images/services/digital-marketing.webp",
+  "seo": "/images/services/seo-optimization.webp",
+  "social-media": "/images/services/social-media-marketing.webp",
+  "strategy": "/images/services/business-strategy.webp",
+  "app-development": "/images/services/app-development.webp",
+  "custom-development": "/images/services/custom-development.webp",
 };
 
 const ServiceBentoCard = memo(({ service, index, size }: ServiceBentoCardProps) => {
@@ -151,10 +155,14 @@ const ServicesHero = memo(() => {
 
   return (
     <section className="relative min-h-[85vh] flex items-center bg-hero-bg pt-20 overflow-hidden">
-      {/* Globe Background - Centered */}
+      {/* Globe Background - Centered with lazy loading */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-[320px] h-[320px] sm:w-[480px] sm:h-[480px] md:w-[600px] md:h-[600px] lg:w-[800px] lg:h-[800px] opacity-60">
-          <Globe className="w-full h-full" />
+          <ErrorBoundary fallback={<SectionErrorFallback />}>
+            <Suspense fallback={<div className="animate-pulse bg-muted h-full w-full rounded-full" />}>
+              <Globe className="w-full h-full" />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </div>
 
@@ -163,7 +171,7 @@ const ServicesHero = memo(() => {
       <div className="absolute inset-0 bg-gradient-to-r from-hero-bg via-transparent to-hero-bg pointer-events-none" />
 
       {/* Content */}
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           ref={heroRef}
           initial={{ opacity: 0, y: 60 }}
@@ -178,13 +186,13 @@ const ServicesHero = memo(() => {
             className="h-1 bg-primary mb-8"
           />
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-hero-fg leading-[0.9] mb-6 sm:mb-8">
             השירותים
             <br />
             <span className="text-gradient">שלנו.</span>
           </h1>
 
-          <p className="text-hero-fg/70 text-xl md:text-2xl leading-relaxed max-w-2xl mb-10">
+          <p className="text-hero-fg/70 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mb-8 sm:mb-10">
             עיצוב, טכנולוגיה ובינה עסקית שנועדו למטרה אחת - להצמיח את העסק שלך. מהרעיון הראשוני ועד להשקה והלאה.
           </p>
 
@@ -192,18 +200,18 @@ const ServicesHero = memo(() => {
             initial={{ opacity: 0, y: 20 }}
             animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-wrap gap-3 sm:gap-4"
           >
             <Link
               to="/contact#contact-form"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl hover:shadow-primary/20"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl hover:shadow-primary/20"
             >
               בואו נדבר
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <a
               href="#services"
-              className="inline-flex items-center gap-2 bg-white/10 text-hero-fg px-8 py-4 rounded-full text-lg font-medium hover:bg-white/20 transition-all border border-white/20"
+              className="inline-flex items-center gap-2 bg-white/10 text-hero-fg px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-medium hover:bg-white/20 transition-all border border-white/20"
             >
               גלו את השירותים
             </a>
@@ -260,14 +268,14 @@ const ServicesBentoGrid = memo(() => {
   }, []);
 
   return (
-    <section id="services" className="py-12 md:py-20 bg-background">
-      <div className="container mx-auto px-4 md:px-6">
+    <section id="services" className="py-12 sm:py-16 md:py-20 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-8 sm:mb-10 md:mb-12"
         >
           <motion.div
             initial={{ width: 0 }}
@@ -275,10 +283,10 @@ const ServicesBentoGrid = memo(() => {
             viewport={{ once: true }}
             className="h-0.5 bg-primary mx-auto mb-4"
           />
-          <h2 className="text-2xl md:text-4xl font-black text-foreground mb-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-2">
             כל מה שהעסק שלכם צריך
           </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-lg mx-auto">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-lg mx-auto">
             פתרונות דיגיטליים מקיפים שמביאים תוצאות אמיתיות
           </p>
         </motion.div>
@@ -311,25 +319,25 @@ ServicesBentoGrid.displayName = 'ServicesBentoGrid';
 
 const CTASection = memo(() => {
   return (
-    <section className="py-24 md:py-32 bg-background">
-      <div className="container mx-auto px-6 text-center">
+    <section className="py-16 sm:py-24 md:py-32 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="max-w-3xl mx-auto"
         >
-          <Sparkles className="w-12 h-12 text-primary mx-auto mb-6" />
-          <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+          <Sparkles className="w-10 h-10 sm:w-12 sm:h-12 text-primary mx-auto mb-4 sm:mb-6" />
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-4 sm:mb-6">
             מוכנים להתחיל?
           </h2>
-          <p className="text-muted-foreground text-lg mb-8">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg mb-6 sm:mb-8">
             בואו נדבר על איך אנחנו יכולים לעזור לכם להגיע למטרות שלכם.
             שיחת ייעוץ ראשונית - ללא התחייבות.
           </p>
           <Link
             to="/contact#contact-form"
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-full text-lg font-bold hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl hover:shadow-primary/20"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl hover:shadow-primary/20"
           >
             צרו קשר
             <ArrowLeft className="w-5 h-5" />
@@ -355,28 +363,228 @@ const SectionLoader = memo(() => (
 
 SectionLoader.displayName = 'SectionLoader';
 
+// BreadcrumbList JSON-LD Schema
+const servicesBreadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+    { "@type": "ListItem", "position": 2, "name": "שירותים", "item": "https://nexo.agency/services" }
+  ]
+};
+
+// ItemList JSON-LD Schema for Services
+const servicesListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "שירותי נקסו",
+  "description": "שירותי דיגיטל מקצועיים - בניית אתרים, מיתוג, שיווק דיגיטלי ופתרונות AI לעסקים",
+  "numberOfItems": 9,
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "item": {
+        "@type": "Service",
+        "name": "בניית אתרים ופיתוח",
+        "description": "אתרים מותאמים אישית שממירים מבקרים ללקוחות. טכנולוגיה מתקדמת, עיצוב מרהיב, וביצועים יוצאי דופן.",
+        "url": "https://nexo.agency/services/web-development",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "item": {
+        "@type": "Service",
+        "name": "בינה מלאכותית ואוטומציה",
+        "description": "פתרונות AI חכמים שחוסכים זמן וכסף. מצ'אטבוטים ועד אוטומציות מורכבות - הטכנולוגיה של המחר, היום.",
+        "url": "https://nexo.agency/services/ai-automation",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "item": {
+        "@type": "Service",
+        "name": "מיתוג וזהות חזותית",
+        "description": "מותג חזק זה הנכס היקר ביותר שלכם. אנחנו יוצרים זהויות שמספרות סיפור ובונות אמון מהרגע הראשון.",
+        "url": "https://nexo.agency/services/branding",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "item": {
+        "@type": "Service",
+        "name": "חנויות אונליין",
+        "description": "חנויות אונליין שמייצרות מכירות. מ-Shopify ועד פתרונות מותאמים - הכל עם דגש על המרות ונוחות.",
+        "url": "https://nexo.agency/services/ecommerce",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 5,
+      "item": {
+        "@type": "Service",
+        "name": "שיווק דיגיטלי",
+        "description": "קמפיינים חכמים שמביאים לקוחות אמיתיים. לא סתם קליקים - המרות, מכירות, וROI שאפשר למדוד.",
+        "url": "https://nexo.agency/services/digital-marketing",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 6,
+      "item": {
+        "@type": "Service",
+        "name": "קידום אורגני SEO",
+        "description": "קידום אורגני שמביא תנועה איכותית לאורך זמן. אסטרטגיית SEO מקיפה שעובדת.",
+        "url": "https://nexo.agency/services/seo",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 7,
+      "item": {
+        "@type": "Service",
+        "name": "אסטרטגיה דיגיטלית",
+        "description": "אסטרטגיה דיגיטלית מקיפה שמנחה כל החלטה ומובילה לתוצאות מדידות.",
+        "url": "https://nexo.agency/services/strategy",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 8,
+      "item": {
+        "@type": "Service",
+        "name": "פיתוח אפליקציות",
+        "description": "פיתוח אפליקציות לאנדרואיד ו-iOS. מאפליקציות פשוטות ועד פלטפורמות מורכבות.",
+        "url": "https://nexo.agency/services/app-development",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 9,
+      "item": {
+        "@type": "Service",
+        "name": "פיתוח מותאם אישית",
+        "description": "כשפתרונות מדף לא מספיקים - אנחנו בונים בדיוק מה שצריך. פיתוח מותאם לצרכים הייחודיים שלכם.",
+        "url": "https://nexo.agency/services/custom-development",
+        "provider": {
+          "@type": "Organization",
+          "name": "נקסו",
+          "url": "https://nexo.agency"
+        }
+      }
+    }
+  ]
+};
+
 const Services = () => {
   return (
-    <div className="min-h-screen bg-background overflow-x-clip">
-      <GlassNavbar />
-      <ServicesHero />
-      <ServicesBentoGrid />
-      <Suspense fallback={<SectionLoader />}>
-        <ProcessSection />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <FAQSection />
-      </Suspense>
-      <Suspense fallback={<SectionLoader />}>
-        <BlogCarouselSection
-          categories={["שיווק", "שיווק דיגיטלי", "עסקים", "AI & טכנולוגיה", "שיווק תוכן"]}
-          title="מאמרים רלוונטיים"
-          subtitle="טיפים ותובנות לשיפור הנוכחות הדיגיטלית של העסק שלכם"
-        />
-      </Suspense>
-      <CTASection />
-      <Footer />
-    </div>
+    <>
+      <Helmet>
+        <title>השירותים שלנו - נקסו | NEXO AGENCY</title>
+        <meta name="description" content="כל שירותי הדיגיטל במקום אחד. בניית אתרים, מיתוג, שיווק דיגיטלי ופתרונות AI לעסקים." />
+        <link rel="canonical" href="https://nexo.agency/services" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="השירותים שלנו - נקסו" />
+        <meta property="og:description" content="כל שירותי הדיגיטל במקום אחד. בניית אתרים, מיתוג, שיווק דיגיטלי ופתרונות AI לעסקים." />
+        <meta property="og:url" content="https://nexo.agency/services" />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="השירותים שלנו - נקסו" />
+        <meta name="twitter:description" content="כל שירותי הדיגיטל במקום אחד. בניית אתרים, מיתוג, שיווק דיגיטלי ופתרונות AI לעסקים." />
+        <meta property="og:image" content="https://nexo.agency/og-image.jpg" />
+        <meta name="twitter:image" content="https://nexo.agency/og-image.jpg" />
+        <link rel="alternate" hreflang="he" href="https://nexo.agency/services" />
+        <link rel="alternate" hreflang="x-default" href="https://nexo.agency/services" />
+        <script type="application/ld+json">
+          {JSON.stringify(servicesBreadcrumbSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(servicesListSchema)}
+        </script>
+      </Helmet>
+
+      <div className="min-h-screen bg-background overflow-x-clip">
+        <GlassNavbar />
+      <main id="main-content">
+        {/* Hero with Globe - wrapped in ErrorBoundary for WebGL safety */}
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <ServicesHero />
+        </ErrorBoundary>
+
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <ServicesBentoGrid />
+        </ErrorBoundary>
+
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<SectionLoader />}>
+            <ProcessSection />
+          </Suspense>
+        </ErrorBoundary>
+
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<SectionLoader />}>
+            <FAQSection />
+          </Suspense>
+        </ErrorBoundary>
+
+        <ErrorBoundary variant="section" fallback={<SectionErrorFallback />}>
+          <Suspense fallback={<SectionLoader />}>
+            <BlogCarouselSection
+              categories={["שיווק", "שיווק דיגיטלי", "עסקים", "AI & טכנולוגיה", "שיווק תוכן"]}
+              title="מאמרים רלוונטיים"
+              subtitle="טיפים ותובנות לשיפור הנוכחות הדיגיטלית של העסק שלכם"
+            />
+          </Suspense>
+        </ErrorBoundary>
+
+        <CTASection />
+      </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 

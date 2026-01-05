@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { motion, useScroll, useTransform, useSpring, useInView } from "framer-motion";
-import { useRef, useEffect, useState, useMemo, useCallback, memo } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback, memo, lazy, Suspense } from "react";
 import { ArrowLeft, ArrowRight, ExternalLink, Clock, Calendar, Tag, ChevronLeft } from "lucide-react";
 import { getCaseStudyBySlug } from "@/data/caseStudies";
 import GlassNavbar from "@/components/GlassNavbar";
@@ -10,11 +11,14 @@ import TeenvestsorWorkflow from "@/components/TeenvestsorWorkflow";
 import LiveWebsitePreview from "@/components/LiveWebsitePreview";
 import Footer from "@/components/Footer";
 import TypeformPopup from "@/components/TypeformPopup";
-import Silk from "@/components/ui/Silk";
+import ErrorBoundary, { WebGLErrorFallback } from "@/components/ErrorBoundary";
 import { dispatchPreloaderComplete } from "@/lib/lenis";
 
+// Lazy load heavy Three.js WebGL Silk component for better performance
+const Silk = lazy(() => import("@/components/ui/Silk"));
+
 // Stable animation configurations to prevent re-creation on each render
-const textRevealTransitionBase = { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] };
+const textRevealTransitionBase = { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const };
 const textRevealInitial = { y: "100%" };
 const textRevealAnimate = { y: 0 };
 
@@ -40,7 +44,7 @@ const TextReveal = memo(({ children, delay = 0, className = "" }: { children: Re
 TextReveal.displayName = 'TextReveal';
 
 // Stable spring transition for magnetic button
-const magneticSpringTransition = { type: "spring", stiffness: 150, damping: 15 };
+const magneticSpringTransition = { type: "spring" as const, stiffness: 150, damping: 15 };
 const defaultPosition = { x: 0, y: 0 };
 
 // Magnetic button component - memoized with stable callbacks
@@ -97,7 +101,7 @@ const FloatingOrb = memo(({ color, size = 200, delay = 0, className = "" }: { co
     duration: 8,
     delay,
     repeat: Infinity,
-    ease: "easeInOut",
+    ease: "easeInOut" as const,
   }), [delay]);
 
   return (
@@ -138,8 +142,8 @@ const transitionDelay0 = { delay: 0 };
 const transitionDelay01 = { delay: 0.1 };
 const transitionDelay02 = { delay: 0.2 };
 const transitionDelay03 = { delay: 0.3 };
-const transitionDelay04Spring = { delay: 0.4, type: "spring", stiffness: 200 };
-const titleTransition = { duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] };
+const transitionDelay04Spring = { delay: 0.4, type: "spring" as const, stiffness: 200 };
+const titleTransition = { duration: 1, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] as const };
 
 // Stable style for silk overlay gradient
 const silkOverlayStyle = {
@@ -148,6 +152,21 @@ const silkOverlayStyle = {
 
 // Spring config for scroll animations
 const springConfig = { stiffness: 100, damping: 30 };
+
+// Helper to generate srcset for case study hero images
+// Supports responsive loading for full-width hero images
+const generateCaseStudySrcSet = (src: string) => {
+  if (!src.startsWith('/portfolio/')) return { src };
+
+  const extension = src.substring(src.lastIndexOf('.'));
+  const basePath = src.substring(0, src.lastIndexOf('.'));
+
+  return {
+    src,
+    srcSet: `${basePath}-sm${extension} 640w, ${basePath}-md${extension} 1024w, ${src} 1920w`,
+    sizes: '100vw', // Hero images are full viewport width
+  };
+};
 
 const CaseStudy = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -272,12 +291,12 @@ const CaseStudy = () => {
 
   if (!caseStudy || !brandColors || !textColors) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAF9F6]">
-        <h1 className="text-4xl font-black text-[#1a1a1a] mb-4">פרויקט לא נמצא</h1>
-        <p className="text-[#666] mb-8">הפרויקט שחיפשת לא קיים במערכת</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-nexo-light">
+        <h1 className="text-4xl font-black text-nexo-charcoal mb-4">פרויקט לא נמצא</h1>
+        <p className="text-nexo-ash mb-8">הפרויקט שחיפשת לא קיים במערכת</p>
         <Link
           to="/portfolio"
-          className="flex items-center gap-2 px-6 py-3 bg-[#1a1a1a] text-white rounded-full hover:bg-primary transition-colors"
+          className="flex items-center gap-2 px-6 py-3 bg-nexo-charcoal text-white rounded-full hover:bg-primary transition-colors"
         >
           <ArrowRight className="w-4 h-4" />
           חזרה לפורטפוליו
@@ -286,26 +305,64 @@ const CaseStudy = () => {
     );
   }
 
+  // BreadcrumbList JSON-LD Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "דף הבית", "item": "https://nexo.agency/" },
+      { "@type": "ListItem", "position": 2, "name": "תיק עבודות", "item": "https://nexo.agency/portfolio" },
+      { "@type": "ListItem", "position": 3, "name": caseStudy.title, "item": `https://nexo.agency/portfolio/${caseStudy.slug}` }
+    ]
+  };
+
   return (
     <div className="min-h-screen" style={containerStyle}>
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>{caseStudy.title} | תיק עבודות | NEXO AGENCY</title>
+        <meta name="description" content={caseStudy.overview.slice(0, 155)} />
+        <link rel="canonical" href={`https://nexo.agency/portfolio/${caseStudy.slug}`} />
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={`${caseStudy.title} | תיק עבודות | NEXO AGENCY`} />
+        <meta property="og:description" content={caseStudy.overview.slice(0, 155)} />
+        <meta property="og:image" content={caseStudy.heroImage} />
+        <meta property="og:url" content={`https://nexo.agency/portfolio/${caseStudy.slug}`} />
+        <meta property="og:locale" content="he_IL" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${caseStudy.title} | תיק עבודות | NEXO AGENCY`} />
+        <meta name="twitter:description" content={caseStudy.overview.slice(0, 155)} />
+        <meta name="twitter:image" content={caseStudy.heroImage} />
+        <link rel="alternate" hreflang="he" href={`https://nexo.agency/portfolio/${caseStudy.slug}`} />
+        <link rel="alternate" hreflang="x-default" href={`https://nexo.agency/portfolio/${caseStudy.slug}`} />
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      </Helmet>
+
       <GlassNavbar />
 
-      {/* Hero Section */}
+      <main id="main-content">
+        {/* Hero Section */}
       <motion.section
         ref={heroRef}
         className="relative h-screen min-h-screen min-h-[100dvh] overflow-hidden"
         style={heroSectionStyle}
       >
-        {/* Silk Background for Teenvestsor */}
+        {/* Silk Background for Teenvestsor with lazy loading and error handling */}
         {slug === 'teenvestsor' && (
           <div className="absolute inset-0 z-0">
-            <Silk
-              speed={3}
-              scale={1.2}
-              color="#5B21B6"
-              noiseIntensity={1.2}
-              rotation={0}
-            />
+            <ErrorBoundary variant="component" fallback={<WebGLErrorFallback />}>
+              <Suspense fallback={<div className="animate-pulse bg-muted h-full w-full" />}>
+                <Silk
+                  speed={3}
+                  scale={1.2}
+                  color="#5B21B6"
+                  noiseIntensity={1.2}
+                  rotation={0}
+                />
+              </Suspense>
+            </ErrorBoundary>
             {/* Overlay gradient for better text readability */}
             <div
               className="absolute inset-0 pointer-events-none"
@@ -328,11 +385,22 @@ const CaseStudy = () => {
             className="absolute inset-0"
             style={{ y: heroImageY, scale: heroImageScale }}
           >
-            <img
-              src={caseStudy.heroImage}
-              alt={caseStudy.title}
-              className="w-full h-full object-cover"
-            />
+            {(() => {
+              const imageSet = generateCaseStudySrcSet(caseStudy.heroImage);
+              return (
+                <img
+                  src={imageSet.src}
+                  srcSet={imageSet.srcSet}
+                  sizes={imageSet.sizes}
+                  alt={caseStudy.title}
+                  width={1920}
+                  height={1080}
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
+              );
+            })()}
             <div
               className="absolute inset-0"
               style={heroImageOverlayStyle}
@@ -587,7 +655,7 @@ const CaseStudy = () => {
       </section>
 
       {/* CTA Section - Conversational */}
-      <section className="py-16 sm:py-24 md:py-32 bg-[#FAF9F6] relative overflow-hidden">
+      <section className="py-16 sm:py-24 md:py-32 bg-nexo-light relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10" dir="rtl">
           {/* Conversational headline */}
           <TextReveal>
@@ -635,7 +703,7 @@ const CaseStudy = () => {
       <TypeformPopup isOpen={isPopupOpen} onClose={handlePopupClose} />
 
       {/* Project Navigation - Bottom */}
-      <section className="bg-[#1a1a1a] text-white">
+      <section className="bg-nexo-charcoal text-white">
         <div className="container mx-auto px-0">
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Next Project */}
@@ -689,6 +757,7 @@ const CaseStudy = () => {
           </div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <Footer />

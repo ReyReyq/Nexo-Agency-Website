@@ -403,7 +403,7 @@ export function IconCloud({ icons, images }: IconCloudProps) {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         className="rounded-lg"
-        aria-label="Interactive 3D Icon Cloud"
+        aria-label="ענן אייקונים תלת מימדי אינטראקטיבי"
         role="img"
       />
     </div>

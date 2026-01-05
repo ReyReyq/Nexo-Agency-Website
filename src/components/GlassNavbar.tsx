@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, memo, lazy, Suspense } from "react";
-import { useAnimate, motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useAnimate, motion, useScroll, useSpring, useTransform, MotionValue } from "framer-motion";
 import { Menu, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -13,11 +13,13 @@ const TypeformPopup = lazy(() => import("@/components/TypeformPopup"));
 const MarqueeButton = ({
   children,
   onClick,
-  isPastHero
+  isPastHero,
+  "aria-label": ariaLabel
 }: {
   children: React.ReactNode;
   onClick: () => void;
   isPastHero: boolean;
+  "aria-label"?: string;
 }) => {
   const text = children as string;
 
@@ -26,17 +28,18 @@ const MarqueeButton = ({
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className={`relative h-11 w-44 overflow-hidden rounded-full text-sm font-bold transition-all duration-300 ${
+      aria-label={ariaLabel}
+      className={`relative h-11 w-44 overflow-hidden rounded-full text-sm font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
         isPastHero
-          ? "bg-[#1a1a1a] text-white hover:bg-[#2a2a2a]"
-          : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+          ? "bg-nexo-charcoal text-white hover:bg-nexo-graphite focus-visible:ring-primary focus-visible:ring-offset-white"
+          : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm focus-visible:ring-white focus-visible:ring-offset-nexo-charcoal"
       }`}
     >
       {/* Gradient fades for smooth edges */}
       <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-inherit to-transparent z-10 pointer-events-none"
-           style={{ background: isPastHero ? 'linear-gradient(to right, #1a1a1a, transparent)' : 'linear-gradient(to right, rgba(255,255,255,0.2), transparent)' }} />
+           style={{ background: isPastHero ? 'linear-gradient(to right, var(--nexo-charcoal), transparent)' : 'linear-gradient(to right, rgba(255,255,255,0.2), transparent)' }} />
       <div className="absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-inherit to-transparent z-10 pointer-events-none"
-           style={{ background: isPastHero ? 'linear-gradient(to left, #1a1a1a, transparent)' : 'linear-gradient(to left, rgba(255,255,255,0.2), transparent)' }} />
+           style={{ background: isPastHero ? 'linear-gradient(to left, var(--nexo-charcoal), transparent)' : 'linear-gradient(to left, rgba(255,255,255,0.2), transparent)' }} />
 
       {/* Marquee container with CSS animation for truly seamless loop */}
       <div className="absolute inset-0 flex items-center">
@@ -58,11 +61,13 @@ const MarqueeButton = ({
 const MarqueeButtonMobile = ({
   children,
   onClick,
-  isPastHero
+  isPastHero,
+  "aria-label": ariaLabel
 }: {
   children: React.ReactNode;
   onClick: () => void;
   isPastHero: boolean;
+  "aria-label"?: string;
 }) => {
   const text = children as string;
 
@@ -71,17 +76,18 @@ const MarqueeButtonMobile = ({
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className={`relative h-11 w-32 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 ${
+      aria-label={ariaLabel}
+      className={`relative h-11 w-32 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
         isPastHero
-          ? "bg-[#1a1a1a] text-white hover:bg-[#2a2a2a]"
-          : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+          ? "bg-nexo-charcoal text-white hover:bg-nexo-graphite focus-visible:ring-primary focus-visible:ring-offset-white"
+          : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm focus-visible:ring-white focus-visible:ring-offset-nexo-charcoal"
       }`}
     >
       {/* Gradient fades for smooth edges */}
       <div className="absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-inherit to-transparent z-10 pointer-events-none"
-           style={{ background: isPastHero ? 'linear-gradient(to right, #1a1a1a, transparent)' : 'linear-gradient(to right, rgba(255,255,255,0.2), transparent)' }} />
+           style={{ background: isPastHero ? 'linear-gradient(to right, var(--nexo-charcoal), transparent)' : 'linear-gradient(to right, rgba(255,255,255,0.2), transparent)' }} />
       <div className="absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-inherit to-transparent z-10 pointer-events-none"
-           style={{ background: isPastHero ? 'linear-gradient(to left, #1a1a1a, transparent)' : 'linear-gradient(to left, rgba(255,255,255,0.2), transparent)' }} />
+           style={{ background: isPastHero ? 'linear-gradient(to left, var(--nexo-charcoal), transparent)' : 'linear-gradient(to left, rgba(255,255,255,0.2), transparent)' }} />
 
       {/* Marquee container with CSS animation for truly seamless loop */}
       <div className="absolute inset-0 flex items-center">
@@ -122,9 +128,7 @@ const GlassNavbar = () => {
   const isScrollPendingRef = useRef(false);
 
   // Scroll progress for navbar border
-  const { scrollYProgress } = useScroll({
-    layoutEffect: false, // Prevent layout thrashing
-  });
+  const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -215,6 +219,8 @@ const GlassNavbar = () => {
     <>
       <motion.nav
         ref={navRef}
+        role="navigation"
+        aria-label="תפריט ראשי"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         initial={{ y: -100, opacity: 0 }}
@@ -224,17 +230,24 @@ const GlassNavbar = () => {
           cursor: hovered ? "none" : "auto",
         }}
         className={`
-          glass-nav-area fixed left-4 right-4 top-[max(1rem,env(safe-area-inset-top))] z-40 mx-auto max-w-6xl overflow-hidden
+          glass-nav-area fixed left-4 right-4 top-[max(1rem,env(safe-area-inset-top))] z-50 mx-auto max-w-6xl overflow-hidden
           transition-all duration-500
           ${isScrolled
             ? isPastHero
               ? "bg-white/80 shadow-lg"
-              : "bg-[#1a1a1a]/40"
+              : "bg-nexo-charcoal/40"
             : "bg-transparent"
           }
           backdrop-blur-xl rounded-2xl
         `}
       >
+        {/* Skip Link for Accessibility - invisible until focused with keyboard */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[9999] focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          דלג לתוכן הראשי
+        </a>
         {/* Scroll Progress Border */}
         <ScrollProgressBorder progress={borderProgress} />
         <div className="glass-nav-area grid grid-cols-3 items-center px-4 md:px-6 py-4" dir="ltr">
@@ -248,7 +261,11 @@ const GlassNavbar = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="hidden lg:flex items-center z-10 justify-self-start"
           >
-            <MarqueeButton onClick={handleOpenPopup} isPastHero={isPastHero}>
+            <MarqueeButton
+              onClick={handleOpenPopup}
+              isPastHero={isPastHero}
+              aria-label="פתח טופס יצירת קשר"
+            >
               צרו קשר עכשיו
             </MarqueeButton>
           </motion.div>
@@ -259,7 +276,11 @@ const GlassNavbar = () => {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="lg:hidden flex items-center z-10 justify-self-start"
           >
-            <MarqueeButtonMobile onClick={handleOpenPopup} isPastHero={isPastHero}>
+            <MarqueeButtonMobile
+              onClick={handleOpenPopup}
+              isPastHero={isPastHero}
+              aria-label="פתח טופס יצירת קשר"
+            >
               צרו קשר
             </MarqueeButtonMobile>
           </motion.div>
@@ -332,7 +353,7 @@ const Logo = memo(({ isPastHero }: LogoProps) => (
     transition={{ delay: 0.1, duration: 0.6 }}
     className="flex items-center justify-center z-10"
   >
-    <Link to="/" className="block">
+    <Link to="/" className="block" aria-label="Nexo - חזרה לדף הבית">
       <img
         src="/logo.svg"
         alt="Nexo"
@@ -358,8 +379,14 @@ interface MenuButtonProps {
 }
 
 const MenuButton = memo(({ setMenuOpen, isPastHero, isScrolled }: MenuButtonProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleClick = useCallback(() => {
-    setMenuOpen((prev) => !prev);
+    setMenuOpen((prev) => {
+      const newState = !prev;
+      setIsOpen(newState);
+      return newState;
+    });
   }, [setMenuOpen]);
 
   return (
@@ -373,14 +400,16 @@ const MenuButton = memo(({ setMenuOpen, isPastHero, isScrolled }: MenuButtonProp
         transition: { type: "spring", stiffness: 400, damping: 25 }
       }}
       whileTap={{ scale: 0.9 }}
+      aria-label={isOpen ? "סגור תפריט" : "פתח תפריט"}
+      aria-expanded={isOpen}
       className={`
-        relative z-10 flex items-center justify-center w-11 h-11 md:w-12 md:h-12
-        rounded-full transition-all duration-300
+        relative z-10 flex items-center justify-center w-11 h-11 md:w-12 md:h-12 min-w-[44px] min-h-[44px]
+        rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
         ${isPastHero
-          ? "bg-[#1a1a1a] text-white hover:bg-primary"
+          ? "bg-nexo-charcoal text-white hover:bg-primary focus-visible:ring-primary focus-visible:ring-offset-white"
           : isScrolled
-            ? "bg-white/20 text-white hover:bg-white/30"
-            : "bg-white text-[#1a1a1a] hover:bg-primary hover:text-white"
+            ? "bg-white/20 text-white hover:bg-white/30 focus-visible:ring-white focus-visible:ring-offset-nexo-charcoal"
+            : "bg-white text-nexo-charcoal hover:bg-primary hover:text-white focus-visible:ring-primary focus-visible:ring-offset-nexo-charcoal"
         }
       `}
     >
@@ -393,7 +422,7 @@ MenuButton.displayName = 'MenuButton';
 
 // Memoized Scroll Progress Border Component
 interface ScrollProgressBorderProps {
-  progress: any; // MotionValue<number>
+  progress: MotionValue<number>;
 }
 
 const ScrollProgressBorder = memo(({ progress }: ScrollProgressBorderProps) => {

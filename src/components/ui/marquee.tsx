@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { ComponentPropsWithoutRef } from "react";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 interface MarqueeProps extends ComponentPropsWithoutRef<"div"> {
   /**
@@ -41,6 +42,36 @@ export function Marquee({
   repeat = 4,
   ...props
 }: MarqueeProps) {
+  const prefersReducedMotion = useReducedMotion();
+
+  // When reduced motion is preferred, show static content (no animation)
+  if (prefersReducedMotion) {
+    return (
+      <div
+        {...props}
+        dir="ltr"
+        className={cn(
+          "group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)]",
+          {
+            "flex-row": !vertical,
+            "flex-col": vertical,
+          },
+          className
+        )}
+      >
+        {/* Show only one instance of children for static display */}
+        <div
+          className={cn("flex shrink-0 [gap:var(--gap)]", {
+            "flex-row": !vertical,
+            "flex-col": vertical,
+          })}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       {...props}

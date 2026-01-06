@@ -78,9 +78,9 @@ export const BackgroundBeams = React.memo(
     const isMobile = useIsMobile();
     const prefersReducedMotion = useReducedMotion();
 
-    // Performance: Skip rendering on mobile or when reduced motion is preferred
-    // Animated SVG gradients are expensive
-    if (isMobile || prefersReducedMotion) {
+    // Performance: Skip rendering on mobile, reduced motion, or when not yet determined
+    // Animated SVG gradients are expensive - use null until we know it's desktop
+    if (isMobile !== false || prefersReducedMotion) {
       return null;
     }
 

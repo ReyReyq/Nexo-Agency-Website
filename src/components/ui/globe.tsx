@@ -55,8 +55,9 @@ export function Globe({
   const isMobile = useIsMobile();
   const prefersReducedMotion = useReducedMotion();
 
-  // Performance: Render a static globe image on mobile or when reduced motion is preferred
-  if (isMobile || prefersReducedMotion) {
+  // Performance: Render a static globe image on mobile, reduced motion, or when not yet determined
+  // Using CSS fallback when isMobile is undefined prevents WebGL errors during initial render
+  if (isMobile !== false || prefersReducedMotion) {
     return (
       <div
         className={cn(

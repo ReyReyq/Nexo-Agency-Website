@@ -62,7 +62,8 @@ const AboutDarkSection = () => {
 
       {/* PixelTrail Layer - z-10, receives all mouse events */}
       {/* Disabled on mobile for performance - Three.js/WebGL is too heavy */}
-      {!isMobile && (
+      {/* Only render when we're certain it's desktop (isMobile === false) */}
+      {isMobile === false && (
         <div className="absolute inset-0 z-10">
           <Suspense fallback={null}>
             <PixelTrail

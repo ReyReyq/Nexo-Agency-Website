@@ -240,7 +240,7 @@ async function createMondayItem(payload: SubmissionPayload): Promise<string | nu
  */
 async function sendNotificationEmail(payload: SubmissionPayload): Promise<boolean> {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || 'sales@nexoagency.com';
+  const NOTIFICATION_EMAIL = process.env.NOTIFICATION_EMAIL || 'sales@nexoagency.org';
 
   if (!RESEND_API_KEY) {
     return false;
@@ -256,7 +256,7 @@ async function sendNotificationEmail(payload: SubmissionPayload): Promise<boolea
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'NEXO Forms <forms@nexoagency.com>',
+        from: 'NEXO Forms <forms@nexoagency.org>',
         to: [NOTIFICATION_EMAIL],
         subject: `🔔 ליד חדש: ${formData.name} - ${tracking.currentPageTitle}`,
         html: `

@@ -655,7 +655,7 @@ const Contact = () => {
             {/* Contact Cards */}
             <div className="space-y-4 mb-10">
               <motion.a
-                href="mailto:sales@nexoagency.com"
+                href="mailto:sales@nexoagency.org"
                 whileHover={{ x: -10, scale: 1.02 }}
                 className="group flex items-center gap-4 p-6 rounded-2xl bg-white border border-nexo-mist hover:border-primary/50 hover:shadow-lg transition-all"
               >
@@ -664,7 +664,7 @@ const Contact = () => {
                 </div>
                 <div className="flex-1 text-right">
                   <p className="text-nexo-ash text-sm mb-1">אימייל</p>
-                  <p className="text-nexo-charcoal text-lg font-bold">sales@nexoagency.com</p>
+                  <p className="text-nexo-charcoal text-lg font-bold">sales@nexoagency.org</p>
                 </div>
                 <ArrowUpRight className="w-5 h-5 text-nexo-smoke group-hover:text-primary transition-colors" />
               </motion.a>

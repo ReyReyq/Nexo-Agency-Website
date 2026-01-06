@@ -71,8 +71,8 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm"
           >
-            <a href="mailto:sales@nexoagency.com" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
-              sales@nexoagency.com
+            <a href="mailto:sales@nexoagency.org" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
+              sales@nexoagency.org
             </a>
             <a href="tel:+972533622423" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
               053-362-2423

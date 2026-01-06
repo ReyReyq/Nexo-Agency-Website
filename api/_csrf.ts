@@ -9,8 +9,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 const ALLOWED_ORIGINS = [
   'https://nexo.agency',
   'https://www.nexo.agency',
-  'https://nexoagency.com',
-  'https://www.nexoagency.com',
+  'https://nexoagency.org',
+  'https://www.nexoagency.org',
 ];
 
 // Development origins (only allowed in non-production)

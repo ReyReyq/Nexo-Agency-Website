@@ -136,14 +136,14 @@ const LiquidSideNav = ({ isOpen, setIsOpen }: LiquidSideNavProps) => {
 
           {/* Email at bottom left */}
           <motion.a
-            href="mailto:sales@nexoagency.com"
-            aria-label="שלח אימייל אל sales@nexoagency.com"
+            href="mailto:sales@nexoagency.org"
+            aria-label="שלח אימייל אל sales@nexoagency.org"
             className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-4 sm:left-6 md:left-8 lg:left-12 text-nexo-charcoal/60 hover:text-primary transition-colors text-sm md:text-base font-medium min-h-[44px] flex items-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
           >
-            sales@nexoagency.com
+            sales@nexoagency.org
           </motion.a>
         </motion.nav>
         </FocusTrap>

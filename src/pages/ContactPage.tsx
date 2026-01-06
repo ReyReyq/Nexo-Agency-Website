@@ -65,7 +65,7 @@ const localBusinessSchema = {
   "alternateName": "נקסו",
   "url": "https://nexo.agency",
   "telephone": "+972-53-362-2423",
-  "email": "sales@nexoagency.com",
+  "email": "sales@nexoagency.org",
   "description": "סוכנות דיגיטל מובילה בישראל - עיצוב אתרים, פיתוח, שיווק דיגיטלי ומיתוג",
   "address": {
     "@type": "PostalAddress",
@@ -594,7 +594,7 @@ const ContactPage = () => {
               {/* Contact Cards */}
               <div className="space-y-3 sm:space-y-4 mb-8 sm:mb-12">
                 <a
-                  href="mailto:sales@nexoagency.com"
+                  href="mailto:sales@nexoagency.org"
                   className="group flex items-center gap-3 sm:gap-4 p-4 sm:p-6 rounded-2xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all min-h-[44px]"
                 >
                   <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors shrink-0">
@@ -602,7 +602,7 @@ const ContactPage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-muted-foreground text-xs sm:text-sm mb-1">אימייל</p>
-                    <p className="text-foreground text-base sm:text-lg font-medium truncate">sales@nexoagency.com</p>
+                    <p className="text-foreground text-base sm:text-lg font-medium truncate">sales@nexoagency.org</p>
                   </div>
                   <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                 </a>

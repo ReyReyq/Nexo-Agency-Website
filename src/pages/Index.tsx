@@ -44,7 +44,7 @@ const organizationSchema = {
     "@type": "ContactPoint",
     "telephone": "+972-53-362-2423",
     "contactType": "sales",
-    "email": "sales@nexoagency.com",
+    "email": "sales@nexoagency.org",
     "availableLanguage": ["Hebrew", "English"]
   },
   "sameAs": [

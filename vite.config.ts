@@ -17,9 +17,13 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     compression({ algorithm: "gzip" }),
     compression({ algorithm: "brotliCompress", ext: ".br" }),
-    // Automatically adds modulepreload links for entry chunks and their imports
-    // This improves initial load performance by preloading critical JS modules
-    preload(),
+    // Modulepreload only critical entry chunks - reduces head parsing overhead
+    // Only preload react-vendor and framer-motion (needed for hero animations)
+    // Other chunks load on-demand when routes are accessed
+    preload({
+      // Only preload essential entry-related chunks, not all lazy routes
+      includeDynamicImports: false,
+    }),
     mode === "analyze" && visualizer({
       filename: "stats.html",
       open: true,

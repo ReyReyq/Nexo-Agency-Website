@@ -291,6 +291,7 @@ const GlassNavbar = () => {
           {/* Right - Menu Button */}
           <div className="justify-self-end">
             <MenuButton
+              isMenuOpen={menuOpen}
               setMenuOpen={setMenuOpen}
               isPastHero={isPastHero}
               isScrolled={isScrolled}
@@ -373,20 +374,16 @@ Logo.displayName = 'Logo';
 
 // Memoized MenuButton component
 interface MenuButtonProps {
+  isMenuOpen: boolean;
   setMenuOpen: (fn: (prev: boolean) => boolean) => void;
   isPastHero: boolean;
   isScrolled: boolean;
 }
 
-const MenuButton = memo(({ setMenuOpen, isPastHero, isScrolled }: MenuButtonProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const MenuButton = memo(({ isMenuOpen, setMenuOpen, isPastHero, isScrolled }: MenuButtonProps) => {
+  // Use parent's state directly to stay in sync with LiquidSideNav close actions
   const handleClick = useCallback(() => {
-    setMenuOpen((prev) => {
-      const newState = !prev;
-      setIsOpen(newState);
-      return newState;
-    });
+    setMenuOpen((prev) => !prev);
   }, [setMenuOpen]);
 
   return (
@@ -400,8 +397,8 @@ const MenuButton = memo(({ setMenuOpen, isPastHero, isScrolled }: MenuButtonProp
         transition: { type: "spring", stiffness: 400, damping: 25 }
       }}
       whileTap={{ scale: 0.9 }}
-      aria-label={isOpen ? "סגור תפריט" : "פתח תפריט"}
-      aria-expanded={isOpen}
+      aria-label={isMenuOpen ? "סגור תפריט" : "פתח תפריט"}
+      aria-expanded={isMenuOpen}
       className={`
         relative z-10 flex items-center justify-center w-11 h-11 md:w-12 md:h-12 min-w-[44px] min-h-[44px]
         rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2

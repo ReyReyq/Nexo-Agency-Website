@@ -226,6 +226,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         >
           <img
             src={HERO_TRANSITION_IMAGE}
+            srcSet="/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w"
+            sizes="100vw"
             alt="עבודת צוות"
             width={1920}
             height={1080}
@@ -258,6 +260,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         >
           <img
             src={HERO_TRANSITION_IMAGE}
+            srcSet="/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w"
+            sizes="100vw"
             alt="עבודת צוות"
             width={1920}
             height={1080}

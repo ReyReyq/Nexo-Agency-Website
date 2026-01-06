@@ -13,15 +13,21 @@ import { BackgroundBeams } from "./ui/background-beams";
 
 // First image MUST match Preloader's HERO_TRANSITION_IMAGE for seamless transition
 // Using WebP format for better compression, q=80 for good quality/size balance
+// Responsive variants (-sm: 640px, -md: 1024px) exist for mobile optimization
 const heroImages = [
-  HERO_TRANSITION_IMAGE, // Same as preloader middle image (already optimized)
-  "/images/hero/creative-team-meeting.webp",
-  "/images/hero/team-collaboration.webp",
+  {
+    src: HERO_TRANSITION_IMAGE, // Same as preloader middle image (already optimized)
+    srcSet: "/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w",
+  },
+  {
+    src: "/images/hero/creative-team-meeting.webp",
+    srcSet: "/images/hero/creative-team-meeting-sm.webp 640w, /images/hero/creative-team-meeting-md.webp 1024w, /images/hero/creative-team-meeting.webp 1920w",
+  },
+  {
+    src: "/images/hero/team-collaboration.webp",
+    srcSet: "/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w",
+  },
 ];
-
-// Hero images use single high-quality source
-// Note: srcset was removed because responsive variants (-sm, -md) don't exist
-// The browser will scale down the 1920w image as needed
 
 // Distance threshold in pixels before changing image
 const MOUSE_DISTANCE_THRESHOLD = 800;
@@ -204,8 +210,11 @@ const Hero = () => {
             style={isMobile ? undefined : { scale: imageScale }}
           >
             {/* Hero images: Above the fold - no lazy loading, high priority fetch */}
+            {/* Using srcset for responsive images: mobile gets 640w, tablet 1024w, desktop 1920w */}
             <img
-              src={heroImages[currentImage]}
+              src={heroImages[currentImage].src}
+              srcSet={heroImages[currentImage].srcSet}
+              sizes="100vw"
               alt="עבודה יצירתית"
               width={1920}
               height={1080}

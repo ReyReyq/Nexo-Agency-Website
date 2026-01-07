@@ -19,16 +19,19 @@ const heroImages = [
   {
     src: HERO_TRANSITION_IMAGE, // Same as preloader middle image (already optimized)
     avifSrc: "/images/hero/team-collaboration.avif",
+    avifSrcSet: "/images/hero/team-collaboration-sm.avif 640w, /images/hero/team-collaboration-md.avif 1024w, /images/hero/team-collaboration.avif 1920w",
     srcSet: "/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w",
   },
   {
     src: "/images/hero/creative-team-meeting.webp",
     avifSrc: "/images/hero/creative-team-meeting.avif",
+    avifSrcSet: "/images/hero/creative-team-meeting-sm.avif 640w, /images/hero/creative-team-meeting-md.avif 1024w, /images/hero/creative-team-meeting.avif 1920w",
     srcSet: "/images/hero/creative-team-meeting-sm.webp 640w, /images/hero/creative-team-meeting-md.webp 1024w, /images/hero/creative-team-meeting.webp 1920w",
   },
   {
     src: "/images/hero/team-collaboration.webp",
     avifSrc: "/images/hero/team-collaboration.avif",
+    avifSrcSet: "/images/hero/team-collaboration-sm.avif 640w, /images/hero/team-collaboration-md.avif 1024w, /images/hero/team-collaboration.avif 1920w",
     srcSet: "/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w",
   },
 ];
@@ -235,7 +238,8 @@ const Hero = () => {
               {/* AVIF source for browsers that support it (Chrome 85+, Firefox 93+, Safari 16.4+) */}
               <source
                 type="image/avif"
-                srcSet={heroImages[currentImage].avifSrc}
+                srcSet={heroImages[currentImage].avifSrcSet}
+                sizes="100vw"
               />
               {/* WebP fallback with responsive srcset */}
               <source

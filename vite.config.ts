@@ -97,6 +97,11 @@ export default defineConfig(({ mode }) => ({
             return "ogl-vendor";
           }
 
+          // Matter.js - physics engine used by FallingText
+          if (id.includes("node_modules/matter-js/")) {
+            return "matter-vendor";
+          }
+
           // Embla Carousel - only needed on pages with carousels
           if (id.includes("node_modules/embla-carousel")) {
             return "embla-vendor";
@@ -120,11 +125,6 @@ export default defineConfig(({ mode }) => ({
           // Split-type - text animation library
           if (id.includes("node_modules/split-type/")) {
             return "split-type-vendor";
-          }
-
-          // Matter.js - physics library
-          if (id.includes("node_modules/matter-js/")) {
-            return "matter-vendor";
           }
 
           // Canvas Confetti - celebration effects

@@ -4,7 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import ErrorBoundary from "./components/ErrorBoundary.tsx";
 import "./index.css";
-import "lenis/dist/lenis.css";
+// Lenis CSS is now fully inlined in index.html critical CSS to avoid render-blocking
 import { initTracking } from "./utils/formTracking";
 
 // Initialize form tracking to capture landing page and UTM parameters

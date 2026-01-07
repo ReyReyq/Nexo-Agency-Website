@@ -10,12 +10,38 @@ interface PreloaderProps {
 export const HERO_TRANSITION_IMAGE = "/images/hero/team-collaboration.webp";
 
 // Preloader images - middle one (index 2) will become hero background
+// Using responsive srcset for gallery images (displayed at 144-256px)
 const preloaderPhotos = [
-  { src: '/images/gallery/minimal-gradient-sunset.webp', alt: 'Gradient sunset' },
-  { src: '/images/gallery/abstract-gradient-purple.webp', alt: 'Purple gradient' },
-  { src: HERO_TRANSITION_IMAGE, alt: 'Team collaboration' }, // MAIN - matches Hero first image
-  { src: '/images/gallery/architecture-modern-building.webp', alt: 'Modern building' },
-  { src: '/images/gallery/workspace-modern-office.webp', alt: 'Modern office' },
+  {
+    src: '/images/gallery/minimal-gradient-sunset.webp',
+    srcSet: '/images/gallery/minimal-gradient-sunset-sm.webp 320w, /images/gallery/minimal-gradient-sunset.webp 1920w',
+    sizes: '(max-width: 768px) 144px, 256px',
+    alt: 'Gradient sunset'
+  },
+  {
+    src: '/images/gallery/abstract-gradient-purple.webp',
+    srcSet: '/images/gallery/abstract-gradient-purple-sm.webp 320w, /images/gallery/abstract-gradient-purple.webp 1920w',
+    sizes: '(max-width: 768px) 144px, 256px',
+    alt: 'Purple gradient'
+  },
+  {
+    src: HERO_TRANSITION_IMAGE,
+    srcSet: '/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w',
+    sizes: '100vw', // This one zooms to full screen
+    alt: 'Team collaboration'
+  }, // MAIN - matches Hero first image
+  {
+    src: '/images/gallery/architecture-modern-building.webp',
+    srcSet: '/images/gallery/architecture-modern-building-sm.webp 320w, /images/gallery/architecture-modern-building.webp 1620w',
+    sizes: '(max-width: 768px) 144px, 256px',
+    alt: 'Modern building'
+  },
+  {
+    src: '/images/gallery/workspace-modern-office.webp',
+    srcSet: '/images/gallery/workspace-modern-office-sm.webp 320w, /images/gallery/workspace-modern-office.webp 1620w',
+    sizes: '(max-width: 768px) 144px, 256px',
+    alt: 'Modern office'
+  },
 ];
 
 const Preloader = ({ onComplete }: PreloaderProps) => {
@@ -187,6 +213,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
               >
                 <motion.img
                   src={photo.src}
+                  srcSet={photo.srcSet}
+                  sizes={photo.sizes}
                   alt={photo.alt}
                   width={256}
                   height={160}

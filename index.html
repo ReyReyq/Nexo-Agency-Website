@@ -42,13 +42,14 @@
     <link rel="preload" href="/fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
 
     <!-- Preload critical hero image for LCP optimization -->
-    <!-- AVIF for modern browsers (30-50% smaller than WebP) -->
+    <!-- AVIF for modern browsers (30-50% smaller than WebP) with responsive srcset -->
     <link
       rel="preload"
-      href="/images/hero/team-collaboration.avif"
       as="image"
       type="image/avif"
       fetchpriority="high"
+      imagesrcset="/images/hero/team-collaboration-sm.avif 640w, /images/hero/team-collaboration-md.avif 1024w, /images/hero/team-collaboration.avif 1920w"
+      imagesizes="100vw"
     >
     <!-- WebP fallback with responsive srcset for optimal device sizing -->
     <link
@@ -144,10 +145,12 @@
       @keyframes spin { to { transform: rotate(360deg); } }
       .animate-spin { animation: spin 1s linear infinite; }
 
-      /* Lenis smooth scroll styles */
+      /* Lenis smooth scroll styles - fully inlined to avoid render-blocking */
       html.lenis, html.lenis body { height: auto; }
       .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+      .lenis [data-lenis-prevent], .lenis [data-lenis-prevent-wheel], .lenis [data-lenis-prevent-touch] { overscroll-behavior: contain; }
       .lenis.lenis-smooth iframe { pointer-events: none; }
+      .lenis.lenis-autoToggle { transition-property: overflow; transition-duration: 1ms; transition-behavior: allow-discrete; }
     </style>
   </head>
 

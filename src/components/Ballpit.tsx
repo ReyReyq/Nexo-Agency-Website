@@ -536,11 +536,17 @@ const U = new Object3D();
 let globalPointerActive = false;
 const pointerPosition = new Vector2();
 
+// Throttle helper for pointer events to reduce forced reflows
+let lastPointerMoveTime = 0;
+const POINTER_THROTTLE_MS = 16; // ~60fps
+
 interface PointerData {
   position: Vector2;
   nPosition: Vector2;
   hover: boolean;
   touching: boolean;
+  cachedRect: DOMRect | null; // Cache rect to avoid forced reflows
+  domElement: HTMLElement;
   onEnter: (data: PointerData) => void;
   onMove: (data: PointerData) => void;
   onClick: (data: PointerData) => void;
@@ -550,12 +556,33 @@ interface PointerData {
 
 const pointerMap = new Map<HTMLElement, PointerData>();
 
+// Update cached rects for all elements (call on scroll/resize, throttled)
+function updateCachedRects() {
+  for (const [elem, data] of pointerMap) {
+    data.cachedRect = elem.getBoundingClientRect();
+  }
+}
+
+// Throttled scroll/resize handler
+let rectUpdateScheduled = false;
+function scheduleRectUpdate() {
+  if (!rectUpdateScheduled) {
+    rectUpdateScheduled = true;
+    requestAnimationFrame(() => {
+      updateCachedRects();
+      rectUpdateScheduled = false;
+    });
+  }
+}
+
 function createPointerData(options: Partial<PointerData> & { domElement: HTMLElement }): PointerData {
   const defaultData: PointerData = {
     position: new Vector2(),
     nPosition: new Vector2(),
     hover: false,
     touching: false,
+    cachedRect: options.domElement.getBoundingClientRect(),
+    domElement: options.domElement,
     onEnter: () => {},
     onMove: () => {},
     onClick: () => {},
@@ -581,6 +608,9 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.addEventListener('touchcancel', onTouchEnd as EventListener, {
         passive: false
       });
+      // Add scroll/resize listeners to update cached rects
+      window.addEventListener('scroll', scheduleRectUpdate, { passive: true });
+      window.addEventListener('resize', scheduleRectUpdate, { passive: true });
       globalPointerActive = true;
     }
   }
@@ -595,6 +625,8 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
       document.body.removeEventListener('touchmove', onTouchMove as EventListener);
       document.body.removeEventListener('touchend', onTouchEnd as EventListener);
       document.body.removeEventListener('touchcancel', onTouchEnd as EventListener);
+      window.removeEventListener('scroll', scheduleRectUpdate);
+      window.removeEventListener('resize', scheduleRectUpdate);
       globalPointerActive = false;
     }
   };
@@ -602,13 +634,18 @@ function createPointerData(options: Partial<PointerData> & { domElement: HTMLEle
 }
 
 function onPointerMove(e: PointerEvent) {
+  // Throttle pointer move to ~60fps to reduce forced reflows
+  const now = performance.now();
+  if (now - lastPointerMoveTime < POINTER_THROTTLE_MS) return;
+  lastPointerMoveTime = now;
+
   pointerPosition.set(e.clientX, e.clientY);
   processPointerInteraction();
 }
 
 function processPointerInteraction() {
-  for (const [elem, data] of pointerMap) {
-    const rect = elem.getBoundingClientRect();
+  for (const [, data] of pointerMap) {
+    const rect = data.cachedRect || data.domElement.getBoundingClientRect();
     if (isInside(rect)) {
       updatePointerData(data, rect);
       if (!data.hover) {
@@ -627,8 +664,8 @@ function onTouchStart(e: TouchEvent) {
   if (e.touches.length > 0) {
     // Don't prevent default - allow scrolling on mobile
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
-    for (const [elem, data] of pointerMap) {
-      const rect = elem.getBoundingClientRect();
+    for (const [, data] of pointerMap) {
+      const rect = data.cachedRect || data.domElement.getBoundingClientRect();
       if (isInside(rect)) {
         data.touching = true;
         updatePointerData(data, rect);
@@ -646,8 +683,8 @@ function onTouchMove(e: TouchEvent) {
   if (e.touches.length > 0) {
     // Don't prevent default - allow scrolling on mobile
     pointerPosition.set(e.touches[0].clientX, e.touches[0].clientY);
-    for (const [elem, data] of pointerMap) {
-      const rect = elem.getBoundingClientRect();
+    for (const [, data] of pointerMap) {
+      const rect = data.cachedRect || data.domElement.getBoundingClientRect();
       updatePointerData(data, rect);
       if (isInside(rect)) {
         if (!data.hover) {
@@ -677,8 +714,8 @@ function onTouchEnd() {
 
 function onPointerClick(e: PointerEvent) {
   pointerPosition.set(e.clientX, e.clientY);
-  for (const [elem, data] of pointerMap) {
-    const rect = elem.getBoundingClientRect();
+  for (const [, data] of pointerMap) {
+    const rect = data.cachedRect || data.domElement.getBoundingClientRect();
     updatePointerData(data, rect);
     if (isInside(rect)) data.onClick(data);
   }

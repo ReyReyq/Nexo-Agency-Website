@@ -1,5 +1,5 @@
-import { useEffect, useRef, useMemo, useCallback, FC, ReactNode, useState, memo } from 'react';
-import { gsap } from 'gsap';
+import { useEffect, useMemo, FC, ReactNode, useState, memo } from 'react';
+import { motion, useMotionValue, useSpring, MotionValue } from 'framer-motion';
 
 interface GridMotionProps {
   items?: (string | ReactNode)[];
@@ -8,10 +8,78 @@ interface GridMotionProps {
   mobileItemsPerRow?: number;
 }
 
-const TOTAL_ITEMS = 28;
 const NUM_ROWS = 4;
 const ITEMS_PER_ROW = 7;
 const MOBILE_BREAKPOINT = 768;
+const MAX_MOVE_AMOUNT = 300;
+
+// Spring configs for different row inertia levels (replaces GSAP duration + ease)
+// Higher damping = less oscillation, stiffness controls responsiveness
+const SPRING_CONFIGS = [
+  { stiffness: 80, damping: 20 },   // Row 0: slowest, most inertia
+  { stiffness: 100, damping: 22 },  // Row 1
+  { stiffness: 120, damping: 24 },  // Row 2
+  { stiffness: 140, damping: 26 },  // Row 3: fastest, least inertia
+];
+
+// Animated row component using Framer Motion springs
+const AnimatedRow = memo(({
+  rowIndex,
+  itemsPerRow,
+  combinedItems,
+  isMobile,
+  mouseX
+}: {
+  rowIndex: number;
+  itemsPerRow: number;
+  combinedItems: (string | ReactNode)[];
+  isMobile: boolean;
+  mouseX: MotionValue<number>;
+}) => {
+  const direction = rowIndex % 2 === 0 ? 1 : -1;
+  const springConfig = SPRING_CONFIGS[rowIndex % SPRING_CONFIGS.length];
+
+  // Create a spring-animated motion value for smooth row movement
+  const targetX = useMotionValue(0);
+  const springX = useSpring(targetX, springConfig);
+
+  // Update target based on mouse position
+  useEffect(() => {
+    const unsubscribe = mouseX.on('change', (latest) => {
+      const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
+      const moveAmount = ((latest / windowWidth) * MAX_MOVE_AMOUNT - MAX_MOVE_AMOUNT / 2) * direction;
+      targetX.set(moveAmount);
+    });
+    return unsubscribe;
+  }, [mouseX, targetX, direction]);
+
+  return (
+    <motion.div
+      className={isMobile ? 'grid grid-cols-4 gap-6' : 'grid grid-cols-7 gap-4'}
+      style={{ x: springX, willChange: 'transform' }}
+    >
+      {Array.from({ length: itemsPerRow }, (_, itemIndex) => {
+        const content = combinedItems[rowIndex * itemsPerRow + itemIndex];
+        return (
+          <div key={itemIndex} className="w-full">
+            {typeof content === 'string' && content.startsWith('http') ? (
+              <div className="w-full aspect-[4/3] overflow-hidden rounded-xl bg-white/60 backdrop-blur-sm border border-nexo-mist/50 shadow-sm">
+                <div
+                  className="w-full h-full bg-cover bg-center"
+                  style={{ backgroundImage: `url(${content})` }}
+                />
+              </div>
+            ) : (
+              <div className="w-full">{content}</div>
+            )}
+          </div>
+        );
+      })}
+    </motion.div>
+  );
+});
+
+AnimatedRow.displayName = 'AnimatedRow';
 
 const GridMotion: FC<GridMotionProps> = memo(({
   items = [],
@@ -19,9 +87,8 @@ const GridMotion: FC<GridMotionProps> = memo(({
   mobileRows = 2,
   mobileItemsPerRow = 4
 }) => {
-  const gridRef = useRef<HTMLDivElement>(null);
-  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const mouseXRef = useRef<number>(typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
+  // Shared motion value for mouse X position - all rows subscribe to this
+  const mouseX = useMotionValue(typeof window !== 'undefined' ? window.innerWidth / 2 : 960);
 
   // Track mobile state for responsive row count
   const [isMobile, setIsMobile] = useState(
@@ -51,71 +118,29 @@ const GridMotion: FC<GridMotionProps> = memo(({
     return Array.from({ length: totalNeeded }, (_, index) => `Item ${index + 1}`);
   }, [items, numRows, itemsPerRow]);
 
-  // Memoize ref callback to prevent new function creation on every render
-  const setRowRef = useCallback((el: HTMLDivElement | null, index: number) => {
-    rowRefs.current[index] = el;
-  }, []);
-
+  // Track mouse/touch position and update the shared motion value
   useEffect(() => {
-    // Store original lag smoothing to restore on cleanup
-    gsap.ticker.lagSmoothing(0);
-
     const handleMouseMove = (e: MouseEvent): void => {
-      mouseXRef.current = e.clientX;
+      mouseX.set(e.clientX);
     };
 
     const handleTouchMove = (e: TouchEvent): void => {
       if (e.touches.length > 0) {
-        mouseXRef.current = e.touches[0].clientX;
+        mouseX.set(e.touches[0].clientX);
       }
     };
 
-    const updateMotion = (): void => {
-      const maxMoveAmount = 300;
-      const baseDuration = 0.8;
-      const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
-
-      rowRefs.current.forEach((row, index) => {
-        if (row) {
-          const direction = index % 2 === 0 ? 1 : -1;
-          const moveAmount = ((mouseXRef.current / window.innerWidth) * maxMoveAmount - maxMoveAmount / 2) * direction;
-
-          gsap.to(row, {
-            x: moveAmount,
-            duration: baseDuration + inertiaFactors[index % inertiaFactors.length],
-            ease: 'power3.out',
-            overwrite: 'auto'
-          });
-        }
-      });
-    };
-
-    const removeAnimationLoop = gsap.ticker.add(updateMotion);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     return () => {
-      // Remove event listeners
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('touchmove', handleTouchMove);
-
-      // Remove ticker callback
-      removeAnimationLoop();
-
-      // Kill all GSAP animations on row elements to prevent memory leaks
-      rowRefs.current.forEach((row) => {
-        if (row) {
-          gsap.killTweensOf(row);
-        }
-      });
-
-      // Restore default lag smoothing
-      gsap.ticker.lagSmoothing(500, 33);
     };
-  }, []);
+  }, [mouseX]);
 
   return (
-    <div ref={gridRef} className="h-full w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden">
       <section
         className="w-full h-full overflow-hidden relative flex items-center justify-center"
         style={{
@@ -125,32 +150,14 @@ const GridMotion: FC<GridMotionProps> = memo(({
         {/* Grid container - uses CSS grid for consistent cell sizing */}
         <div className={`flex-none relative w-[200vw] flex flex-col gap-4 md:gap-4 rotate-[-12deg] origin-center z-[2] ${isMobile ? 'gap-6' : ''}`}>
           {Array.from({ length: numRows }, (_, rowIndex) => (
-            <div
+            <AnimatedRow
               key={rowIndex}
-              className={isMobile ? 'grid grid-cols-4 gap-6' : 'grid grid-cols-7 gap-4'}
-              style={{ willChange: 'transform, filter' }}
-              ref={(el) => setRowRef(el, rowIndex)}
-            >
-              {Array.from({ length: itemsPerRow }, (_, itemIndex) => {
-                const content = combinedItems[rowIndex * itemsPerRow + itemIndex];
-                return (
-                  // Each cell fills its grid space
-                  <div key={itemIndex} className="w-full">
-                    {typeof content === 'string' && content.startsWith('http') ? (
-                      <div className="w-full aspect-[4/3] overflow-hidden rounded-xl bg-white/60 backdrop-blur-sm border border-nexo-mist/50 shadow-sm">
-                        <div
-                          className="w-full h-full bg-cover bg-center"
-                          style={{ backgroundImage: `url(${content})` }}
-                        />
-                      </div>
-                    ) : (
-                      // ReactNode content - rendered at full size within cell
-                      <div className="w-full">{content}</div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+              rowIndex={rowIndex}
+              itemsPerRow={itemsPerRow}
+              combinedItems={combinedItems}
+              isMobile={isMobile}
+              mouseX={mouseX}
+            />
           ))}
         </div>
       </section>

@@ -6,7 +6,7 @@ import { ArrowLeft, Clock, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getBlogPosts, type BlogPost } from "@/data/blogPosts";
 
-// Lazy load GridMotion - uses GSAP which adds to bundle size
+// Lazy load GridMotion for code splitting (uses Framer Motion springs)
 const GridMotion = lazy(() => import("./ui/GridMotion"));
 
 // Compact Article Card - memoized to prevent re-renders

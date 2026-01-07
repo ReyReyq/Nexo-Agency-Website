@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["three", "react", "react-dom"],
   },
   optimizeDeps: {
+    // Pre-bundle these for faster dev server startup, but they will be chunked separately in production
     include: ["three", "@react-three/fiber", "@react-three/drei"],
   },
   // CSS optimization settings
@@ -52,11 +53,26 @@ export default defineConfig(({ mode }) => ({
     cssCodeSplit: true,
     // Inline assets smaller than 4KB to reduce HTTP requests
     assetsInlineLimit: 4096,
+    // Disable module preload entirely - this prevents:
+    // 1. The preload polyfill from being bundled into vendor chunks (which would cause them to load on every page)
+    // 2. The <link rel="modulepreload"> tags from being generated for lazy-loaded chunks
+    // This is safe because:
+    // - Modern browsers support dynamic import() natively
+    // - Lazy chunks will still load on-demand when the component is rendered
+    // - We're using React.lazy() with Suspense for proper loading states
+    modulePreload: false,
     rollupOptions: {
       output: {
         // Use function-based manualChunks for proper code-splitting with lazy imports
-        // This ensures Three.js stays in its own chunk when lazy-loaded
-        manualChunks(id) {
+        // IMPORTANT: Don't assign Vite's internal helpers (like __vite__preload) to vendor chunks
+        // This is done by checking that the id is an actual module path, not a virtual module
+        manualChunks(id, { getModuleInfo }) {
+          // Skip virtual modules, Vite internals, and already-processed chunks
+          // This prevents Vite's preload helper from being bundled into vendor chunks
+          if (!id.includes('node_modules') || id.startsWith('\0') || id.includes('?')) {
+            return undefined;
+          }
+
           // React core - needed on every page
           if (id.includes("node_modules/react/") ||
               id.includes("node_modules/react-dom/") ||

@@ -47,6 +47,8 @@ const preloaderPhotos = [
 const Preloader = ({ onComplete }: PreloaderProps) => {
   const [phase, setPhase] = useState<'logo' | 'photos' | 'zooming' | 'complete'>('logo');
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [hasCheckedDevice, setHasCheckedDevice] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const isCompletedRef = useRef(false);
@@ -58,6 +60,29 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
     dispatchPreloaderComplete();
     onComplete();
   }, [onComplete]);
+
+  // Check for mobile device - skip preloader entirely on mobile for better LCP/FCP
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkMobile = () => {
+      // Check viewport width (< 768px is mobile/tablet)
+      const isSmallViewport = window.innerWidth < 768;
+      // Also check for touch device as a secondary signal
+      const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+      // Consider it mobile if either condition is true
+      return isSmallViewport || isTouchDevice;
+    };
+
+    const mobile = checkMobile();
+    setIsMobile(mobile);
+    setHasCheckedDevice(true);
+
+    // If mobile, immediately complete the preloader
+    if (mobile) {
+      handleComplete();
+    }
+  }, [handleComplete]);
 
   // Check for reduced motion preference in useEffect to avoid SSR hydration mismatch
   useEffect(() => {
@@ -76,10 +101,14 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
   }, []);
 
   useEffect(() => {
-    if (prefersReducedMotion) {
+    // Skip animation timers on mobile or reduced motion
+    if (prefersReducedMotion || isMobile) {
       handleComplete();
       return;
     }
+
+    // Don't start timers until device check is complete
+    if (!hasCheckedDevice) return;
 
     // Clear any existing timers before setting new ones
     timersRef.current.forEach(clearTimeout);
@@ -108,9 +137,10 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
     };
-  }, [handleComplete, prefersReducedMotion]);
+  }, [handleComplete, prefersReducedMotion, isMobile, hasCheckedDevice]);
 
-  if (prefersReducedMotion) return null;
+  // Skip preloader on mobile or reduced motion for better performance
+  if (prefersReducedMotion || isMobile) return null;
 
   // Phase checks - all based on single 'zooming' phase with CSS animation timing
   const isZooming = phase === 'zooming';

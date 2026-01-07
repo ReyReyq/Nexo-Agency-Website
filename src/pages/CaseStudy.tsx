@@ -10,12 +10,12 @@ import SimplyHebrewWorkflow from "@/components/SimplyHebrewWorkflow";
 import TeenvestsorWorkflow from "@/components/TeenvestsorWorkflow";
 import LiveWebsitePreview from "@/components/LiveWebsitePreview";
 import Footer from "@/components/Footer";
-import TypeformPopup from "@/components/TypeformPopup";
 import ErrorBoundary, { WebGLErrorFallback } from "@/components/ErrorBoundary";
 import { dispatchPreloaderComplete } from "@/lib/lenis";
 
-// Lazy load heavy Three.js WebGL Silk component for better performance
+// Lazy load heavy components for better performance
 const Silk = lazy(() => import("@/components/ui/Silk"));
+const TypeformPopup = lazy(() => import("@/components/TypeformPopup"));
 
 // Stable animation configurations to prevent re-creation on each render
 const textRevealTransitionBase = { duration: 0.8, ease: [0.25, 0.1, 0.25, 1] as const };
@@ -699,8 +699,10 @@ const CaseStudy = () => {
         </div>
       </section>
 
-      {/* Typeform Popup */}
-      <TypeformPopup isOpen={isPopupOpen} onClose={handlePopupClose} />
+      {/* Typeform Popup - lazy loaded for better performance */}
+      <Suspense fallback={null}>
+        <TypeformPopup isOpen={isPopupOpen} onClose={handlePopupClose} />
+      </Suspense>
 
       {/* Project Navigation - Bottom */}
       <section className="bg-nexo-charcoal text-white">

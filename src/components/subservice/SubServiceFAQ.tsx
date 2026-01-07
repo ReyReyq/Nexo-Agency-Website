@@ -1,7 +1,6 @@
 import { memo, useRef, useState, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import useMeasure from "react-use-measure";
 import type { SubServiceDetail as SubServiceDetailType } from "@/data/subServices";
 import type { Service } from "@/data/services";
 
@@ -29,8 +28,6 @@ interface FAQItemProps {
 }
 
 const FAQItem = memo(({ question, answer, isOpen, onToggle, accentColor }: FAQItemProps) => {
-  const [ref, { height }] = useMeasure();
-
   return (
     <motion.div
       animate={isOpen ? "open" : "closed"}
@@ -51,18 +48,21 @@ const FAQItem = memo(({ question, answer, isOpen, onToggle, accentColor }: FAQIt
           <ChevronDown className="text-2xl w-6 h-6" />
         </motion.span>
       </button>
-      <motion.div
-        initial={false}
-        animate={{
-          height: isOpen ? height : 0,
-          marginBottom: isOpen ? 24 : 0,
+      {/* GPU-accelerated accordion using CSS Grid */}
+      <div
+        className="grid transition-[grid-template-rows,opacity] duration-300 ease-out text-nexo-steel"
+        style={{
+          gridTemplateRows: isOpen ? '1fr' : '0fr',
+          opacity: isOpen ? 1 : 0,
+          marginBottom: isOpen ? '24px' : '0px',
         }}
-        className="overflow-hidden text-nexo-steel"
       >
-        <p ref={ref} className="text-base md:text-lg leading-relaxed" dir="rtl">
-          {answer}
-        </p>
-      </motion.div>
+        <div className="overflow-hidden">
+          <p className="text-base md:text-lg leading-relaxed" dir="rtl">
+            {answer}
+          </p>
+        </div>
+      </div>
     </motion.div>
   );
 });

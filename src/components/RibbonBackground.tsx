@@ -13,17 +13,17 @@ import { useMemo, memo } from "react";
  * - CSS handles reduced-motion preference directly (no JS state needed)
  */
 
-// Memoized animation styles to prevent object recreation on re-renders
+// Memoized animation styles using CSS custom properties for GPU-composited animations
 const animationStyles = {
-  ribbon1: { animationDelay: "0s" },
-  ribbon2: { animationDelay: "0.3s", animationDuration: "12s" },
-  ribbon3: { animationDelay: "0.6s", animationDuration: "14s" },
-  ribbon4: { animationDelay: "1s", animationDuration: "13s" },
-  ribbon5: { animationDelay: "1.3s", animationDuration: "11s" },
-  ribbon6: { animationDelay: "1.5s", animationDuration: "15s" },
-  ribbon7: { animationDelay: "1.8s", animationDuration: "14s" },
-  ribbon8: { animationDelay: "2s", animationDuration: "13s" },
-  ribbon9: { animationDelay: "2.2s", animationDuration: "12s" },
+  ribbon1: { "--delay": "0s", "--ribbon-opacity": "0.5" } as React.CSSProperties,
+  ribbon2: { "--delay": "0.3s", "--ribbon-opacity": "0.45" } as React.CSSProperties,
+  ribbon3: { "--delay": "0.6s", "--ribbon-opacity": "0.4" } as React.CSSProperties,
+  ribbon4: { "--delay": "1s", "--ribbon-opacity": "0.5" } as React.CSSProperties,
+  ribbon5: { "--delay": "1.3s", "--ribbon-opacity": "0.55" } as React.CSSProperties,
+  ribbon6: { "--delay": "1.5s", "--ribbon-opacity": "0.4" } as React.CSSProperties,
+  ribbon7: { "--delay": "1.8s", "--ribbon-opacity": "0.45" } as React.CSSProperties,
+  ribbon8: { "--delay": "2s", "--ribbon-opacity": "0.35" } as React.CSSProperties,
+  ribbon9: { "--delay": "2.2s", "--ribbon-opacity": "0.38" } as React.CSSProperties,
 } as const;
 
 const RibbonBackground = memo(() => {
@@ -61,21 +61,23 @@ const RibbonBackground = memo(() => {
       }
     }
 
-    @keyframes ribbonDraw {
+    @keyframes ribbonFadeIn {
       from {
-        stroke-dashoffset: 4000;
+        opacity: 0;
+        transform: translateY(30px);
       }
       to {
-        stroke-dashoffset: 0;
+        opacity: var(--ribbon-opacity, 0.5);
+        transform: translateY(0px);
       }
     }
 
     .ribbon-anim {
-      stroke-dasharray: 4000;
-      stroke-dashoffset: 0;
+      opacity: 0;
       animation:
-        ribbonDraw 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
+        ribbonFadeIn 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards,
         ribbonFloat 10s ease-in-out infinite;
+      animation-delay: var(--delay, 0s), calc(var(--delay, 0s) + 1.5s);
     }
 
     @media (prefers-reduced-motion: reduce) {

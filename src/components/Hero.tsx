@@ -12,19 +12,23 @@ import { Spotlight } from "./ui/spotlight";
 import { BackgroundBeams } from "./ui/background-beams";
 
 // First image MUST match Preloader's HERO_TRANSITION_IMAGE for seamless transition
-// Using WebP format for better compression, q=80 for good quality/size balance
+// Using AVIF format with WebP fallback for optimal compression
+// AVIF provides 30-50% better compression than WebP
 // Responsive variants (-sm: 640px, -md: 1024px) exist for mobile optimization
 const heroImages = [
   {
     src: HERO_TRANSITION_IMAGE, // Same as preloader middle image (already optimized)
+    avifSrc: "/images/hero/team-collaboration.avif",
     srcSet: "/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w",
   },
   {
     src: "/images/hero/creative-team-meeting.webp",
+    avifSrc: "/images/hero/creative-team-meeting.avif",
     srcSet: "/images/hero/creative-team-meeting-sm.webp 640w, /images/hero/creative-team-meeting-md.webp 1024w, /images/hero/creative-team-meeting.webp 1920w",
   },
   {
     src: "/images/hero/team-collaboration.webp",
+    avifSrc: "/images/hero/team-collaboration.avif",
     srcSet: "/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w",
   },
 ];
@@ -60,6 +64,21 @@ const fadeUpVariants = {
       ease: [0.16, 1, 0.3, 1] as const,
     },
   }),
+};
+
+// LCP-optimized variant - shows text immediately for better LCP score
+// Animation is purely decorative enhancement, not blocking content visibility
+const lcpTextVariants = {
+  hidden: { y: 20, opacity: 0.85 }, // Start visible (0.85 opacity) for LCP
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      delay: 0.1, // Minimal delay
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
 };
 
 const Hero = () => {
@@ -210,18 +229,30 @@ const Hero = () => {
             style={isMobile ? undefined : { scale: imageScale }}
           >
             {/* Hero images: Above the fold - no lazy loading, high priority fetch */}
-            {/* Using srcset for responsive images: mobile gets 640w, tablet 1024w, desktop 1920w */}
-            <img
-              src={heroImages[currentImage].src}
-              srcSet={heroImages[currentImage].srcSet}
-              sizes="100vw"
-              alt="עבודה יצירתית"
-              width={1920}
-              height={1080}
-              decoding="async"
-              fetchPriority="high"
-              className="w-full h-full object-cover"
-            />
+            {/* Using picture element with AVIF source for modern browsers, WebP fallback */}
+            {/* AVIF saves ~30-50% over WebP, srcset for responsive sizing */}
+            <picture>
+              {/* AVIF source for browsers that support it (Chrome 85+, Firefox 93+, Safari 16.4+) */}
+              <source
+                type="image/avif"
+                srcSet={heroImages[currentImage].avifSrc}
+              />
+              {/* WebP fallback with responsive srcset */}
+              <source
+                type="image/webp"
+                srcSet={heroImages[currentImage].srcSet}
+                sizes="100vw"
+              />
+              <img
+                src={heroImages[currentImage].src}
+                alt="עבודה יצירתית"
+                width={1920}
+                height={1080}
+                decoding="async"
+                fetchPriority="high"
+                className="w-full h-full object-cover"
+              />
+            </picture>
           </motion.div>
         </AnimatePresence>
 
@@ -257,13 +288,12 @@ const Hero = () => {
             </div>
           ))}
 
-          {/* Subheadline with fade up */}
+          {/* Subheadline - LCP element, visible immediately for performance */}
           <motion.p
-            custom={0.6}
             initial="hidden"
-            animate={hasAnimated ? "visible" : "hidden"}
-            variants={fadeUpVariants}
-            className="text-hero-fg/70 text-fluid-base sm:text-fluid-lg md:text-fluid-xl lg:text-fluid-2xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
+            animate="visible"
+            variants={lcpTextVariants}
+            className="text-hero-fg/80 text-fluid-base sm:text-fluid-lg md:text-fluid-xl lg:text-fluid-2xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
           >
             סוכנות דיגיטל שמובילה מותגים לצמיחה אמיתית. אסטרטגיה, עיצוב ופיתוח - הכל תחת קורת גג אחת.
           </motion.p>

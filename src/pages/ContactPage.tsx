@@ -529,7 +529,7 @@ const ContactPage = () => {
               <span className="text-gradient">מדהים ביחד.</span>
             </h1>
 
-            <p className="text-hero-fg/60 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-12">
+            <p className="text-hero-fg/80 text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto mb-8 sm:mb-12">
               יש לכם רעיון שמחכה לצאת לאור? אנחנו כאן כדי להפוך אותו למציאות דיגיטלית שמייצרת תוצאות.
             </p>
 
@@ -564,7 +564,7 @@ const ContactPage = () => {
               initial={{ opacity: 0 }}
               animate={isHeroInView ? { opacity: 1 } : {}}
               transition={{ delay: 0.6 }}
-              className="text-hero-fg/40 text-sm mt-8 flex items-center justify-center gap-2"
+              className="text-hero-fg/70 text-sm mt-8 flex items-center justify-center gap-2"
             >
               <Clock className="w-4 h-4" />
               אנחנו משיבים תוך 24 שעות, בדרך כלל הרבה פחות
@@ -718,12 +718,12 @@ const ContactPage = () => {
                 ) : (
                   // Form Steps
                   <>
-                    {/* Progress Bar */}
+                    {/* Progress Bar - GPU-accelerated with scaleX */}
                     <div className="h-1 bg-border rounded-full mb-8 overflow-hidden">
                       <motion.div
-                        className="h-full bg-primary"
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress}%` }}
+                        className="h-full w-full bg-primary origin-right"
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: progress / 100 }}
                         transition={{ duration: 0.3 }}
                       />
                     </div>
@@ -851,7 +851,7 @@ const ContactPage = () => {
               <br />
               <span className="text-primary">לשלב הבא?</span>
             </h2>
-            <p className="text-hero-fg/60 text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-10">
+            <p className="text-hero-fg/80 text-base sm:text-lg md:text-xl max-w-2xl mx-auto mb-8 sm:mb-10">
               בואו נדבר על איך אנחנו יכולים לעזור לכם להשיג את המטרות שלכם.
             </p>
             <motion.a

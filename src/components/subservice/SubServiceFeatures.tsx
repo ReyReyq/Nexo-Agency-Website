@@ -67,7 +67,7 @@ const SubServiceFeatures = memo(({ subService, parentService }: SubServiceFeatur
               <h2 className="text-5xl xl:text-6xl font-black text-gray-900 mb-4 leading-tight">
                 {subService.features.title}
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-700 text-lg">
                 {subService.features.description}
               </p>
             </motion.div>
@@ -157,7 +157,7 @@ const SubServiceFeatures = memo(({ subService, parentService }: SubServiceFeatur
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-3 leading-tight">
               {subService.features.title}
             </h2>
-            <p className="text-gray-600 text-sm sm:text-base max-w-lg mx-auto">
+            <p className="text-gray-700 text-sm sm:text-base max-w-lg mx-auto">
               {subService.features.description}
             </p>
           </motion.div>

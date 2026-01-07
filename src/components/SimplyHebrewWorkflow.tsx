@@ -130,10 +130,10 @@ const BrandIdentityShowcase = memo(({ brandIdentity }: { brandIdentity: BrandIde
       className="h-full flex flex-col justify-center"
       dir="rtl"
     >
-      <h4 className="text-2xl md:text-3xl font-display font-bold mb-3" style={{ color: '#1a5f4a' }}>
+      <h3 className="text-2xl md:text-3xl font-display font-bold mb-3" style={{ color: '#1a5f4a' }}>
         הזהות שיצרנו
-      </h4>
-      <p className="text-base text-foreground/60 mb-10 max-w-md">
+      </h3>
+      <p className="text-base text-foreground/80 mb-10 max-w-md">
         האלמנטים המרכזיים שמרכיבים את השפה הוויזואלית של SimplyHebrew
       </p>
 

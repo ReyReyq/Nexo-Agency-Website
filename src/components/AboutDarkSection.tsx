@@ -82,10 +82,10 @@ const AboutDarkSection = () => {
       <div className="relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20 lg:py-24 flex items-center h-full pointer-events-none">
         <div className="max-w-3xl">
           <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: 80 }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="h-1 bg-primary mb-6 sm:mb-8"
+            className="h-1 w-20 bg-primary mb-6 sm:mb-8 origin-left"
           />
 
           <motion.h2

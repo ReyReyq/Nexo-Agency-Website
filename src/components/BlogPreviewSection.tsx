@@ -10,24 +10,37 @@ import { getBlogPosts, type BlogPost } from "@/data/blogPosts";
 const GridMotion = lazy(() => import("./ui/GridMotion"));
 
 // Compact Article Card - memoized to prevent re-renders
-const ArticleCard = memo(({ post }: { post: BlogPost }) => (
-  <Link
-    to={`/blog/${post.slug}`}
-    className="group block w-full aspect-[4/3] bg-white rounded-xl overflow-hidden border border-nexo-mist hover:border-primary/40 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10"
-  >
-    {/* Flex container to fill the aspect-ratio box */}
-    <div className="h-full flex flex-col">
-      {/* Image - 45% of card height on desktop, 50% on mobile for bigger visual */}
-      <div className="relative h-[50%] md:h-[45%] flex-shrink-0 overflow-hidden">
-        <img
-          src={post.image}
-          alt={post.title}
-          loading="lazy"
-          decoding="async"
-          width={400}
-          height={300}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+const ArticleCard = memo(({ post }: { post: BlogPost }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <Link
+      to={`/blog/${post.slug}`}
+      className="group block w-full aspect-[4/3] bg-white rounded-xl overflow-hidden border border-nexo-mist hover:border-primary/40 transition-all duration-500 hover:shadow-xl hover:shadow-primary/10"
+    >
+      {/* Flex container to fill the aspect-ratio box */}
+      <div className="h-full flex flex-col">
+        {/* Image - 45% of card height on desktop, 50% on mobile for bigger visual */}
+        <div className="relative h-[50%] md:h-[45%] flex-shrink-0 overflow-hidden">
+          {/* Placeholder skeleton */}
+          {!isLoaded && (
+            <div
+              className="absolute inset-0 bg-nexo-mist animate-pulse"
+              aria-hidden="true"
+            />
+          )}
+          <img
+            src={post.image}
+            alt={post.title}
+            loading="lazy"
+            decoding="async"
+            width={400}
+            height={300}
+            onLoad={() => setIsLoaded(true)}
+            className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-110 ${
+              isLoaded ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         {/* Category badge - hidden on mobile, visible on md+ screens */}
         <span className="hidden md:inline-block absolute bottom-2 right-2 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-sm text-nexo-charcoal rounded-full shadow-sm">
@@ -35,17 +48,17 @@ const ArticleCard = memo(({ post }: { post: BlogPost }) => (
         </span>
         {/* Title overlay on mobile for better visibility */}
         <div className="md:hidden absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-          <h4 className="text-xs sm:text-sm font-bold text-white leading-tight line-clamp-2" dir="rtl">
+          <h3 className="text-xs sm:text-sm font-bold text-white leading-tight line-clamp-2" dir="rtl">
             {post.title}
-          </h4>
+          </h3>
         </div>
       </div>
       {/* Content - remaining space with overflow handling */}
       <div className="flex-1 p-4 sm:p-5 md:p-6 flex flex-col overflow-hidden" dir="rtl">
         {/* Title hidden on mobile (shown in image overlay), visible on desktop */}
-        <h4 className="hidden md:block text-sm sm:text-base font-bold text-nexo-charcoal leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
+        <h3 className="hidden md:block text-sm sm:text-base font-bold text-nexo-charcoal leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
           {post.title}
-        </h4>
+        </h3>
         {/* Excerpt - hidden on mobile, visible on desktop */}
         <p className="hidden md:block mt-1.5 text-xs text-nexo-ash leading-snug line-clamp-2 flex-1">
           {post.excerpt}
@@ -64,7 +77,8 @@ const ArticleCard = memo(({ post }: { post: BlogPost }) => (
       </div>
     </div>
   </Link>
-));
+  );
+});
 
 ArticleCard.displayName = 'ArticleCard';
 

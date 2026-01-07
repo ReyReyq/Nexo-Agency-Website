@@ -158,10 +158,10 @@ const BrandIdentityShowcase = ({ brandIdentity }: { brandIdentity: BrandIdentity
       className="h-full flex flex-col justify-center"
       dir="rtl"
     >
-      <h4 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-3 text-primary">
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-display font-bold mb-3 text-primary">
         חלק מהזהות שיצרנו
-      </h4>
-      <p className="text-base text-foreground/60 mb-10 max-w-md">
+      </h3>
+      <p className="text-base text-foreground/80 mb-10 max-w-md">
         כמה מהאלמנטים המרכזיים שמרכיבים את השפה הויזואלית של SIONÉ
       </p>
 
@@ -1032,7 +1032,7 @@ const WebsitePreviewSection = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={isInView ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.5, delay: 0.4 + i * 0.08 }}
-                    className="flex items-center gap-3 text-foreground/60"
+                    className="flex items-center gap-3 text-foreground/70"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                     <span className="text-sm font-heebo">{feature}</span>

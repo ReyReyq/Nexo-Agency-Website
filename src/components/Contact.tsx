@@ -442,10 +442,10 @@ const Contact = () => {
           className="text-center mb-16"
         >
           <motion.div
-            initial={{ width: 0 }}
-            animate={isInView ? { width: 80 } : { width: 0 }}
+            initial={{ scaleX: 0 }}
+            animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="h-1 bg-primary mx-auto mb-6"
+            className="h-1 w-20 bg-primary mx-auto mb-6 origin-center"
           />
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-nexo-charcoal leading-[1] mb-6">
@@ -523,12 +523,12 @@ const Contact = () => {
               ) : (
                 // Form Steps
                 <>
-                  {/* Progress Bar */}
+                  {/* Progress Bar - GPU-accelerated with scaleX */}
                   <div className="h-1 bg-nexo-mist rounded-full mb-8 overflow-hidden">
                     <motion.div
-                      className="h-full bg-primary"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${progress}%` }}
+                      className="h-full w-full bg-primary origin-right"
+                      initial={{ scaleX: 0 }}
+                      animate={{ scaleX: progress / 100 }}
                       transition={{ duration: 0.3 }}
                     />
                   </div>

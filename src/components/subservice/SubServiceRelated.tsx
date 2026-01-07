@@ -62,7 +62,7 @@ const SubServiceRelated = memo(({ currentSubServiceId, parentService, parentSlug
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4">
             עוד ב{parentService.name}
           </h2>
-          <p className="text-neutral-600 text-lg max-w-2xl mx-auto">
+          <p className="text-neutral-700 text-lg max-w-2xl mx-auto">
             גלו את כל השירותים שלנו בתחום {parentService.name}
           </p>
         </motion.div>

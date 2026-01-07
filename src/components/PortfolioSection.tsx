@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, memo } from "react";
+import { useRef, useMemo, memo, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowLeft, ExternalLink, Sparkles, ShoppingBag, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,8 @@ const generatePortfolioSrcSet = (src: string, isLarge = false) => {
   };
 };
 
-// Helper for marquee images
+// Helper to generate srcset for marquee images
+// Uses responsive images: -sm (600w) for mobile, original for desktop
 const generateMarqueeSrcSet = (src: string) => {
   if (!src.startsWith('/images/websites-pictures/')) return { src };
 
@@ -41,52 +42,94 @@ const generateMarqueeSrcSet = (src: string) => {
 
   return {
     src,
-    srcSet: `${basePath}-sm${extension} 280w, ${src} 360w`,
+    srcSet: `${basePath}-sm${extension} 600w, ${src} 1680w`,
     sizes: '(max-width: 768px) 280px, 360px',
   };
 };
 
+// Memoized marquee image component with optimized loading
+const MarqueeImage = memo(function MarqueeImage({
+  src,
+  index,
+  rowOffset = 0
+}: {
+  src: string;
+  index: number;
+  rowOffset?: number;
+}) {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const imageSet = generateMarqueeSrcSet(src);
+
+  return (
+    <div
+      className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
+    >
+      {/* Placeholder skeleton */}
+      {!isLoaded && (
+        <div
+          className="absolute inset-0 bg-muted animate-pulse"
+          aria-hidden="true"
+        />
+      )}
+      <img
+        src={imageSet.src}
+        srcSet={imageSet.srcSet}
+        sizes={imageSet.sizes}
+        alt={`Website showcase ${index + rowOffset + 1}`}
+        width={360}
+        height={225}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setIsLoaded(true)}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+    </div>
+  );
+});
+
 // Website showcase images for marquee - equally distributed (18 each)
 const websiteImages = {
   row1: [
-    "/images/websites-pictures/Gemini Generated Image (1).webp",
-    "/images/websites-pictures/Gemini Generated Image (2).webp",
-    "/images/websites-pictures/Gemini Generated Image (3).webp",
-    "/images/websites-pictures/Gemini Generated Image (4).webp",
-    "/images/websites-pictures/Gemini Generated Image (5).webp",
-    "/images/websites-pictures/Gemini Generated Image (6).webp",
-    "/images/websites-pictures/Gemini Generated Image (7).webp",
-    "/images/websites-pictures/Gemini Generated Image (8).webp",
-    "/images/websites-pictures/Gemini Generated Image.webp",
-    "/images/websites-pictures/Gemini_Generated_Image_ubgf3rubgf3rubgf.webp",
-    "/images/websites-pictures/Gemini_Generated_Image_1rnbic1rnbic1rnb.webp",
-    "/images/websites-pictures/Gemini_Generated_Image_q4yb80q4yb80q4yb.webp",
-    "/images/websites-pictures/Gemini_Generated_Image_rr1pmlrr1pmlrr1p.webp",
-    "/images/websites-pictures/Gemini_Generated_Image_jvgltxjvgltxjvgl.webp",
-    "/images/websites-pictures/Gemini_Generated_Image_ld0r21ld0r21ld0r.webp",
-    "/images/websites-pictures/Google Gemini Generated Image.webp",
-    "/images/websites-pictures/Google Gemini Image (1).webp",
-    "/images/websites-pictures/Google Gemini Image (2).webp",
+    "/images/websites-pictures/portfolio-website-01.webp",
+    "/images/websites-pictures/portfolio-website-02.webp",
+    "/images/websites-pictures/portfolio-website-03.webp",
+    "/images/websites-pictures/portfolio-website-04.webp",
+    "/images/websites-pictures/portfolio-website-05.webp",
+    "/images/websites-pictures/portfolio-website-06.webp",
+    "/images/websites-pictures/portfolio-website-07.webp",
+    "/images/websites-pictures/portfolio-website-08.webp",
+    "/images/websites-pictures/portfolio-website-09.webp",
+    "/images/websites-pictures/portfolio-website-10.webp",
+    "/images/websites-pictures/portfolio-website-11.webp",
+    "/images/websites-pictures/portfolio-website-12.webp",
+    "/images/websites-pictures/portfolio-website-13.webp",
+    "/images/websites-pictures/portfolio-website-14.webp",
+    "/images/websites-pictures/portfolio-website-15.webp",
+    "/images/websites-pictures/portfolio-website-16.webp",
+    "/images/websites-pictures/portfolio-website-17.webp",
+    "/images/websites-pictures/portfolio-website-18.webp",
   ],
   row2: [
-    "/images/websites-pictures/Google Gemini Image (3).webp",
-    "/images/websites-pictures/Google Gemini Image (4).webp",
-    "/images/websites-pictures/Google Gemini Image (5).webp",
-    "/images/websites-pictures/Google Gemini Image (6).webp",
-    "/images/websites-pictures/Google Gemini Image (7).webp",
-    "/images/websites-pictures/Google Gemini Image (8).webp",
-    "/images/websites-pictures/Google Gemini Image (9).webp",
-    "/images/websites-pictures/Google Gemini Image (10).webp",
-    "/images/websites-pictures/Google Gemini Image (11).webp",
-    "/images/websites-pictures/Google Gemini Image (12).webp",
-    "/images/websites-pictures/Google Gemini Image (13).webp",
-    "/images/websites-pictures/Google Gemini Image (14).webp",
-    "/images/websites-pictures/Google Gemini Image (15).webp",
-    "/images/websites-pictures/Google Gemini Image (16).webp",
-    "/images/websites-pictures/Google Gemini Image.webp",
-    "/images/websites-pictures/Gemini Generated Image (3).webp",
-    "/images/websites-pictures/Gemini Generated Image (5).webp",
-    "/images/websites-pictures/Gemini Generated Image (7).webp",
+    "/images/websites-pictures/portfolio-website-19.webp",
+    "/images/websites-pictures/portfolio-website-20.webp",
+    "/images/websites-pictures/portfolio-website-21.webp",
+    "/images/websites-pictures/portfolio-website-22.webp",
+    "/images/websites-pictures/portfolio-website-23.webp",
+    "/images/websites-pictures/portfolio-website-24.webp",
+    "/images/websites-pictures/portfolio-website-25.webp",
+    "/images/websites-pictures/portfolio-website-26.webp",
+    "/images/websites-pictures/portfolio-website-27.webp",
+    "/images/websites-pictures/portfolio-website-28.webp",
+    "/images/websites-pictures/portfolio-website-29.webp",
+    "/images/websites-pictures/portfolio-website-30.webp",
+    "/images/websites-pictures/portfolio-website-31.webp",
+    "/images/websites-pictures/portfolio-website-32.webp",
+    "/images/websites-pictures/portfolio-website-33.webp",
+    "/images/websites-pictures/portfolio-website-03.webp",
+    "/images/websites-pictures/portfolio-website-05.webp",
+    "/images/websites-pictures/portfolio-website-07.webp",
   ],
 };
 
@@ -451,20 +494,7 @@ const PortfolioSection = memo(function PortfolioSection() {
         <div className="mb-6">
           <Marquee className="[--duration:20s] [--gap:1.5rem]">
             {websiteImages.row1.map((src, index) => (
-              <div
-                key={index}
-                className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
-              >
-                <img
-                  src={src}
-                  alt={`Website showcase ${index + 1}`}
-                  width={360}
-                  height={225}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <MarqueeImage key={index} src={src} index={index} rowOffset={0} />
             ))}
           </Marquee>
         </div>
@@ -472,20 +502,7 @@ const PortfolioSection = memo(function PortfolioSection() {
         {/* Second Marquee Row - Right to Left */}
         <Marquee className="[--duration:20s] [--gap:1.5rem]" reverse>
           {websiteImages.row2.map((src, index) => (
-            <div
-              key={index}
-              className="relative w-[280px] md:w-[360px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl flex-shrink-0"
-            >
-              <img
-                src={src}
-                alt={`Website showcase ${index + 10}`}
-                width={360}
-                height={225}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <MarqueeImage key={index} src={src} index={index} rowOffset={18} />
           ))}
         </Marquee>
       </div>

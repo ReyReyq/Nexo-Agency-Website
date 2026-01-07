@@ -93,7 +93,7 @@ const SteppedProcessSection: React.FC<SteppedProcessSectionProps> = ({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto"
+            className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto"
           >
             {description}
           </motion.p>
@@ -144,7 +144,7 @@ const SteppedProcessSection: React.FC<SteppedProcessSectionProps> = ({
               </button>
 
               {/* Step Counter */}
-              <span className="text-sm text-neutral-500">
+              <span className="text-sm text-neutral-700 font-medium">
                 {currentStep + 1} / {numSteps}
               </span>
 
@@ -182,12 +182,12 @@ const Steps: React.FC<StepsProps> = ({ numSteps, stepsComplete, accentColor }) =
           <React.Fragment key={stepNum}>
             <Step num={stepNum} isActive={isActive} accentColor={accentColor} />
             {stepNum !== stepArray.length && (
-              <div className="flex-1 h-1 rounded-full bg-neutral-200 relative min-w-[20px]">
+              <div className="flex-1 h-1 rounded-full bg-neutral-200 relative min-w-[20px] overflow-hidden">
                 <motion.div
-                  className="absolute top-0 bottom-0 right-0 rounded-full"
+                  className="absolute inset-0 rounded-full origin-right"
                   style={{ backgroundColor: accentColor }}
-                  initial={{ width: 0 }}
-                  animate={{ width: isActive ? "100%" : 0 }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: isActive ? 1 : 0 }}
                   transition={{ ease: "easeInOut", duration: 0.4 }}
                 />
               </div>
@@ -296,7 +296,7 @@ const StepContent: React.FC<StepContentProps> = ({ step, accentColor }) => {
       </h3>
 
       {/* Step Description */}
-      <p className="text-neutral-600 text-lg leading-relaxed">
+      <p className="text-neutral-700 text-lg leading-relaxed">
         {step.description}
       </p>
 

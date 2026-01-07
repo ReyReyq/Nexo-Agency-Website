@@ -1058,13 +1058,13 @@ const TypeformPopup = ({ isOpen, onClose }: TypeformPopupProps) => {
               />
             )}
 
-            {/* Progress Bar */}
+            {/* Progress Bar - GPU-accelerated with scaleX */}
             {!isSuccess && !showStartScreen && (
               <div className="absolute top-0 left-0 right-0 h-1 bg-foreground/10">
                 <motion.div
-                  className="h-full bg-primary"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
+                  className="h-full w-full bg-primary origin-left"
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: progress / 100 }}
                   transition={{ duration: 0.3, ease: "easeOut" }}
                 />
               </div>

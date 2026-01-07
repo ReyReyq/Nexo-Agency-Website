@@ -39,7 +39,7 @@ const Footer = () => {
             className="text-center md:text-right"
           >
             <span className="text-3xl font-black text-white tracking-tight">NEXO</span>
-            <p className="text-white/40 text-sm mt-2">סוכנות דיגיטלית ליצירת חוויות</p>
+            <p className="text-white/70 text-sm mt-2">סוכנות דיגיטלית ליצירת חוויות</p>
           </motion.div>
 
           {/* Quick Contact */}
@@ -49,7 +49,7 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="flex items-center gap-4"
           >
-            <span className="text-white/40 text-sm hidden md:block">התקשרו אלינו</span>
+            <span className="text-white/70 text-sm hidden md:block">התקשרו אלינו</span>
             <motion.a
               href={CONTACT_LINK.href}
               className="min-w-[44px] min-h-[44px] w-11 h-11 rounded-full bg-white/5 flex items-center justify-center text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
@@ -71,13 +71,13 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-sm"
           >
-            <a href="mailto:sales@nexoagency.org" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
+            <a href="mailto:sales@nexoagency.org" className="text-white/80 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
               sales@nexoagency.org
             </a>
-            <a href="tel:+972533622423" className="text-white/60 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
+            <a href="tel:+972533622423" className="text-white/80 hover:text-primary transition-colors py-2 min-h-[44px] flex items-center">
               053-362-2423
             </a>
-            <span className="text-white/40 py-2">תל אביב, ישראל</span>
+            <span className="text-white/70 py-2">תל אביב, ישראל</span>
           </motion.div>
         </div>
 
@@ -90,16 +90,16 @@ const Footer = () => {
             className="flex flex-col md:flex-row justify-between items-center gap-4"
           >
             {/* Copyright */}
-            <p className="text-white/40 text-sm">
+            <p className="text-white/70 text-sm">
               © 2025 NEXO AGENCY. כל הזכויות שמורות.
             </p>
 
             {/* Legal Links */}
             <div className="flex gap-4 text-sm">
-              <a href="/privacy" className="text-white/40 hover:text-white transition-colors py-2 min-h-[44px] flex items-center px-1">
+              <a href="/privacy" className="text-white/70 hover:text-white transition-colors py-2 min-h-[44px] flex items-center px-1">
                 מדיניות פרטיות
               </a>
-              <a href="/terms" className="text-white/40 hover:text-white transition-colors py-2 min-h-[44px] flex items-center px-1">
+              <a href="/terms" className="text-white/70 hover:text-white transition-colors py-2 min-h-[44px] flex items-center px-1">
                 תנאי שימוש
               </a>
             </div>

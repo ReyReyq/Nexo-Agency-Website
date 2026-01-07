@@ -174,10 +174,10 @@ const Services = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             <motion.div
-              initial={{ width: 0 }}
-              animate={isInView ? { width: 60 } : { width: 0 }}
+              initial={{ scaleX: 0 }}
+              animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
               transition={{ duration: 0.6 }}
-              className="h-1 bg-primary mb-6"
+              className="h-1 w-[60px] bg-primary mb-6 origin-left"
             />
             <h2 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-foreground leading-[1.1]">
               לא סתם שירותים.

@@ -1,7 +1,6 @@
 import { useState, useCallback, memo, useMemo, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import useMeasure from "react-use-measure";
 
 // FAQ Categories (Tabs) - כללי first for RTL (appears on right)
 const TABS = ["כללי", "תהליך העבודה", "מחירים וזמנים", "טכנולוגיה"];
@@ -123,11 +122,11 @@ const FAQSection = () => {
         >
           {/* Accent line */}
           <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: 80 }}
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="h-1 bg-primary mx-auto mb-6"
+            className="h-1 w-20 bg-primary mx-auto mb-6 origin-center"
           />
 
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black mb-4">
@@ -369,7 +368,6 @@ interface QuestionProps {
 }
 
 const Question = memo(({ title, children, isOpen, onToggle, id }: QuestionProps) => {
-  const [ref, { height }] = useMeasure();
   const triggerId = `faq-trigger-${id}`;
   const panelId = `faq-panel-${id}`;
 
@@ -397,22 +395,25 @@ const Question = memo(({ title, children, isOpen, onToggle, id }: QuestionProps)
           <ChevronDown className="text-2xl w-6 h-6" aria-hidden="true" />
         </motion.span>
       </button>
-      <motion.div
+      {/* GPU-accelerated accordion using CSS Grid */}
+      <div
         id={panelId}
         role="region"
         aria-labelledby={triggerId}
         aria-hidden={!isOpen}
-        initial={false}
-        animate={{
-          height: isOpen ? height : "0px",
-          marginBottom: isOpen ? "24px" : "0px",
+        className="grid transition-[grid-template-rows,opacity] duration-300 ease-out text-nexo-steel"
+        style={{
+          gridTemplateRows: isOpen ? '1fr' : '0fr',
+          opacity: isOpen ? 1 : 0,
+          marginBottom: isOpen ? '24px' : '0px',
         }}
-        className="overflow-hidden text-nexo-steel"
       >
-        <p ref={ref} className="text-sm sm:text-base md:text-lg leading-relaxed" dir="rtl">
-          {children}
-        </p>
-      </motion.div>
+        <div className="overflow-hidden">
+          <p className="text-sm sm:text-base md:text-lg leading-relaxed" dir="rtl">
+            {children}
+          </p>
+        </div>
+      </div>
     </motion.div>
   );
 });

@@ -212,10 +212,10 @@ const Blog = () => {
             className="max-w-4xl"
           >
             <motion.div
-              initial={{ width: 0 }}
-              animate={isHeroInView ? { width: 80 } : {}}
+              initial={{ scaleX: 0 }}
+              animate={isHeroInView ? { scaleX: 1 } : {}}
               transition={{ duration: 0.6 }}
-              className="h-1 bg-primary mb-8"
+              className="h-1 w-20 bg-primary mb-8 origin-left"
             />
 
             <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-hero-fg leading-[0.9] mb-6 sm:mb-8">

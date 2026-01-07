@@ -180,10 +180,10 @@ const ServicesHero = memo(() => {
           className="max-w-4xl"
         >
           <motion.div
-            initial={{ width: 0 }}
-            animate={isHeroInView ? { width: 80 } : {}}
+            initial={{ scaleX: 0 }}
+            animate={isHeroInView ? { scaleX: 1 } : {}}
             transition={{ duration: 0.6 }}
-            className="h-1 bg-primary mb-8"
+            className="h-1 w-20 bg-primary mb-8 origin-left"
           />
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-hero-fg leading-[0.9] mb-6 sm:mb-8">
@@ -278,10 +278,10 @@ const ServicesBentoGrid = memo(() => {
           className="text-center mb-8 sm:mb-10 md:mb-12"
         >
           <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: 50 }}
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
-            className="h-0.5 bg-primary mx-auto mb-4"
+            className="h-0.5 w-[50px] bg-primary mx-auto mb-4 origin-center"
           />
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-foreground mb-2">
             כל מה שהעסק שלכם צריך

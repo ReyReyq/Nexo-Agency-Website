@@ -43,7 +43,7 @@ const SubServiceWhyChooseUs = memo(({ subService, parentService }: SubServiceWhy
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-neutral-900 mb-4">
             {subService.whyChooseUs.title}
           </h2>
-          <p className="text-neutral-600 text-base sm:text-lg leading-relaxed">
+          <p className="text-neutral-700 text-base sm:text-lg leading-relaxed">
             {subService.whyChooseUs.description}
           </p>
         </motion.div>
@@ -88,7 +88,7 @@ const SubServiceWhyChooseUs = memo(({ subService, parentService }: SubServiceWhy
                   </h3>
 
                   {/* Description */}
-                  <p className="relative text-neutral-600 leading-relaxed text-sm md:text-base">
+                  <p className="relative text-neutral-700 leading-relaxed text-sm md:text-base">
                     {benefit.description}
                   </p>
 

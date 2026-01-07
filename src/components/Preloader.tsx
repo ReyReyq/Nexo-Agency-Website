@@ -59,24 +59,24 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
 
-    // Phase 1: Logo shows for 1.5s
-    timersRef.current.push(setTimeout(() => setPhase('photos'), 1500));
+    // OPTIMIZED TIMING - reduced from 10.5s to ~3.5s for better PageSpeed scores
+    // Phase 1: Logo shows for 0.8s (was 1.5s)
+    timersRef.current.push(setTimeout(() => setPhase('photos'), 800));
 
-    // Phase 2: Photos reveal for 2.5s
-    timersRef.current.push(setTimeout(() => setPhase('zooming'), 4000));
+    // Phase 2: Photos reveal for 0.8s (was 2.5s)
+    timersRef.current.push(setTimeout(() => setPhase('zooming'), 1600));
 
-    // Phase 3: Zoom + crossfade to hero (overlapping animations)
+    // Phase 3: Zoom + crossfade to hero - 1.6s (was 5.5s)
     // The settled image starts fading in during zoom
     // Text starts animating in during the crossfade
-    // Everything happens smoothly without gaps
 
     // Phase 4: Complete - preloader fades out
-    timersRef.current.push(setTimeout(() => setPhase('complete'), 9500));
+    timersRef.current.push(setTimeout(() => setPhase('complete'), 3200));
 
-    // Remove preloader
+    // Remove preloader - total ~3.8s (was 10.5s)
     timersRef.current.push(setTimeout(() => {
       handleComplete();
-    }, 10500));
+    }, 3800));
 
     return () => {
       timersRef.current.forEach(clearTimeout);
@@ -123,8 +123,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 ]
               }}
               transition={{
-                duration: 1.4,
-                delay: 0.2,
+                duration: 0.7, // Reduced from 1.4s
+                delay: 0.1, // Reduced from 0.2s
                 times: [0, 0.4, 0.7, 1],
                 ease: [0.16, 1, 0.3, 1]
               }}
@@ -152,7 +152,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
               scale: isZooming ? 7 : 1,
             }}
             transition={{
-              duration: 4,
+              duration: 1.6, // Reduced from 4s
               ease: [0.22, 1, 0.36, 1],
             }}
             style={{
@@ -173,13 +173,13 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                 }}
                 transition={{
                   clipPath: {
-                    duration: 1.2,
-                    delay: (preloaderPhotos.length - 1 - index) * 0.18,
+                    duration: 0.5, // Reduced from 1.2s
+                    delay: (preloaderPhotos.length - 1 - index) * 0.08, // Reduced from 0.18s
                     ease: [0.16, 1, 0.3, 1]
                   },
                   opacity: {
-                    duration: 0.8,
-                    delay: (preloaderPhotos.length - 1 - index) * 0.18,
+                    duration: 0.4, // Reduced from 0.8s
+                    delay: (preloaderPhotos.length - 1 - index) * 0.08, // Reduced from 0.18s
                   }
                 }}
                 className="relative overflow-hidden flex-shrink-0 w-36 h-24 sm:w-44 sm:h-28 md:w-56 md:h-36 lg:w-64 lg:h-40"
@@ -190,11 +190,11 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                   alt={photo.alt}
                   width={256}
                   height={160}
-                  initial={{ scale: 1.4 }}
+                  initial={{ scale: 1.2 }} // Reduced from 1.4
                   animate={{ scale: 1 }}
                   transition={{
-                    duration: 1.5,
-                    delay: (preloaderPhotos.length - 1 - index) * 0.18,
+                    duration: 0.6, // Reduced from 1.5s
+                    delay: (preloaderPhotos.length - 1 - index) * 0.08, // Reduced from 0.18s
                     ease: [0.16, 1, 0.3, 1]
                   }}
                   className="w-full h-full object-cover"
@@ -215,8 +215,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
-            duration: 2.5,
-            delay: 2, // Start 2s into the 4s zoom - overlapping transition
+            duration: 1, // Reduced from 2.5s
+            delay: 0.6, // Start 0.6s into the 1.6s zoom (was 2s into 4s)
             ease: [0.16, 1, 0.3, 1]
           }}
           className="absolute inset-0 z-20"
@@ -238,13 +238,13 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 2.5 }}
+            transition={{ duration: 0.6, delay: 0.8 }} // Reduced from 1.5s, delay 2.5s
             className="absolute inset-0 bg-gradient-to-t from-[hsl(0,0%,4%)]/80 via-[hsl(0,0%,4%)]/30 to-transparent"
           />
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 2.5 }}
+            transition={{ duration: 0.6, delay: 0.8 }} // Reduced from 1.5s, delay 2.5s
             className="absolute inset-0 bg-gradient-to-r from-[hsl(0,0%,4%)]/60 to-transparent"
           />
         </motion.div>
@@ -277,7 +277,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: isZooming ? 3 : 0 }}
+          transition={{ duration: 0.4, delay: isZooming ? 1 : 0 }} // Reduced from 3s delay
           className="absolute inset-0 z-30 flex items-end"
         >
           <div className="container mx-auto px-4 sm:px-6 md:px-12 pb-20 sm:pb-24 md:pb-32 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:pb-[calc(2rem+env(safe-area-inset-bottom))]">
@@ -289,8 +289,8 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
                     initial={{ y: 200, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{
-                      duration: 1,
-                      delay: (isZooming ? 3.2 : 0) + index * 0.1,
+                      duration: 0.6, // Reduced from 1s
+                      delay: (isZooming ? 1.1 : 0) + index * 0.06, // Reduced from 3.2s + 0.1
                       ease: [0.16, 1, 0.3, 1]
                     }}
                     className="text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[9vw] font-black text-white leading-[0.85] tracking-[-0.02em]"
@@ -304,7 +304,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
               <motion.p
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: isZooming ? 3.7 : 0.5 }}
+                transition={{ duration: 0.5, delay: isZooming ? 1.4 : 0.3 }} // Reduced from 3.7s
                 className="text-white/70 text-base sm:text-lg md:text-xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
               >
                 סוכנות דיגיטל שמובילה מותגים לצמיחה אמיתית. אסטרטגיה, עיצוב ופיתוח - הכל תחת קורת גג אחת.
@@ -314,7 +314,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: isZooming ? 3.9 : 0.7 }}
+                transition={{ duration: 0.4, delay: isZooming ? 1.5 : 0.4 }} // Reduced from 3.9s
                 className="mt-6 sm:mt-8 md:mt-10"
               >
                 <div className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-primary via-primary to-primary/90 text-primary-foreground font-semibold text-base sm:text-lg">

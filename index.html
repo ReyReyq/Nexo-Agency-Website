@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <!-- Favicon - Company logo -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/logo.png">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
+
     <title>NEXO AGENCY | סוכנות דיגיטלית</title>
     <meta name="description" content="NEXO AGENCY - בניית אתרים, מיתוג ופתרונות AI מתקדמים לעסקים. מובילים את העתיד הדיגיטלי." />
     <meta name="author" content="NEXO AGENCY" />
@@ -18,6 +24,8 @@
 
     <!-- Preconnect to external domains for faster resource loading -->
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <!-- DNS prefetch for Simple Icons CDN (used in lazy-loaded ProcessSection) -->
+    <link rel="dns-prefetch" href="https://cdn.simpleicons.org">
 
     <!--
       Self-hosted fonts - eliminates CDN dependency and improves performance
@@ -34,7 +42,113 @@
     <link rel="preload" href="/fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
 
     <!-- Preload critical hero image for LCP optimization -->
-    <link rel="preload" href="/images/hero/team-collaboration.webp" as="image" type="image/webp" fetchpriority="high">
+    <!-- AVIF for modern browsers (30-50% smaller than WebP) -->
+    <link
+      rel="preload"
+      href="/images/hero/team-collaboration.avif"
+      as="image"
+      type="image/avif"
+      fetchpriority="high"
+    >
+    <!-- WebP fallback with responsive srcset for optimal device sizing -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      imagesrcset="/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w"
+      imagesizes="100vw"
+    >
+
+    <!--
+      Critical CSS Inline Styles
+      These styles prevent FOUC (Flash of Unstyled Content) for above-the-fold content.
+      They load instantly while the main CSS bundle is fetched asynchronously.
+    -->
+    <style id="critical-css">
+      /* Font declarations - prevent font flash */
+      @font-face {
+        font-family: 'Heebo';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/heebo-hebrew.woff2') format('woff2');
+        unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: 'Heebo';
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url('/fonts/heebo-latin.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+2000-206F;
+      }
+
+      /* Critical layout - prevent layout shift */
+      :root {
+        --background: 0 0% 98%;
+        --foreground: 0 0% 8%;
+        --hero-bg: 0 0% 4%;
+        --hero-fg: 0 0% 100%;
+        --primary: 328 100% 42%;
+        --primary-bright: 328 100% 54%;
+        --nexo-charcoal: #1a1a1a;
+        --nexo-graphite: #2a2a2a;
+      }
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: 'Heebo', sans-serif;
+        background-color: hsl(var(--background));
+        color: hsl(var(--foreground));
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+      }
+
+      /* Hero section critical styles */
+      #root { min-height: 100vh; min-height: 100dvh; }
+      .min-h-screen { min-height: 100vh; min-height: 100dvh; }
+      .bg-background { background-color: hsl(var(--background)); }
+      .bg-hero-bg { background-color: hsl(var(--hero-bg)); }
+      .text-hero-fg { color: hsl(var(--hero-fg)); }
+
+      /* Preloader styles - prevent flash */
+      .fixed { position: fixed; }
+      .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+      .z-50 { z-index: 50; }
+      .flex { display: flex; }
+      .items-center { align-items: center; }
+      .justify-center { justify-content: center; }
+      .relative { position: relative; }
+      .absolute { position: absolute; }
+      .overflow-hidden { overflow: hidden; }
+      .w-full { width: 100%; }
+      .h-full { height: 100%; }
+      .h-screen { height: 100vh; height: 100dvh; }
+
+      /* Navbar critical styles - prevent layout shift */
+      nav[role="navigation"] {
+        position: fixed;
+        left: 1rem; right: 1rem;
+        top: max(1rem, env(safe-area-inset-top));
+        z-index: 50;
+        max-width: 72rem;
+        margin: 0 auto;
+        border-radius: 1rem;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+      }
+
+      /* Loading spinner */
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .animate-spin { animation: spin 1s linear infinite; }
+
+      /* Lenis smooth scroll styles */
+      html.lenis, html.lenis body { height: auto; }
+      .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+      .lenis.lenis-smooth iframe { pointer-events: none; }
+    </style>
   </head>
 
   <body>

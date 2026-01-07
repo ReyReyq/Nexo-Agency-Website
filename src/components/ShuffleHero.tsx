@@ -1,7 +1,54 @@
 import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+
+// Memoized image component with lazy loading
+const OptimizedGridImage = memo(function OptimizedGridImage({
+  src,
+  index,
+  isVisible
+}: {
+  src: string;
+  index: number;
+  isVisible: boolean;
+}) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Only load if visible (intersection observer based)
+  if (!isVisible) {
+    return (
+      <div
+        className="w-full h-full bg-muted animate-pulse"
+        aria-hidden="true"
+      />
+    );
+  }
+
+  return (
+    <div className="w-full h-full relative overflow-hidden">
+      {/* Placeholder shown until loaded */}
+      {!isLoaded && (
+        <div
+          className="absolute inset-0 bg-muted animate-pulse"
+          aria-hidden="true"
+        />
+      )}
+      <img
+        src={src}
+        alt={`Portfolio preview ${index + 1}`}
+        loading="lazy"
+        decoding="async"
+        width={200}
+        height={200}
+        onLoad={() => setIsLoaded(true)}
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+    </div>
+  );
+});
 
 const ShuffleHero = () => {
   return (
@@ -53,60 +100,86 @@ const shuffle = <T,>(array: T[]): T[] => {
 };
 
 const squareData = [
-  { id: 1, src: "/images/websites-pictures/Gemini Generated Image (1).webp" },
-  { id: 2, src: "/images/websites-pictures/Gemini Generated Image (2).webp" },
-  { id: 3, src: "/images/websites-pictures/Gemini Generated Image (3).webp" },
-  { id: 4, src: "/images/websites-pictures/Gemini Generated Image (4).webp" },
-  { id: 5, src: "/images/websites-pictures/Gemini Generated Image (5).webp" },
-  { id: 6, src: "/images/websites-pictures/Gemini Generated Image (6).webp" },
-  { id: 7, src: "/images/websites-pictures/Gemini Generated Image (7).webp" },
-  { id: 8, src: "/images/websites-pictures/Gemini Generated Image (8).webp" },
-  { id: 9, src: "/images/websites-pictures/Google Gemini Image (1).webp" },
-  { id: 10, src: "/images/websites-pictures/Google Gemini Image (2).webp" },
-  { id: 11, src: "/images/websites-pictures/Google Gemini Image (3).webp" },
-  { id: 12, src: "/images/websites-pictures/Google Gemini Image (4).webp" },
-  { id: 13, src: "/images/websites-pictures/Google Gemini Image (5).webp" },
-  { id: 14, src: "/images/websites-pictures/Google Gemini Image (6).webp" },
-  { id: 15, src: "/images/websites-pictures/Google Gemini Image (7).webp" },
-  { id: 16, src: "/images/websites-pictures/Google Gemini Image (8).webp" },
+  { id: 1, src: "/images/websites-pictures/portfolio-website-01.webp" },
+  { id: 2, src: "/images/websites-pictures/portfolio-website-02.webp" },
+  { id: 3, src: "/images/websites-pictures/portfolio-website-03.webp" },
+  { id: 4, src: "/images/websites-pictures/portfolio-website-04.webp" },
+  { id: 5, src: "/images/websites-pictures/portfolio-website-05.webp" },
+  { id: 6, src: "/images/websites-pictures/portfolio-website-06.webp" },
+  { id: 7, src: "/images/websites-pictures/portfolio-website-07.webp" },
+  { id: 8, src: "/images/websites-pictures/portfolio-website-08.webp" },
+  { id: 9, src: "/images/websites-pictures/portfolio-website-17.webp" },
+  { id: 10, src: "/images/websites-pictures/portfolio-website-18.webp" },
+  { id: 11, src: "/images/websites-pictures/portfolio-website-19.webp" },
+  { id: 12, src: "/images/websites-pictures/portfolio-website-20.webp" },
+  { id: 13, src: "/images/websites-pictures/portfolio-website-21.webp" },
+  { id: 14, src: "/images/websites-pictures/portfolio-website-22.webp" },
+  { id: 15, src: "/images/websites-pictures/portfolio-website-23.webp" },
+  { id: 16, src: "/images/websites-pictures/portfolio-website-24.webp" },
 ];
 
-const generateSquares = () => {
-  return shuffle(squareData).map((sq: { id: number; src: string }) => (
-    <motion.div
-      key={sq.id}
-      layout
-      transition={{ duration: 1.5, type: "spring" as const }}
-      className="w-full h-full"
-      style={{
-        backgroundImage: `url(${sq.src})`,
-        backgroundSize: "cover",
-      }}
-    ></motion.div>
-  ));
-};
+// Generate shuffled square data (not elements - elements created in render)
+const generateShuffledData = () => shuffle(squareData);
 
 const ShuffleGrid = () => {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [squares, setSquares] = useState(generateSquares());
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [shuffledData, setShuffledData] = useState(generateShuffledData);
+  const [isVisible, setIsVisible] = useState(false);
 
+  // Intersection observer to detect when grid is in viewport
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect(); // Only need to detect once
+        }
+      },
+      { rootMargin: '100px' } // Start loading slightly before visible
+    );
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Shuffle animation loop
+  useEffect(() => {
+    if (!isVisible) return; // Don't start shuffling until visible
+
+    const shuffleSquares = () => {
+      setShuffledData(generateShuffledData());
+      timeoutRef.current = setTimeout(shuffleSquares, 3000);
+    };
+
     shuffleSquares();
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
-
-  const shuffleSquares = () => {
-    setSquares(generateSquares());
-
-    timeoutRef.current = setTimeout(shuffleSquares, 3000);
-  };
+  }, [isVisible]);
 
   return (
-    <div className="grid grid-cols-4 grid-rows-4 h-[280px] sm:h-[350px] md:h-[450px] gap-1">
-      {squares.map((sq: React.ReactElement) => sq)}
+    <div
+      ref={containerRef}
+      className="grid grid-cols-4 grid-rows-4 h-[280px] sm:h-[350px] md:h-[450px] gap-1"
+    >
+      {shuffledData.map((sq, index) => (
+        <motion.div
+          key={sq.id}
+          layout
+          transition={{ duration: 1.5, type: "spring" as const }}
+          className="w-full h-full overflow-hidden"
+        >
+          <OptimizedGridImage
+            src={sq.src}
+            index={index}
+            isVisible={isVisible}
+          />
+        </motion.div>
+      ))}
     </div>
   );
 };

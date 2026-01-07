@@ -97,10 +97,9 @@ export default defineConfig(({ mode }) => ({
             return "ui-vendor";
           }
 
-          // Framer Motion - animation library
-          if (id.includes("node_modules/framer-motion/")) {
-            return "framer-motion";
-          }
+          // NOTE: Framer Motion is NOT chunked separately to avoid circular dependency
+          // with react-vendor. It will be bundled with the code that imports it.
+          // This prevents the "Cannot read properties of undefined (reading 'createContext')" error
 
           // GSAP - animation library
           if (id.includes("node_modules/gsap/")) {
@@ -123,15 +122,9 @@ export default defineConfig(({ mode }) => ({
             return "embla-vendor";
           }
 
-          // Lucide icons - tree-shake but keep commonly used together
-          if (id.includes("node_modules/lucide-react/")) {
-            return "icons-vendor";
-          }
+          // NOTE: Lucide icons NOT chunked separately to avoid circular dependency with react-vendor
 
-          // TanStack Query - data fetching library
-          if (id.includes("node_modules/@tanstack/")) {
-            return "query-vendor";
-          }
+          // NOTE: TanStack Query NOT chunked separately to avoid circular dependency with react-vendor
 
           // Lenis - smooth scroll library
           if (id.includes("node_modules/lenis/")) {

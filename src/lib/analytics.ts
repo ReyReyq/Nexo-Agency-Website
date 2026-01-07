@@ -2,7 +2,7 @@
  * Analytics Integration - Google Analytics 4 + Microsoft Clarity
  *
  * This module provides unified analytics tracking for:
- * - Google Analytics 4 with cross-domain tracking (nexo.co.il & nexo.org)
+ * - Google Analytics 4 with cross-domain tracking (nexo-agency.co.il & nexoagency.org)
  * - Microsoft Clarity for session recordings and heatmaps
  *
  * Cross-domain tracking allows tracking users across both domains as a single session.
@@ -20,7 +20,7 @@ import Clarity from '@microsoft/clarity';
 const GA4_MEASUREMENT_ID = 'G-CL4Y6SFBMZ';
 
 // Domains for cross-domain tracking
-const CROSS_DOMAIN_DOMAINS = ['nexo.co.il', 'nexo.org'];
+const CROSS_DOMAIN_DOMAINS = ['nexo-agency.co.il', 'nexoagency.org'];
 
 // Microsoft Clarity Project ID
 const CLARITY_PROJECT_ID = 'uxu2vm6wqq';

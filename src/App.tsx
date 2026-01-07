@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LenisProvider } from "@/lib/lenis";
 import ScrollToTop from "@/components/ScrollToTop";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 // Eagerly loaded pages (home page with preloader, and small fallback page)
 import Index from "./pages/Index";
@@ -47,6 +48,15 @@ const PageLoader = memo(() => (
 
 PageLoader.displayName = 'PageLoader';
 
+// Analytics wrapper - tracks page views on route changes
+// Must be inside BrowserRouter to access useLocation
+const AnalyticsProvider = memo(({ children }: { children: React.ReactNode }) => {
+  useAnalytics();
+  return <>{children}</>;
+});
+
+AnalyticsProvider.displayName = 'AnalyticsProvider';
+
 // Main App component - memoized to prevent unnecessary re-renders from parent
 const App = memo(() => (
   <ErrorBoundary>
@@ -56,8 +66,9 @@ const App = memo(() => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
+            <AnalyticsProvider>
+              <ScrollToTop />
+              <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/about" element={
               <Suspense fallback={<PageLoader />}>
@@ -110,7 +121,8 @@ const App = memo(() => (
               </Suspense>
             } />
             <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </AnalyticsProvider>
           </BrowserRouter>
         </LenisProvider>
       </TooltipProvider>

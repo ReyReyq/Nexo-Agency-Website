@@ -1,8 +1,24 @@
 import lighthouse from 'lighthouse';
 import * as chromeLauncher from 'chrome-launcher';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const URL = process.argv[2] || 'https://nexo-vision-two.vercel.app';
+const USE_BUDGET = process.argv.includes('--budget');
+
+// Load budget configuration if available
+let budgetConfig = null;
+const budgetPath = path.join(__dirname, '..', 'lighthouse-budget.json');
+if (fs.existsSync(budgetPath)) {
+  try {
+    budgetConfig = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
+    console.log('Loaded performance budget configuration');
+  } catch (e) {
+    console.warn('Warning: Could not parse lighthouse-budget.json');
+  }
+}
 
 async function runLighthouseAudit(url, device = 'mobile') {
   console.log(`\n🔍 Running Lighthouse audit on: ${url}`);
@@ -30,6 +46,8 @@ async function runLighthouseAudit(url, device = 'mobile') {
       throughputKbps: 10240,
       cpuSlowdownMultiplier: 1,
     } : undefined,
+    // Include budget configuration if available and --budget flag is used
+    ...(USE_BUDGET && budgetConfig ? { budgets: budgetConfig } : {}),
   };
 
   const result = await lighthouse(url, options);
@@ -206,8 +224,56 @@ async function main() {
       }
     }
 
+    // Budget validation (if budget config is available)
+    if (budgetConfig && USE_BUDGET) {
+      console.log('\n\n📊 PERFORMANCE BUDGET VALIDATION');
+      console.log('-'.repeat(70));
+
+      const budgetTimings = budgetConfig[0]?.timings || [];
+      const budgetResources = budgetConfig[0]?.resourceSizes || [];
+      let budgetViolations = 0;
+
+      // Validate timings
+      console.log('\nTiming Budgets:');
+      for (const timing of budgetTimings) {
+        const metricId = timing.metric;
+        const budget = timing.budget;
+
+        // Map budget metric names to Lighthouse audit IDs
+        const auditId = metricId === 'interactive' ? 'interactive' : metricId;
+        const mobileValue = mobileAudits[auditId]?.numericValue || 0;
+        const desktopValue = desktopAudits[auditId]?.numericValue || 0;
+
+        const mobilePass = mobileValue <= budget;
+        const desktopPass = desktopValue <= budget;
+
+        const mobileStatus = mobilePass ? '\x1b[32mPASS\x1b[0m' : '\x1b[31mFAIL\x1b[0m';
+        const desktopStatus = desktopPass ? '\x1b[32mPASS\x1b[0m' : '\x1b[31mFAIL\x1b[0m';
+
+        if (!mobilePass) budgetViolations++;
+        if (!desktopPass) budgetViolations++;
+
+        const unit = metricId === 'cumulative-layout-shift' ? '' : 'ms';
+        const budgetStr = unit ? `${budget}${unit}` : budget;
+        const mobileStr = unit ? `${Math.round(mobileValue)}${unit}` : mobileValue.toFixed(3);
+        const desktopStr = unit ? `${Math.round(desktopValue)}${unit}` : desktopValue.toFixed(3);
+
+        console.log(`  ${metricId.padEnd(30)} Budget: ${budgetStr.padEnd(10)} Mobile: ${mobileStr.padEnd(10)} [${mobileStatus}]  Desktop: ${desktopStr.padEnd(10)} [${desktopStatus}]`);
+      }
+
+      console.log(`\nTotal budget violations: ${budgetViolations}`);
+      if (budgetViolations > 0) {
+        console.log('\x1b[33mWarning: Performance budget exceeded. Review metrics above.\x1b[0m');
+      } else {
+        console.log('\x1b[32mAll performance budgets passed!\x1b[0m');
+      }
+    }
+
     console.log('\n\n' + '='.repeat(70));
     console.log('Reports saved: lighthouse-mobile.html, lighthouse-desktop.html');
+    if (USE_BUDGET) {
+      console.log('Budget configuration: lighthouse-budget.json');
+    }
     console.log('='.repeat(70) + '\n');
 
     // Save JSON summary
@@ -245,6 +311,25 @@ async function main() {
         },
       },
     };
+
+    // Add budget validation results if enabled
+    if (budgetConfig && USE_BUDGET) {
+      const budgetTimings = budgetConfig[0]?.timings || [];
+      summary.budgetValidation = {
+        enabled: true,
+        budgets: budgetTimings.map(timing => {
+          const auditId = timing.metric === 'interactive' ? 'interactive' : timing.metric;
+          const mobileValue = mobileAudits[auditId]?.numericValue || 0;
+          const desktopValue = desktopAudits[auditId]?.numericValue || 0;
+          return {
+            metric: timing.metric,
+            budget: timing.budget,
+            mobile: { value: mobileValue, pass: mobileValue <= timing.budget },
+            desktop: { value: desktopValue, pass: desktopValue <= timing.budget },
+          };
+        }),
+      };
+    }
 
     fs.writeFileSync('lighthouse-summary.json', JSON.stringify(summary, null, 2));
 

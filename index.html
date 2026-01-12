@@ -24,41 +24,89 @@
 
     <!-- Preconnect to external domains for faster resource loading -->
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+
+    <!-- DNS Prefetch for third-party analytics domains (loaded after idle) -->
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.google-analytics.com">
+    <link rel="dns-prefetch" href="https://www.clarity.ms">
+
     <!-- DNS prefetch for Simple Icons CDN (used in lazy-loaded ProcessSection) -->
     <link rel="dns-prefetch" href="https://cdn.simpleicons.org">
 
     <!--
       Self-hosted fonts - eliminates CDN dependency and improves performance
-      - Heebo: Primary Hebrew font (variable font, supports all weights)
-      - Roboto Flex: Variable font for VariableProximity component
-      - Clash Display: Geometric display font for headlines and branding
-      - Fonts are loaded via @font-face in index.css with font-display: swap
+      - Heebo: Primary Hebrew font (variable font, supports all weights) - CRITICAL
+      - Clash Display 600: Geometric display font for preloader logo and headlines - CRITICAL
+      - Roboto Flex: Variable font for VariableProximity (AboutSection) - NOT preloaded
+
+      Font Loading Optimization Strategy (Industry Best Practices):
+      1. Only preload fonts used above the fold (hero/preloader)
+      2. Roboto Flex (84KB) is NOT preloaded - used only in AboutSection below fold
+      3. fetchpriority="high" only on the 2 most critical fonts
+      4. All fonts use font-display: swap in CSS (FOUT over FOIT)
+      5. crossorigin="anonymous" required for font preloads (CORS)
     -->
 
     <!-- Preload critical font files for faster initial render -->
-    <link rel="preload" href="/fonts/heebo-hebrew.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/heebo-latin.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/roboto-flex-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- Heebo Hebrew: Primary content font for Hebrew text (12KB) - highest priority -->
+    <link rel="preload" href="/fonts/heebo-hebrew.woff2" as="font" type="font/woff2" crossorigin="anonymous" fetchpriority="high">
+    <!-- Heebo Latin: Fallback for Latin characters in Hebrew text (30KB) -->
+    <link rel="preload" href="/fonts/heebo-latin.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <!-- Clash Display 600: Preloader "NEXO" logo and headlines (15KB) - high priority -->
+    <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin="anonymous" fetchpriority="high">
+    <!-- NOTE: Roboto Flex (84KB) intentionally NOT preloaded - only used in AboutSection below fold -->
 
     <!-- Preload critical hero image for LCP optimization -->
-    <!-- AVIF for modern browsers (30-50% smaller than WebP) with responsive srcset -->
+    <!-- Mobile-specific preloads (max-width: 640px) -->
     <link
       rel="preload"
       as="image"
       type="image/avif"
       fetchpriority="high"
-      imagesrcset="/images/hero/team-collaboration-sm.avif 640w, /images/hero/team-collaboration-md.avif 1024w, /images/hero/team-collaboration.avif 1920w"
-      imagesizes="100vw"
+      href="/images/hero/team-collaboration-sm.avif"
+      media="(max-width: 640px)"
     >
-    <!-- WebP fallback with responsive srcset for optimal device sizing -->
     <link
       rel="preload"
       as="image"
       type="image/webp"
       fetchpriority="high"
-      imagesrcset="/images/hero/team-collaboration-sm.webp 640w, /images/hero/team-collaboration-md.webp 1024w, /images/hero/team-collaboration.webp 1920w"
-      imagesizes="100vw"
+      href="/images/hero/team-collaboration-sm.webp"
+      media="(max-width: 640px)"
+    >
+    <!-- Tablet-specific preloads (641px - 1024px) -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      fetchpriority="high"
+      href="/images/hero/team-collaboration-md.avif"
+      media="(min-width: 641px) and (max-width: 1024px)"
+    >
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      href="/images/hero/team-collaboration-md.webp"
+      media="(min-width: 641px) and (max-width: 1024px)"
+    >
+    <!-- Desktop-specific preloads (1025px+) -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      fetchpriority="high"
+      href="/images/hero/team-collaboration.avif"
+      media="(min-width: 1025px)"
+    >
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      href="/images/hero/team-collaboration.webp"
+      media="(min-width: 1025px)"
     >
 
     <!--

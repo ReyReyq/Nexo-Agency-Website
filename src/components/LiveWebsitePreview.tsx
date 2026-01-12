@@ -115,8 +115,8 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
       className="py-16 md:py-24 relative overflow-hidden"
       style={{ backgroundColor: brandColors?.background || '#FAF9F6' }}
     >
-      <div className="container mx-auto px-6 md:px-12 relative z-10" dir="rtl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-14 items-center">
           {/* Text Content - Right side (RTL) */}
           <div className="order-2 lg:order-1">
             {/* Label */}
@@ -301,6 +301,11 @@ export function LiveWebsitePreview({ url, title, brandColors }: LiveWebsitePrevi
                     height: device === 'desktop' ? '450px' : device === 'tablet' ? '550px' : '600px'
                   }}
                 >
+                  {/*
+                    FACADE PATTERN: Heavy iframe embed is not loaded until user clicks
+                    This prevents loading external website resources until explicitly requested,
+                    improving initial page load performance significantly.
+                  */}
                   {isVisible && showIframe ? (
                     <>
                       {/* Loading Overlay */}

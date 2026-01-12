@@ -43,6 +43,7 @@ const MOUSE_DISTANCE_THRESHOLD = 800;
 const heroHeadlines = ["הופכים", "חזון", "למציאות", "דיגיטלית."];
 
 // Text reveal animation variants
+// Using opacity: 0 for clean animations - text is gated by hasAnimated so LCP is not affected
 const lineVariants = {
   hidden: { y: "100%", opacity: 0 },
   visible: (i: number) => ({
@@ -69,16 +70,15 @@ const fadeUpVariants = {
   }),
 };
 
-// LCP-optimized variant - shows text immediately for better LCP score
-// Animation is purely decorative enhancement, not blocking content visibility
+// Subheadline animation variant
 const lcpTextVariants = {
-  hidden: { y: 20, opacity: 0.85 }, // Start visible (0.85 opacity) for LCP
+  hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
       duration: 0.5,
-      delay: 0.1, // Minimal delay
+      delay: 0.1,
       ease: [0.16, 1, 0.3, 1] as const,
     },
   },
@@ -102,10 +102,27 @@ const Hero = () => {
   const springX = useSpring(mouseX, SPRING_CONFIG);
   const springY = useSpring(mouseY, SPRING_CONFIG);
 
-  // Trigger animation after preloader
+  // Trigger animation when preloader signals it's ready
+  // The preloader dispatches this event during settling phase (when hero image is visible)
+  // This allows Hero text to animate in while preloader image is still showing
   useEffect(() => {
-    const timer = setTimeout(() => setHasAnimated(true), 100);
-    return () => clearTimeout(timer);
+    const PRELOADER_COMPLETE_EVENT = 'nexo:preloader-complete';
+
+    // Check if preloader already completed (e.g., returning visitor in same session)
+    const preloaderShown = sessionStorage.getItem('nexo-preloader-shown');
+    if (preloaderShown) {
+      // Preloader was already shown, animate immediately
+      setHasAnimated(true);
+      return;
+    }
+
+    // Wait for preloader to signal it's ready for text animation
+    const handlePreloaderComplete = () => {
+      setHasAnimated(true); // Start text animation immediately
+    };
+
+    window.addEventListener(PRELOADER_COMPLETE_EVENT, handlePreloaderComplete);
+    return () => window.removeEventListener(PRELOADER_COMPLETE_EVENT, handlePreloaderComplete);
   }, []);
 
   // Check for mobile viewport to disable parallax
@@ -124,10 +141,12 @@ const Hero = () => {
     offset: ["start start", "end start"] as const,
   });
 
-  // Disable parallax effects when reduced motion is preferred
-  const imageScale = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [1, 1] : [1, 1.3]);
-  const textY = useTransform(scrollYProgress, [0, 1], prefersReducedMotion ? [0, 0] : [0, 150]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], prefersReducedMotion ? [1, 1] : [1, 0]);
+  // Disable parallax effects when reduced motion is preferred or on mobile devices
+  // Mobile devices have limited CPU/GPU resources, so we skip expensive scroll-based transforms
+  const disableParallax = prefersReducedMotion || isMobile;
+  const imageScale = useTransform(scrollYProgress, [0, 1], disableParallax ? [1, 1] : [1, 1.3]);
+  const textY = useTransform(scrollYProgress, [0, 1], disableParallax ? [0, 0] : [0, 150]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], disableParallax ? [1, 1] : [1, 0]);
 
   // Mouse movement handler for image changes
   // Disabled when reduced motion is preferred - no image cycling
@@ -252,7 +271,8 @@ const Hero = () => {
                 alt="עבודה יצירתית"
                 width={1920}
                 height={1080}
-                decoding="async"
+                loading="eager"
+                decoding="sync"
                 fetchPriority="high"
                 className="w-full h-full object-cover"
               />
@@ -292,10 +312,10 @@ const Hero = () => {
             </div>
           ))}
 
-          {/* Subheadline - LCP element, visible immediately for performance */}
+          {/* Subheadline - gated by hasAnimated to prevent showing through preloader */}
           <motion.p
             initial="hidden"
-            animate="visible"
+            animate={hasAnimated ? "visible" : "hidden"}
             variants={lcpTextVariants}
             className="text-hero-fg/80 text-fluid-base sm:text-fluid-lg md:text-fluid-xl lg:text-fluid-2xl max-w-2xl mt-6 sm:mt-8 leading-relaxed"
           >

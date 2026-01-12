@@ -5,6 +5,7 @@ import { componentTagger } from "lovable-tagger";
 import compression from "vite-plugin-compression";
 import { visualizer } from "rollup-plugin-visualizer";
 import preload from "vite-plugin-preload";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -27,6 +28,69 @@ export default defineConfig(({ mode }) => ({
       open: true,
       gzipSize: true,
       brotliSize: true,
+    }),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+      manifest: {
+        name: 'NEXO Agency',
+        short_name: 'NEXO',
+        description: 'Digital Agency - Web Design, Development & Marketing',
+        theme_color: '#0a0a0a',
+        background_color: '#0a0a0a',
+        display: 'standalone',
+        icons: [
+          {
+            src: '/icons/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: '/icons/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          }
+        ]
+      },
+      workbox: {
+        // Precache core assets but exclude large portfolio images (they'll be runtime cached)
+        globPatterns: ['**/*.{js,css,html,ico,woff2}', 'images/hero/**/*.{png,webp,avif}', 'images/gallery/**/*.{png,webp,avif}'],
+        // Exclude portfolio folder from precaching (large images, runtime cached instead)
+        globIgnores: ['**/portfolio/**', '**/node_modules/**'],
+        // Increase limit for hero images, but portfolio will use runtime caching
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/.*\.(avif|webp|png|jpg|jpeg)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 365 * 24 * 60 * 60 // 1 year
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:js|css)$/i,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources'
+            }
+          }
+        ]
+      }
     }),
   ].filter(Boolean),
   resolve: {

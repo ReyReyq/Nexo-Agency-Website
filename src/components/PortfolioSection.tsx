@@ -7,29 +7,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Marquee } from "@/components/ui/marquee";
 
-// Helper to generate srcset for portfolio images
-// Naming convention: image.webp -> image-sm.webp (400w), image-md.webp (600w)
-const generatePortfolioSrcSet = (src: string, isLarge = false) => {
-  if (!src.startsWith('/portfolio/')) return { src };
-
-  const extension = src.substring(src.lastIndexOf('.'));
-  const basePath = src.substring(0, src.lastIndexOf('.'));
-
-  // Large cards (featured) get larger srcset
-  if (isLarge) {
-    return {
-      src,
-      srcSet: `${basePath}-sm${extension} 480w, ${basePath}-md${extension} 800w, ${src} 1200w`,
-      sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 800px',
-    };
-  }
-
-  // Standard cards
-  return {
-    src,
-    srcSet: `${basePath}-sm${extension} 320w, ${basePath}-md${extension} 480w, ${src} 640w`,
-    sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px',
-  };
+// Helper for portfolio images - returns src only (no srcset since responsive variants don't exist)
+const generatePortfolioSrcSet = (src: string, _isLarge = false) => {
+  return { src };
 };
 
 // Helper to generate srcset for marquee images

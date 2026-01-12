@@ -264,10 +264,10 @@ const StepSection = memo(({ step, index, brandIdentity }: StepSectionProps) => {
         </span>
       </motion.div>
 
-      <div ref={ref} className="container mx-auto px-6 md:px-12 relative z-10" dir="rtl">
+      <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10" dir="rtl">
         {/* Two-column layout for Design step */}
         {isDesignStep && brandIdentity ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 lg:gap-20">
             {/* Main content */}
             <div className="order-1 lg:order-1">
               {/* Step Label */}
@@ -501,7 +501,7 @@ const SimplyHebrewWorkflow = memo(({
             }}
           />
 
-          <div className="container mx-auto px-6 md:px-12 text-center relative z-10" dir="rtl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10" dir="rtl">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={isIntroInView ? { opacity: 1, y: 0 } : {}}
@@ -590,7 +590,7 @@ const SimplyHebrewWorkflow = memo(({
       {/* ========== CONCLUSION SECTION ========== */}
       <div className="relative" style={{ backgroundColor: '#1a5f4a', zIndex: 30 }}>
         <section className="py-28 md:py-36 text-white">
-          <div className="container mx-auto px-6 md:px-12 text-center" dir="rtl">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center" dir="rtl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}

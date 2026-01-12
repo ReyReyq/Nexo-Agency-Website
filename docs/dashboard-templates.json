@@ -1,0 +1,982 @@
+{
+  "dashboardTemplates": {
+    "executive-summary": {
+      "name": "Executive Summary Dashboard",
+      "description": "High-level KPI overview for leadership and clients",
+      "type": "client-facing",
+      "frequency": "weekly/monthly",
+      "pages": 1,
+      "layout": "responsive",
+      "purpose": "Quick snapshot of business health and key metrics",
+      "targetAudience": ["C-Level", "Clients", "Stakeholders"],
+      "pages_config": [
+        {
+          "pageNumber": 1,
+          "title": "Executive Overview",
+          "sections": [
+            {
+              "type": "header",
+              "content": "Dashboard Title - [Date Range]",
+              "styling": "prominent"
+            },
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Users",
+                  "dimension": "User Count",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                },
+                {
+                  "name": "Sessions",
+                  "dimension": "Session Count",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                },
+                {
+                  "name": "Conversion Rate",
+                  "dimension": "Conversions / Sessions",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                },
+                {
+                  "name": "Revenue",
+                  "dimension": "Total Revenue",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                }
+              ]
+            },
+            {
+              "type": "chart_row",
+              "row": 1,
+              "charts": [
+                {
+                  "title": "Users Trend",
+                  "type": "line_chart",
+                  "metric": "Users",
+                  "dimension": "Date",
+                  "timeRange": "last_90_days",
+                  "width": "50%"
+                },
+                {
+                  "title": "Traffic by Device",
+                  "type": "pie_chart",
+                  "metric": "Sessions",
+                  "dimension": "Device Category",
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "chart_row",
+              "row": 2,
+              "charts": [
+                {
+                  "title": "Revenue by Channel",
+                  "type": "bar_chart",
+                  "metric": "Revenue",
+                  "dimension": "Source / Medium",
+                  "sortBy": "Revenue",
+                  "sortOrder": "descending",
+                  "limit": 5,
+                  "width": "50%"
+                },
+                {
+                  "title": "Conversion by Source",
+                  "type": "table",
+                  "columns": [
+                    "Source / Medium",
+                    "Users",
+                    "Conversions",
+                    "Conversion Rate"
+                  ],
+                  "limit": 10,
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "text_box",
+              "title": "Key Insights",
+              "content": "[Insert key findings and highlights for this period]",
+              "styling": "highlight"
+            },
+            {
+              "type": "text_box",
+              "title": "Recommendations",
+              "content": "[Insert actionable recommendations based on data]",
+              "styling": "action"
+            }
+          ],
+          "filters": [
+            {
+              "name": "Date Range",
+              "type": "date_range",
+              "position": "top",
+              "default": "last_month"
+            }
+          ]
+        }
+      ]
+    },
+    "performance-dashboard-client": {
+      "name": "Performance Dashboard (Client-Facing)",
+      "description": "Comprehensive monthly client reporting with insights",
+      "type": "client-facing",
+      "frequency": "weekly/monthly",
+      "pages": 4,
+      "layout": "responsive",
+      "purpose": "Detailed performance review with actionable insights",
+      "targetAudience": ["Clients", "Account Managers", "Stakeholders"],
+      "pages_config": [
+        {
+          "pageNumber": 1,
+          "title": "Monthly Overview",
+          "sections": [
+            {
+              "type": "header",
+              "content": "Performance Report - [Client Name] - [Month/Period]"
+            },
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Users",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                },
+                {
+                  "name": "Sessions",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                },
+                {
+                  "name": "Conversions",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                },
+                {
+                  "name": "Revenue",
+                  "comparison": "month-over-month",
+                  "visualization": "scorecard",
+                  "showTrend": true
+                }
+              ]
+            },
+            {
+              "type": "text_box",
+              "title": "Performance Highlight",
+              "content": "[Insert key achievement or win for the period]"
+            },
+            {
+              "type": "chart",
+              "title": "Users & Sessions Trend",
+              "type": "dual_axis_chart",
+              "metrics": ["Users", "Sessions"],
+              "dimension": "Date"
+            }
+          ]
+        },
+        {
+          "pageNumber": 2,
+          "title": "Traffic Analysis",
+          "sections": [
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Users by Traffic Source",
+                  "type": "bar_chart",
+                  "metric": "Users",
+                  "dimension": "Source / Medium",
+                  "width": "50%"
+                },
+                {
+                  "title": "Device Breakdown",
+                  "type": "pie_chart",
+                  "metric": "Sessions",
+                  "dimension": "Device Category",
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "chart",
+              "title": "Traffic Trends",
+              "type": "line_chart",
+              "metric": "Users",
+              "dimension": "Date"
+            },
+            {
+              "type": "table",
+              "title": "Top Landing Pages",
+              "columns": [
+                "Page Title",
+                "Users",
+                "Sessions",
+                "Bounce Rate",
+                "Avg Duration"
+              ],
+              "limit": 10
+            }
+          ],
+          "filters": [
+            {
+              "name": "Date Range",
+              "type": "date_range",
+              "default": "last_month"
+            },
+            {
+              "name": "Traffic Source",
+              "type": "dropdown",
+              "dimension": "Source / Medium"
+            }
+          ]
+        },
+        {
+          "pageNumber": 3,
+          "title": "Conversions & Revenue",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Conversion Rate",
+                  "visualization": "scorecard",
+                  "comparison": "month-over-month"
+                },
+                {
+                  "name": "Revenue",
+                  "visualization": "scorecard",
+                  "comparison": "month-over-month"
+                },
+                {
+                  "name": "ROAS",
+                  "visualization": "scorecard",
+                  "comparison": "month-over-month"
+                },
+                {
+                  "name": "Cost Per Conversion",
+                  "visualization": "scorecard",
+                  "comparison": "month-over-month"
+                }
+              ]
+            },
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Conversion Rate Trend",
+                  "type": "line_chart",
+                  "metric": "Conversion Rate",
+                  "dimension": "Date",
+                  "width": "50%"
+                },
+                {
+                  "title": "Revenue by Source",
+                  "type": "bar_chart",
+                  "metric": "Revenue",
+                  "dimension": "Source / Medium",
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "table",
+              "title": "Conversion by Traffic Source",
+              "columns": [
+                "Source / Medium",
+                "Users",
+                "Conversions",
+                "Conversion Rate",
+                "Revenue",
+                "ROAS"
+              ]
+            }
+          ]
+        },
+        {
+          "pageNumber": 4,
+          "title": "Insights & Recommendations",
+          "sections": [
+            {
+              "type": "text_box",
+              "title": "What's Working",
+              "content": "[List top 3-5 performing areas and why they're working well]"
+            },
+            {
+              "type": "text_box",
+              "title": "Areas to Improve",
+              "content": "[List 2-3 areas that need attention and recommendations]"
+            },
+            {
+              "type": "text_box",
+              "title": "Recommended Next Steps",
+              "content": "[Provide 3-5 specific actionable recommendations for next month]"
+            },
+            {
+              "type": "text_box",
+              "title": "Questions & Notes",
+              "content": "[Space for questions or additional context]"
+            }
+          ]
+        }
+      ]
+    },
+    "agency-performance": {
+      "name": "Agency Performance Dashboard (Internal)",
+      "description": "Multi-client analytics for agency teams",
+      "type": "internal",
+      "frequency": "daily/weekly",
+      "pages": 5,
+      "layout": "freeform",
+      "purpose": "Track performance across all clients and campaigns",
+      "targetAudience": ["Agency Team", "Account Managers", "Strategists"],
+      "pages_config": [
+        {
+          "pageNumber": 1,
+          "title": "Client Portfolio Overview",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Active Clients",
+                  "metric": "Count of Unique Accounts"
+                },
+                {
+                  "name": "Total Managed Budget",
+                  "metric": "Sum of Ad Spend"
+                },
+                {
+                  "name": "Average ROAS",
+                  "metric": "Average Revenue / Cost"
+                },
+                {
+                  "name": "Active Campaigns",
+                  "metric": "Count of Active Campaigns"
+                }
+              ]
+            },
+            {
+              "type": "table",
+              "title": "Client Performance Matrix",
+              "columns": [
+                "Client Name",
+                "Revenue",
+                "Cost",
+                "ROAS",
+                "Conversions",
+                "Status"
+              ],
+              "sortBy": "Revenue",
+              "sortOrder": "descending"
+            }
+          ]
+        },
+        {
+          "pageNumber": 2,
+          "title": "Aggregate Performance",
+          "sections": [
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Combined Users Trend",
+                  "type": "line_chart",
+                  "metric": "Users",
+                  "dimension": "Date",
+                  "width": "50%"
+                },
+                {
+                  "title": "Combined Revenue Trend",
+                  "type": "line_chart",
+                  "metric": "Revenue",
+                  "dimension": "Date",
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "ROAS by Client",
+                  "type": "bar_chart",
+                  "metric": "ROAS",
+                  "dimension": "Client Name",
+                  "sortBy": "ROAS",
+                  "sortOrder": "descending",
+                  "width": "50%"
+                },
+                {
+                  "title": "Top Performing Campaigns",
+                  "type": "scorecard",
+                  "metric": "Campaign with Highest ROAS",
+                  "width": "50%"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pageNumber": 3,
+          "title": "Budget Allocation",
+          "sections": [
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Budget Distribution by Client",
+                  "type": "pie_chart",
+                  "metric": "Cost",
+                  "dimension": "Client Name",
+                  "width": "50%"
+                },
+                {
+                  "title": "Budget Trends",
+                  "type": "line_chart",
+                  "metric": "Cost",
+                  "dimension": "Date",
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "table",
+              "title": "Budget vs Revenue by Client",
+              "columns": [
+                "Client Name",
+                "Budget",
+                "Spend",
+                "Burn Rate",
+                "Revenue",
+                "ROI"
+              ]
+            }
+          ]
+        },
+        {
+          "pageNumber": 4,
+          "title": "Campaign Deep Dive",
+          "sections": [
+            {
+              "type": "table",
+              "title": "All Campaigns Performance",
+              "columns": [
+                "Campaign Name",
+                "Client",
+                "Cost",
+                "Conversions",
+                "Revenue",
+                "ROAS",
+                "Status"
+              ],
+              "sortBy": "ROAS",
+              "sortOrder": "descending",
+              "limit": 50
+            }
+          ],
+          "filters": [
+            {
+              "name": "Client",
+              "type": "dropdown"
+            },
+            {
+              "name": "Campaign Status",
+              "type": "dropdown",
+              "options": ["Active", "Paused", "Ended"]
+            },
+            {
+              "name": "Date Range",
+              "type": "date_range"
+            }
+          ]
+        },
+        {
+          "pageNumber": 5,
+          "title": "Alerts & Actions",
+          "sections": [
+            {
+              "type": "alert_section",
+              "title": "Underperforming Campaigns",
+              "alertType": "warning",
+              "content": "[Table of campaigns with ROAS below threshold]"
+            },
+            {
+              "type": "alert_section",
+              "title": "Opportunities",
+              "alertType": "success",
+              "content": "[Table of high-performing campaigns ready to scale]"
+            },
+            {
+              "type": "text_box",
+              "title": "This Week's Action Items",
+              "content": "[List of recommended actions and optimizations]"
+            }
+          ]
+        }
+      ]
+    },
+    "ecommerce-dashboard": {
+      "name": "E-commerce Performance Dashboard",
+      "description": "Track sales, products, and customer metrics",
+      "type": "client-facing",
+      "frequency": "daily/weekly",
+      "pages": 5,
+      "layout": "responsive",
+      "purpose": "Monitor e-commerce sales and customer behavior",
+      "targetAudience": ["E-commerce Managers", "Store Owners", "Marketing Teams"],
+      "pages_config": [
+        {
+          "pageNumber": 1,
+          "title": "Sales Overview",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Revenue",
+                  "comparison": "day-over-day",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Transactions",
+                  "comparison": "day-over-day",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Average Order Value",
+                  "comparison": "day-over-day",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Conversion Rate",
+                  "comparison": "day-over-day",
+                  "visualization": "scorecard"
+                }
+              ]
+            },
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Revenue Trend",
+                  "type": "line_chart",
+                  "metric": "Revenue",
+                  "dimension": "Date",
+                  "width": "50%"
+                },
+                {
+                  "title": "Order Count Trend",
+                  "type": "line_chart",
+                  "metric": "Transactions",
+                  "dimension": "Date",
+                  "width": "50%"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pageNumber": 2,
+          "title": "Product Performance",
+          "sections": [
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Top Products by Revenue",
+                  "type": "bar_chart",
+                  "metric": "Revenue",
+                  "dimension": "Product Name",
+                  "limit": 10,
+                  "width": "50%"
+                },
+                {
+                  "title": "Top Products by Quantity",
+                  "type": "bar_chart",
+                  "metric": "Quantity",
+                  "dimension": "Product Name",
+                  "limit": 10,
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "table",
+              "title": "Product Category Performance",
+              "columns": [
+                "Category",
+                "Revenue",
+                "Units Sold",
+                "Avg Price",
+                "Conversion Rate"
+              ]
+            }
+          ],
+          "filters": [
+            {
+              "name": "Date Range",
+              "type": "date_range"
+            },
+            {
+              "name": "Category",
+              "type": "dropdown"
+            }
+          ]
+        },
+        {
+          "pageNumber": 3,
+          "title": "Traffic & Users",
+          "sections": [
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Users Trend",
+                  "type": "line_chart",
+                  "metric": "Users",
+                  "dimension": "Date",
+                  "width": "50%"
+                },
+                {
+                  "title": "New vs Returning Users",
+                  "type": "pie_chart",
+                  "metric": "Users",
+                  "dimension": "User Type",
+                  "width": "50%"
+                }
+              ]
+            },
+            {
+              "type": "chart_row",
+              "charts": [
+                {
+                  "title": "Traffic by Source",
+                  "type": "bar_chart",
+                  "metric": "Users",
+                  "dimension": "Source / Medium",
+                  "width": "50%"
+                },
+                {
+                  "title": "Device Category Breakdown",
+                  "type": "table",
+                  "columns": ["Device", "Users", "Sessions", "Conversion Rate"],
+                  "width": "50%"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "pageNumber": 4,
+          "title": "Checkout & Funnel",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Add-to-Cart Events",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Checkout Starts",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Completed Purchases",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Cart Abandonment Rate",
+                  "visualization": "scorecard"
+                }
+              ]
+            },
+            {
+              "type": "chart",
+              "title": "Funnel Steps",
+              "type": "funnel_chart",
+              "steps": [
+                "Product Views",
+                "Add to Cart",
+                "Checkout Start",
+                "Purchase Complete"
+              ]
+            }
+          ]
+        },
+        {
+          "pageNumber": 5,
+          "title": "Customer Insights",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Customer Lifetime Value",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Repeat Customer Rate",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Churn Rate",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Customer Acquisition Cost",
+                  "visualization": "scorecard"
+                }
+              ]
+            },
+            {
+              "type": "chart",
+              "title": "Geographic Performance",
+              "type": "geo_chart",
+              "metric": "Revenue",
+              "dimension": "Country"
+            }
+          ]
+        }
+      ]
+    },
+    "content-blog-dashboard": {
+      "name": "Content & Blog Performance Dashboard",
+      "description": "Track content marketing metrics and engagement",
+      "type": "internal",
+      "frequency": "weekly",
+      "pages": 4,
+      "layout": "freeform",
+      "purpose": "Measure content effectiveness and reader engagement",
+      "targetAudience": ["Content Managers", "Marketers", "Writers"],
+      "pages_config": [
+        {
+          "pageNumber": 1,
+          "title": "Content Overview",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Total Pageviews",
+                  "comparison": "week-over-week",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Avg Time on Page",
+                  "comparison": "week-over-week",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Bounce Rate",
+                  "comparison": "week-over-week",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Engagement Rate",
+                  "comparison": "week-over-week",
+                  "visualization": "scorecard"
+                }
+              ]
+            },
+            {
+              "type": "chart",
+              "title": "Pageviews Trend",
+              "type": "line_chart",
+              "metric": "Pageviews",
+              "dimension": "Date"
+            }
+          ]
+        },
+        {
+          "pageNumber": 2,
+          "title": "Top Performing Content",
+          "sections": [
+            {
+              "type": "chart",
+              "title": "Top Articles by Pageviews",
+              "type": "bar_chart",
+              "metric": "Pageviews",
+              "dimension": "Page Title",
+              "limit": 15
+            },
+            {
+              "type": "table",
+              "title": "Detailed Content Performance",
+              "columns": [
+                "Page Title",
+                "Pageviews",
+                "Avg Duration",
+                "Bounce Rate",
+                "Engagement Rate",
+                "Conversions"
+              ],
+              "limit": 20
+            }
+          ],
+          "filters": [
+            {
+              "name": "Content Type",
+              "type": "dropdown"
+            },
+            {
+              "name": "Author",
+              "type": "dropdown"
+            }
+          ]
+        },
+        {
+          "pageNumber": 3,
+          "title": "Traffic Sources",
+          "sections": [
+            {
+              "type": "kpi_row",
+              "metrics": [
+                {
+                  "name": "Organic Search",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Direct Traffic",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Referral Traffic",
+                  "visualization": "scorecard"
+                },
+                {
+                  "name": "Social Traffic",
+                  "visualization": "scorecard"
+                }
+              ]
+            },
+            {
+              "type": "chart",
+              "title": "Traffic Sources Trend",
+              "type": "line_chart",
+              "metric": "Pageviews",
+              "dimension": "Date",
+              "breakdown": "Source / Medium"
+            }
+          ]
+        },
+        {
+          "pageNumber": 4,
+          "title": "Conversion Analysis",
+          "sections": [
+            {
+              "type": "table",
+              "title": "Content-Driven Conversions",
+              "columns": [
+                "Page Title",
+                "Conversions",
+                "Conversion Rate",
+                "Revenue"
+              ]
+            },
+            {
+              "type": "chart",
+              "title": "Email Signups by Content",
+              "type": "bar_chart",
+              "metric": "Goal Completions",
+              "dimension": "Page Title"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "best_practices": {
+    "kpi_selection": {
+      "acquisition": [
+        "Users (unique visitors)",
+        "New Users",
+        "Sessions",
+        "Source/Medium breakdown"
+      ],
+      "engagement": [
+        "Engaged Sessions",
+        "Engagement Rate",
+        "Average Session Duration",
+        "Pages per Session",
+        "Bounce Rate"
+      ],
+      "conversion": [
+        "Conversion Rate",
+        "Goal Completions",
+        "Transactions",
+        "Revenue",
+        "Average Order Value"
+      ],
+      "efficiency": [
+        "Cost per Acquisition",
+        "Return on Ad Spend (ROAS)",
+        "Customer Lifetime Value",
+        "Revenue per Session"
+      ]
+    },
+    "visualization_recommendations": {
+      "single_kpi": "Scorecard",
+      "time_series": "Line Chart",
+      "category_comparison": "Bar Chart",
+      "proportional_data": "Pie/Donut Chart",
+      "detailed_metrics": "Table",
+      "goal_progress": "Gauge Chart",
+      "geographic": "Geo Chart",
+      "funnel": "Funnel Chart"
+    },
+    "color_scheme": {
+      "positive": "#10B981",
+      "negative": "#EF4444",
+      "neutral": "#6B7280",
+      "primary": "#3B82F6",
+      "secondary": "#8B5CF6",
+      "accent": "#F59E0B"
+    },
+    "filter_best_practices": {
+      "max_filters": 4,
+      "placement": "top_of_report",
+      "essential_filters": [
+        "Date Range",
+        "Traffic Channel",
+        "Campaign",
+        "Geographic Location"
+      ]
+    }
+  },
+  "scheduling_recommendations": {
+    "client_reports": {
+      "weekly": {
+        "day": "Monday",
+        "time": "07:00 AM",
+        "timezone": "Client Timezone"
+      },
+      "monthly": {
+        "day": "First Monday",
+        "time": "07:00 AM",
+        "timezone": "Client Timezone"
+      }
+    },
+    "internal_reports": {
+      "daily": {
+        "time": "06:00 AM"
+      },
+      "weekly": {
+        "day": "Tuesday",
+        "time": "08:00 AM"
+      }
+    }
+  }
+}

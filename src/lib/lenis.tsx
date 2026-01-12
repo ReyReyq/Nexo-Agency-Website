@@ -105,42 +105,65 @@ export const LenisProvider = ({ children, options = {} }: LenisProviderProps) =>
   }, []);
 
   useEffect(() => {
+    let lenisInstance: Lenis | null = null;
+    let idleCallbackId: number | null = null;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
     // Check for reduced motion preference
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (prefersReducedMotion) {
-      return;
-    }
-
-    const opts = optionsRef.current;
-
-    // Initialize Lenis with optimized defaults
-    const lenisInstance = new Lenis({
-      duration: opts.duration ?? 1.2,
-      easing: opts.easing ?? ((t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
-      orientation: opts.orientation ?? 'vertical',
-      gestureOrientation: opts.gestureOrientation ?? 'vertical',
-      smoothWheel: opts.smoothWheel ?? true,
-      wheelMultiplier: opts.wheelMultiplier ?? 1,
-      touchMultiplier: opts.touchMultiplier ?? 2,
-      infinite: opts.infinite ?? false,
-    });
-
-    // Set state to trigger re-render and update context
-    setLenis(lenisInstance);
 
     // Handle visibility change - pause RAF when tab is hidden
     const handleVisibilityChange = () => {
       setIsTabVisible(document.visibilityState === 'visible');
     };
 
+    // Deferred initialization function
+    const initLenis = () => {
+      // Skip if user prefers reduced motion
+      if (prefersReducedMotion) return;
+
+      const opts = optionsRef.current;
+
+      // Initialize Lenis with optimized defaults
+      lenisInstance = new Lenis({
+        duration: opts.duration ?? 1.2,
+        easing: opts.easing ?? ((t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))),
+        orientation: opts.orientation ?? 'vertical',
+        gestureOrientation: opts.gestureOrientation ?? 'vertical',
+        smoothWheel: opts.smoothWheel ?? true,
+        wheelMultiplier: opts.wheelMultiplier ?? 1,
+        touchMultiplier: opts.touchMultiplier ?? 2,
+        infinite: opts.infinite ?? false,
+      });
+
+      // Set state to trigger re-render and update context
+      setLenis(lenisInstance);
+    };
+
+    // Defer Lenis initialization until after initial content is visible
+    // This prevents the RAF loop from consuming CPU during initial page load
+    if ('requestIdleCallback' in window) {
+      idleCallbackId = window.requestIdleCallback(initLenis, { timeout: 3000 });
+    } else {
+      // Fallback for browsers without requestIdleCallback (Safari)
+      timeoutId = setTimeout(initLenis, 2500);
+    }
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Cleanup
     return () => {
+      // Cancel pending initialization if not yet executed
+      if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleCallbackId);
+      }
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+
       stopRafLoop();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      lenisInstance.destroy();
+      lenisInstance?.destroy();
       setLenis(null);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps

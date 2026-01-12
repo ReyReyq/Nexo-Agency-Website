@@ -293,7 +293,7 @@ const SubServiceBlogSection = memo(({ subService, parentService }: SubServiceBlo
   if (isLoading) {
     return (
       <section className="py-20 md:py-28 bg-muted/30" dir="rtl">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
@@ -313,7 +313,7 @@ const SubServiceBlogSection = memo(({ subService, parentService }: SubServiceBlo
       className="py-20 md:py-28 bg-muted/30"
       dir="rtl"
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={INITIAL_FADE_UP_40}

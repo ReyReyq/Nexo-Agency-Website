@@ -68,19 +68,18 @@ const websiteSchema = {
 };
 
 const Index = () => {
-  // Check if preloader should show - skip for return visitors (localStorage) or same-session (sessionStorage)
+  // Check if preloader should show - only skip if already shown in THIS session/tab
+  // Every new tab/visit will show the preloader (sessionStorage clears on tab close)
   const [isLoading, setIsLoading] = useState(() => {
-    // Check both localStorage (cross-session) and sessionStorage (same-session)
+    // Only check sessionStorage - preloader shows on every new tab/session
     const hasSeenPreloaderSession = sessionStorage.getItem("nexo-preloader-shown");
-    const hasSeenPreloaderPersistent = localStorage.getItem("nexo-preloader-seen");
-    return !hasSeenPreloaderSession && !hasSeenPreloaderPersistent;
+    return !hasSeenPreloaderSession;
   });
 
   // Memoized callback to prevent unnecessary re-renders of Preloader
   const handlePreloaderComplete = useCallback(() => {
-    // Mark preloader as shown for this session AND persistently
+    // Mark preloader as shown for this session only (new tab = new session = preloader shows)
     sessionStorage.setItem("nexo-preloader-shown", "true");
-    localStorage.setItem("nexo-preloader-seen", "true");
     setIsLoading(false);
   }, []);
 

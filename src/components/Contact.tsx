@@ -3,6 +3,15 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { Phone, Mail, ArrowUpRight, Send, Rocket, Check, AlertCircle, ArrowLeft, ArrowRight, MessageCircle, Clock } from "lucide-react";
 import confetti from "canvas-confetti";
 import { submitContactForm, type FormData as SubmissionFormData } from "@/utils/formSubmission";
+import {
+  trackFormStart,
+  trackFormStepComplete,
+  trackFormFieldComplete,
+  trackFormAbandon,
+  trackGenerateLead,
+  trackPhoneClick,
+  trackEmailClick,
+} from "@/lib/analytics";
 
 // Utility for tracking timeouts for cleanup
 const useTimeoutCleanup = () => {
@@ -314,7 +323,7 @@ const Contact = () => {
                 }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className={`p-4 rounded-xl border-2 text-right transition-all ${
+                className={`p-4 min-h-[44px] rounded-xl border-2 text-right transition-all ${
                   formData.budget === option.value
                     ? "border-primary bg-primary/10"
                     : "border-nexo-mist hover:border-primary/50 bg-white"
@@ -341,7 +350,7 @@ const Contact = () => {
                 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`p-4 rounded-xl border-2 text-center transition-all ${
+                className={`p-4 min-h-[44px] rounded-xl border-2 text-center transition-all ${
                   formData.source === option.value
                     ? "border-primary bg-primary/10"
                     : "border-nexo-mist hover:border-primary/50 bg-white"
@@ -514,7 +523,7 @@ const Contact = () => {
                     onClick={() => setShowStartScreen(false)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="px-8 py-4 bg-primary text-white rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
+                    className="px-8 py-4 min-h-[44px] bg-primary text-white rounded-full text-lg font-bold hover:bg-primary/90 transition-colors"
                   >
                     בואו נתחיל
                   </motion.button>
@@ -581,7 +590,7 @@ const Contact = () => {
                       onClick={handleBack}
                       disabled={currentStep === 0}
                       aria-label="הקודם"
-                      className={`flex items-center gap-2 px-4 min-h-[44px] rounded-lg transition-all ${
+                      className={`flex items-center justify-center gap-2 px-4 min-w-[44px] min-h-[44px] rounded-lg transition-all ${
                         currentStep === 0
                           ? "opacity-0 pointer-events-none"
                           : "text-nexo-ash hover:text-nexo-charcoal"
@@ -597,7 +606,7 @@ const Contact = () => {
                         disabled={isSubmitting}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        className="flex items-center justify-center gap-2 px-6 py-3 min-w-[44px] min-h-[44px] bg-primary text-white rounded-full font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
                       >
                         {isSubmitting ? (
                           <>

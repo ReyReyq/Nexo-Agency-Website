@@ -104,7 +104,7 @@ const CaseStudyHighlight = memo(function CaseStudyHighlight({
         className
       )}
     >
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div ref={headerRef} className="mb-16 md:mb-24">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8">

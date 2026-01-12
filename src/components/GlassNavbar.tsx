@@ -77,7 +77,7 @@ const MarqueeButtonMobile = ({
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
       aria-label={ariaLabel}
-      className={`relative h-11 w-32 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
+      className={`relative h-11 w-28 overflow-hidden rounded-full text-xs font-bold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
         isPastHero
           ? "bg-nexo-charcoal text-white hover:bg-nexo-graphite focus-visible:ring-primary focus-visible:ring-offset-white"
           : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm focus-visible:ring-white focus-visible:ring-offset-nexo-charcoal"
@@ -90,7 +90,7 @@ const MarqueeButtonMobile = ({
            style={{ background: isPastHero ? 'linear-gradient(to left, var(--nexo-charcoal), transparent)' : 'linear-gradient(to left, rgba(255,255,255,0.2), transparent)' }} />
 
       {/* Marquee container with CSS animation for truly seamless loop */}
-      <div className="absolute inset-0 flex items-center">
+      <div className="absolute inset-0 flex items-center overflow-hidden">
         <div className="flex items-center whitespace-nowrap animate-marquee-scroll">
           {/* Duplicate content 4 times for seamless infinite loop */}
           {[...Array(4)].map((_, i) => (
@@ -115,6 +115,8 @@ const GlassNavbar = () => {
   const [menuHasOpened, setMenuHasOpened] = useState(false);
   // Track if popup has ever been opened
   const [popupHasOpened, setPopupHasOpened] = useState(false);
+  // Track mobile viewport for disabling expensive scroll animations
+  const [isMobile, setIsMobile] = useState(false);
 
   const [scope, animate] = useAnimate();
   const navRef = useRef<HTMLElement>(null);
@@ -127,7 +129,19 @@ const GlassNavbar = () => {
   // Ref to track if a scroll update is pending
   const isScrollPendingRef = useRef(false);
 
-  // Scroll progress for navbar border
+  // Check for mobile viewport to disable expensive scroll-based animations
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Scroll progress for navbar border - only active on desktop
+  // On mobile, we skip the useSpring to reduce CPU work during scrolling
   const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -135,7 +149,12 @@ const GlassNavbar = () => {
     restDelta: 0.001,
   });
   // Transform scroll progress to degrees (0 to 360) for conic gradient
-  const borderProgress = useTransform(smoothProgress, [0, 1], [0, 360]);
+  // On mobile, use static 0 to disable the animated border completely
+  const borderProgress = useTransform(
+    isMobile ? scrollYProgress : smoothProgress,
+    [0, 1],
+    isMobile ? [0, 0] : [0, 360]
+  );
 
   // Track scroll position for styling changes - throttled with requestAnimationFrame
   const updateScrollState = useCallback(() => {
@@ -274,7 +293,7 @@ const GlassNavbar = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="lg:hidden flex items-center z-10 justify-self-start"
+            className="lg:hidden flex items-center z-10 justify-self-start overflow-hidden"
           >
             <MarqueeButtonMobile
               onClick={handleOpenPopup}

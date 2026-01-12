@@ -176,7 +176,7 @@ const ServiceBlogSection = memo(({ service }: ServiceBlogSectionProps) => {
   if (isLoading) {
     return (
       <section className="py-24 md:py-32 bg-muted/30" dir="rtl">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
@@ -196,7 +196,7 @@ const ServiceBlogSection = memo(({ service }: ServiceBlogSectionProps) => {
       className="py-24 md:py-32 bg-muted/30"
       dir="rtl"
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
           initial={INITIAL_FADE_UP_40}

@@ -137,13 +137,15 @@ export default defineConfig(({ mode }) => ({
             return undefined;
           }
 
-          // React core + framer-motion - needed on every page
+          // React core + framer-motion + embla - needed on every page
           // framer-motion must load with React to avoid createContext errors
+          // embla-carousel included to avoid circular chunk dependency
           if (id.includes("node_modules/react/") ||
               id.includes("node_modules/react-dom/") ||
               id.includes("node_modules/react-router-dom/") ||
               id.includes("node_modules/framer-motion/") ||
-              id.includes("node_modules/scheduler/")) {
+              id.includes("node_modules/scheduler/") ||
+              id.includes("node_modules/embla-carousel")) {
             return "react-vendor";
           }
 
@@ -184,10 +186,7 @@ export default defineConfig(({ mode }) => ({
             return "matter-vendor";
           }
 
-          // Embla Carousel - only needed on pages with carousels
-          if (id.includes("node_modules/embla-carousel")) {
-            return "embla-vendor";
-          }
+          // NOTE: Embla Carousel is included in react-vendor to avoid circular chunk dependency
 
           // NOTE: Lucide icons NOT chunked separately to avoid circular dependency with react-vendor
 

@@ -24,6 +24,8 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/BlogArticle"));
 const ContactPage = lazy(() => import("./pages/ContactPage"));
 const ImagePicker = lazy(() => import("./pages/ImagePicker"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 
 // Landing Pages - SEO-optimized industry-specific pages
 const LawyersWebsite = lazy(() => import("./pages/lp/LawyersWebsite"));
@@ -152,6 +154,17 @@ const App = memo(() => {
             <Route path="/image-picker" element={
               <Suspense fallback={<PageLoader />}>
                 <ImagePicker />
+              </Suspense>
+            } />
+            {/* Legal Pages */}
+            <Route path="/privacy" element={
+              <Suspense fallback={<PageLoader />}>
+                <Privacy />
+              </Suspense>
+            } />
+            <Route path="/terms" element={
+              <Suspense fallback={<PageLoader />}>
+                <Terms />
               </Suspense>
             } />
             {/* Landing Pages - SEO-optimized industry pages */}

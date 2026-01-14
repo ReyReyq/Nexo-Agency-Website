@@ -44,7 +44,7 @@ export const freeWebsiteLandingPage: LandingPageData = {
       "wordpress בחינם",                   // Free WordPress
       "אתר אינטרנט חינם",                  // Free internet website
     ],
-    canonicalUrl: "https://nexo.co.il/lp/free-website",
+    canonicalUrl: "https://nexo.agency/lp/free-website",
     ogImage: "/images/landing/free-website-hero.jpg",
     schema: {
       type: "Service",
@@ -52,7 +52,7 @@ export const freeWebsiteLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

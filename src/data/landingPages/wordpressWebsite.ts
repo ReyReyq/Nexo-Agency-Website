@@ -44,7 +44,7 @@ export const wordpressWebsiteLandingPage: LandingPageData = {
       "בניית אתר וורדפרס תל אביב",          // Tel Aviv
       "מפתח וורדפרס ישראל",                // WordPress developer Israel
     ],
-    canonicalUrl: "https://nexo.co.il/lp/wordpress-website",
+    canonicalUrl: "https://nexo.agency/lp/wordpress-website",
     ogImage: "/images/landing/wordpress-website-hero.jpg",
     schema: {
       type: "ProfessionalService",
@@ -52,7 +52,7 @@ export const wordpressWebsiteLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

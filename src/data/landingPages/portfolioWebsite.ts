@@ -46,7 +46,7 @@ export const portfolioWebsiteLandingPage: LandingPageData = {
       "בניית אתר תדמיתי תל אביב",         // Tel Aviv
       "אתר תדמית ירושלים",                // Jerusalem
     ],
-    canonicalUrl: "https://nexo.co.il/lp/portfolio-website",
+    canonicalUrl: "https://nexo.agency/lp/portfolio-website",
     ogImage: "/images/landing/portfolio-website-hero.jpg",
     schema: {
       type: "ProfessionalService",
@@ -54,7 +54,7 @@ export const portfolioWebsiteLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

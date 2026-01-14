@@ -42,7 +42,7 @@ export const portfolioSiteLandingPage: LandingPageData = {
       "אתר ייצוגי לעסק",                // Representative website for business
       "אתר עסקי תדמיתי",                // Business image website
     ],
-    canonicalUrl: "https://nexo.co.il/lp/portfolio-site",
+    canonicalUrl: "https://nexo.agency/lp/portfolio-site",
     ogImage: "/images/landing/portfolio-site-hero.jpg",
     schema: {
       type: "ProfessionalService",
@@ -50,7 +50,7 @@ export const portfolioSiteLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

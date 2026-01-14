@@ -67,6 +67,90 @@ const websiteSchema = {
   }
 };
 
+// ProfessionalService schema for local SEO and Google Business Profile
+const professionalServiceSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "נקסו - NEXO Digital Agency",
+  "alternateName": "NEXO Agency",
+  "url": "https://nexo.agency",
+  "logo": "https://nexo.agency/logo.png",
+  "image": "https://nexo.agency/og-image.jpg",
+  "description": "סוכנות דיגיטל מובילה בישראל המתמחה בעיצוב ופיתוח אתרים, שיווק דיגיטלי, קידום אתרים (SEO), מיתוג ואוטומציה עם AI לעסקים קטנים ובינוניים.",
+  "priceRange": "₪₪-₪₪₪",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "דרך מנחם בגין 132",
+    "addressLocality": "תל אביב-יפו",
+    "addressRegion": "תל אביב",
+    "postalCode": "6701101",
+    "addressCountry": "IL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 32.0636,
+    "longitude": 34.7795
+  },
+  "telephone": "+972-53-362-2423",
+  "email": "sales@nexoagency.org",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    }
+  ],
+  "areaServed": {
+    "@type": "Country",
+    "name": "Israel"
+  },
+  "serviceType": [
+    "Web Design",
+    "Web Development",
+    "Digital Marketing",
+    "SEO Services",
+    "Branding",
+    "E-commerce Development",
+    "AI Automation"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Digital Services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "בניית אתרים",
+          "description": "עיצוב ופיתוח אתרים מקצועיים, רספונסיביים ומותאמים לקידום"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "קידום אתרים SEO",
+          "description": "קידום אורגני בגוגל, SEO טכני, SEO מקומי ובניית קישורים"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "שיווק דיגיטלי",
+          "description": "ניהול קמפיינים בגוגל ופייסבוק, שיווק ברשתות חברתיות"
+        }
+      }
+    ]
+  },
+  "sameAs": [
+    "https://www.instagram.com/nexo.agency",
+    "https://www.facebook.com/nexoagency",
+    "https://www.linkedin.com/company/nexo-agency"
+  ]
+};
+
 const Index = () => {
   // Check if preloader should show - only skip if already shown in THIS session/tab
   // Every new tab/visit will show the preloader (sessionStorage clears on tab close)
@@ -106,6 +190,9 @@ const Index = () => {
         </script>
         <script type="application/ld+json">
           {JSON.stringify(websiteSchema)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(professionalServiceSchema)}
         </script>
       </Helmet>
 

@@ -43,7 +43,7 @@ export const internetWebsiteLandingPage: LandingPageData = {
       "אתר מותאם לגוגל",                      // Google-optimized website
       "אתר עם מערכת ניהול",                   // Website with CMS
     ],
-    canonicalUrl: "https://nexo.co.il/lp/internet-website",
+    canonicalUrl: "https://nexo.agency/lp/internet-website",
     ogImage: "/images/landing/internet-website-hero.jpg",
     schema: {
       type: "Service",
@@ -51,7 +51,7 @@ export const internetWebsiteLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

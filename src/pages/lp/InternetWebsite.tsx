@@ -61,13 +61,13 @@ const InternetWebsite = memo(() => {
         "@type": "ListItem",
         "position": 1,
         "name": "דף הבית",
-        "item": "https://nexo.co.il",
+        "item": "https://nexo.agency",
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "דפי נחיתה",
-        "item": "https://nexo.co.il/lp",
+        "item": "https://nexo.agency/lp",
       },
       {
         "@type": "ListItem",

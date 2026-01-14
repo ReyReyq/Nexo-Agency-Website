@@ -1,8 +1,29 @@
+# NEXO Agency - robots.txt
+# https://nexo.agency
+
+# ===========================================
+# SEARCH ENGINE CRAWLERS
+# ===========================================
+
 User-agent: Googlebot
 Allow: /
+Disallow: /api/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /api/
+
+User-agent: Yandex
+Allow: /
+Disallow: /api/
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /api/
+
+# ===========================================
+# SOCIAL MEDIA CRAWLERS
+# ===========================================
 
 User-agent: Twitterbot
 Allow: /
@@ -10,11 +31,114 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: LinkedInBot
 Allow: /
 
-# Sitemap
+User-agent: Pinterest
+Allow: /
+
+# ===========================================
+# AI CRAWLERS - ALLOWED FOR AEO VISIBILITY
+# ===========================================
+
+# OpenAI Crawlers
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+# Anthropic Claude Crawlers
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
+# Google AI (Gemini training - separate from search)
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+# Apple AI
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+
+# Amazon Alexa
+User-agent: Amazonbot
+Allow: /
+Disallow: /api/
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+Disallow: /api/
+
+# ===========================================
+# AI CRAWLERS - BLOCKED (Aggressive/Training-Only)
+# ===========================================
+
+# Common Crawl (used for many AI training datasets)
+User-agent: CCBot
+Disallow: /
+
+# ByteDance (aggressive crawler)
+User-agent: Bytespider
+Disallow: /
+
+# Cohere AI training
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: cohere-training-data-crawler
+Disallow: /
+
+# Diffbot
+User-agent: Diffbot
+Disallow: /
+
+# Omgili
+User-agent: omgili
+Disallow: /
+
+User-agent: omgilibot
+Disallow: /
+
+# ===========================================
+# DEFAULT POLICY
+# ===========================================
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# ===========================================
+# SITEMAP & AI CONTENT
+# ===========================================
+
 Sitemap: https://nexo.agency/sitemap.xml
 
-# Disallow admin/API routes
-Disallow: /api/
+# For AI-readable site summary, see:
+# https://nexo.agency/llms.txt

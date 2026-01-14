@@ -45,7 +45,7 @@ export const websiteDesignLandingPage: LandingPageData = {
       "עיצוב אתרים ירושלים",              // Jerusalem
       "עיצוב אתרים חיפה",                 // Haifa
     ],
-    canonicalUrl: "https://nexo.co.il/lp/website-design",
+    canonicalUrl: "https://nexo.agency/lp/website-design",
     ogImage: "/images/landing/website-design-og.webp",
     schema: {
       type: "ProfessionalService",
@@ -53,7 +53,7 @@ export const websiteDesignLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

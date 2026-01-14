@@ -43,7 +43,7 @@ export const websiteSetupLandingPage: LandingPageData = {
       "הקמת נוכחות דיגיטלית",                // Establishing digital presence
       "דומיין ואחסון לאתר",                  // Domain and hosting for website
     ],
-    canonicalUrl: "https://nexo.co.il/lp/website-setup",
+    canonicalUrl: "https://nexo.agency/lp/website-setup",
     ogImage: "/images/landing/website-setup-og.webp",
     schema: {
       type: "Service",
@@ -51,7 +51,7 @@ export const websiteSetupLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

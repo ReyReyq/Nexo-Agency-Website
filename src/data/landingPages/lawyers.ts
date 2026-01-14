@@ -42,7 +42,7 @@ export const lawyersLandingPage: LandingPageData = {
       "אתר לעורך דין ירושלים",            // Jerusalem
       "אתר למשרד עו״ד חיפה",              // Haifa
     ],
-    canonicalUrl: "https://nexo.co.il/lp/lawyers-website",
+    canonicalUrl: "https://nexo.agency/lp/lawyers-website",
     ogImage: "/images/landing/lawyers-og.webp",
     schema: {
       type: "ProfessionalService",
@@ -50,7 +50,7 @@ export const lawyersLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

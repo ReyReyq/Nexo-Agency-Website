@@ -43,7 +43,7 @@ export const onlineStoreLandingPage: LandingPageData = {
       "חנות אונליין תל אביב",           // Online store Tel Aviv
       "מסחר אלקטרוני בישראל",           // E-commerce in Israel
     ],
-    canonicalUrl: "https://nexo.co.il/lp/online-store",
+    canonicalUrl: "https://nexo.agency/lp/online-store",
     ogImage: "/images/landing/online-store-hero.jpg",
     schema: {
       type: "Service",
@@ -51,7 +51,7 @@ export const onlineStoreLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

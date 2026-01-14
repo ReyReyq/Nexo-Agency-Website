@@ -12,7 +12,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "lighthouse:budget": "lighthouse https://nexo-vision.vercel.app --budget-path=./lighthouse-budget.json --output=html --output-path=./lighthouse-budget-report.html",
-    "optimize-images": "node scripts/optimize-images.mjs"
+    "optimize-images": "node scripts/optimize-images.mjs",
+    "generate-sitemap": "node scripts/generate-sitemap.mjs",
+    "build:full": "vite build && node scripts/generate-sitemap.mjs && node scripts/prerender.mjs"
   },
   "dependencies": {
     "@microsoft/clarity": "^1.0.2",

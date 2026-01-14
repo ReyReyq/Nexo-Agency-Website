@@ -1,0 +1,159 @@
+# NEXO Agency
+
+> NEXO is a leading digital agency in Israel specializing in web development, e-commerce solutions, branding, AI automation, and digital marketing. We help businesses build modern, high-performance digital experiences with a focus on the Israeli market.
+
+## About
+
+NEXO Agency provides comprehensive digital services for businesses of all sizes across Israel. Our team combines creative design with technical expertise to deliver results-driven solutions. We specialize in Hebrew-first digital experiences with RTL (right-to-left) design optimization.
+
+**Founded:** Israel
+**Primary Language:** Hebrew (he-IL)
+**Website:** https://nexo.agency
+**Email:** sales@nexoagency.org
+**Phone:** +972-53-362-2423
+
+## Services
+
+### Web Development (בניית אתרים)
+- [Web Development Overview](/services/web-development): Custom website development services
+- [Landing Pages](/services/web-development/landing-pages): High-converting landing page design
+- [WordPress Sites](/services/web-development/wordpress): WordPress development and customization
+- [Web Applications](/services/web-development/web-apps): Custom web app development
+- [Corporate Sites](/services/web-development/corporate-sites): Professional business websites
+- [Catalog Sites](/services/web-development/catalog-sites): Product catalog websites
+
+### E-commerce (חנויות אונליין)
+- [E-commerce Overview](/services/ecommerce): Online store development
+- [Shopify Development](/services/ecommerce/shopify): Shopify store setup and customization
+- [WooCommerce](/services/ecommerce/woocommerce): WooCommerce development
+- [Payment Integration](/services/ecommerce/payments): Payment gateway setup
+- [Inventory Management](/services/ecommerce/inventory): Stock management systems
+
+### Branding (מיתוג)
+- [Branding Overview](/services/branding): Complete branding services
+- [Logo Design](/services/branding/logo-design): Professional logo creation
+- [Visual Identity](/services/branding/visual-identity): Brand visual systems
+- [Brand Book](/services/branding/brand-book): Brand guidelines documentation
+- [Copywriting](/services/branding/copywriting): Brand messaging and content
+
+### AI & Automation (בינה מלאכותית)
+- [AI Automation Overview](/services/ai-automation): AI-powered business solutions
+- [Chatbots](/services/ai-automation/chatbots): AI chatbot development
+- [Business Automation](/services/ai-automation/automation): Workflow automation
+- [AI Content](/services/ai-automation/ai-content): AI-assisted content creation
+
+### Digital Marketing (שיווק דיגיטלי)
+- [Digital Marketing Overview](/services/digital-marketing): Comprehensive marketing services
+- [Google Ads](/services/digital-marketing/google-ads): PPC campaign management
+- [Meta Ads](/services/digital-marketing/meta-ads): Facebook and Instagram advertising
+- [Email Marketing](/services/digital-marketing/email-marketing): Email campaign management
+- [Influencer Marketing](/services/digital-marketing/influencer): Influencer partnerships
+
+### SEO (קידום אתרים)
+- [SEO Overview](/services/seo): Search engine optimization
+- [Technical SEO](/services/seo/technical-seo): Technical site optimization
+- [Local SEO](/services/seo/local-seo): Local search optimization for Israeli businesses
+- [Content SEO](/services/seo/content-seo): Content optimization strategies
+- [Link Building](/services/seo/link-building): Authority building campaigns
+
+### Social Media (רשתות חברתיות)
+- [Social Media Overview](/services/social-media): Social media management
+- [Instagram Marketing](/services/social-media/instagram-marketing): Instagram growth strategies
+- [Facebook Marketing](/services/social-media/facebook-marketing): Facebook page management
+- [LinkedIn Marketing](/services/social-media/linkedin-marketing): B2B LinkedIn strategies
+- [TikTok Marketing](/services/social-media/tiktok-marketing): TikTok content and growth
+
+### Strategy (אסטרטגיה)
+- [Strategy Overview](/services/strategy): Digital strategy consulting
+- [Market Research](/services/strategy/market-research): Market analysis
+- [Digital Audit](/services/strategy/digital-audit): Digital presence assessment
+- [Growth Strategy](/services/strategy/growth-strategy): Business growth planning
+- [Conversion Optimization](/services/strategy/conversion-optimization): CRO services
+
+### App Development (פיתוח אפליקציות)
+- [App Development Overview](/services/app-development): Mobile app development
+- [iOS Apps](/services/app-development/ios-apps): iPhone and iPad apps
+- [Android Apps](/services/app-development/android-apps): Android applications
+- [Cross-Platform](/services/app-development/cross-platform): React Native development
+- [PWA](/services/app-development/pwa): Progressive web apps
+
+### Custom Development (פיתוח מותאם)
+- [Custom Development Overview](/services/custom-development): Bespoke software solutions
+- [SaaS Development](/services/custom-development/saas-development): SaaS product development
+- [API Development](/services/custom-development/api-development): Custom API creation
+- [Dashboard Systems](/services/custom-development/dashboard-systems): Admin dashboards
+- [Automation Systems](/services/custom-development/automation-systems): Custom automation tools
+
+## Content
+
+### Blog
+Our blog features in-depth guides and articles about digital marketing, web development, SEO, and business growth - primarily in Hebrew for the Israeli market.
+
+- [Blog Home](/blog): All articles and guides
+- [SEO Guide Israel 2025](/blog/seo-guide-israel-2025): Comprehensive SEO guide for Israeli businesses
+- [Website Pricing Guide](/blog/website-pricing-guide-israel-2025): Website development costs in Israel
+- [Google Ads Guide](/blog/google-ads-guide-israel-2025): Google Ads for Israeli businesses
+- [Local SEO Guide](/blog/local-seo-guide-israel-2025): Local search optimization
+- [Landing Page Guide](/blog/landing-page-guide-israel-2025): Creating effective landing pages
+
+### Portfolio
+Case studies showcasing our client work and results.
+
+- [Portfolio Home](/portfolio): All case studies
+- [SimplyHebrew](/portfolio/simplyhebrew): Hebrew learning platform
+- [Teenvestor](/portfolio/teenvestsor): Financial education app
+- [Sione](/portfolio/sione): Fashion brand
+- [Fashion Hub](/portfolio/fashion-hub): E-commerce platform
+- [TechConnect](/portfolio/techconnect): Technology company
+- [FinFlow](/portfolio/finflow): Financial services
+
+### Landing Pages
+Industry-specific service pages optimized for Israeli businesses:
+
+- [Lawyer Websites](/lp/lawyers-website): Websites for law firms
+- [Business Websites](/lp/business-websites): Corporate website solutions
+- [Website Building](/lp/website-building): General website services
+- [Website Design](/lp/website-design): Design-focused services
+- [Online Store](/lp/online-store): E-commerce solutions
+- [WordPress Website](/lp/wordpress-website): WordPress services
+- [Website Development](/lp/website-development): Development services
+
+## Company Information
+
+### Contact
+- **Website:** https://nexo.agency
+- **Contact Page:** https://nexo.agency/contact
+- **Email:** sales@nexoagency.org
+- **Phone:** +972-53-362-2423
+
+### Social Media
+- **Instagram:** https://www.instagram.com/nexo.agency
+- **Facebook:** https://www.facebook.com/nexoagency
+- **LinkedIn:** https://www.linkedin.com/company/nexo-agency
+
+### Legal
+- [Privacy Policy](/privacy): Data privacy information
+- [Terms of Service](/terms): Service terms and conditions
+
+## Technical Information
+
+This website is a Single Page Application (SPA) built with:
+- **Framework:** React with React Router
+- **Styling:** Tailwind CSS
+- **SEO:** react-helmet-async for meta tags
+- **Deployment:** Vercel
+
+### Structured Data
+All pages include JSON-LD structured data:
+- Organization schema on homepage
+- Service schemas on service pages
+- Article/BlogPosting schemas on blog posts
+- FAQPage schemas on FAQ sections
+- BreadcrumbList for navigation context
+
+### Sitemap
+XML sitemap available at: https://nexo.agency/sitemap.xml
+
+---
+
+*Last updated: January 2026*

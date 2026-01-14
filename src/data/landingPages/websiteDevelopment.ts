@@ -42,7 +42,7 @@ export const websiteDevelopmentLandingPage: LandingPageData = {
       "פיתוח אתרים ישראל",              // Israel
       "מפתחי אתרים מקצועיים",           // Professional website developers
     ],
-    canonicalUrl: "https://nexo.co.il/lp/website-development",
+    canonicalUrl: "https://nexo.agency/lp/website-development",
     ogImage: "/images/landing/website-development-hero.jpg",
     schema: {
       type: "ProfessionalService",
@@ -50,7 +50,7 @@ export const websiteDevelopmentLandingPage: LandingPageData = {
       areaServed: "Israel",
       provider: {
         name: "Nexo Digital",
-        url: "https://nexo.co.il",
+        url: "https://nexo.agency",
       },
     },
   },

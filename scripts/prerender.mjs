@@ -26,10 +26,33 @@ const distDir = join(__dirname, '..', 'dist');
 // heavy WebGL components (Orb, Three.js) that crash in headless browsers.
 // These pages still work fine in the browser - they just can't be prerendered.
 const routes = [
+  // Core pages
   '/about',
   '/services',
   '/blog',
   '/contact',
+  '/privacy',
+  '/terms',
+
+  // Main service pages
+  '/services/web-development',
+  '/services/ecommerce',
+  '/services/branding',
+  '/services/ai-automation',
+  '/services/digital-marketing',
+  '/services/seo',
+  '/services/social-media',
+  '/services/strategy',
+  '/services/app-development',
+  '/services/custom-development',
+
+  // High-value landing pages (SEO keywords)
+  '/lp/website-building',
+  '/lp/business-websites',
+  '/lp/website-design',
+  '/lp/lawyers-website',
+  '/lp/online-store',
+  '/lp/wordpress-website',
 ];
 
 // Routes that are skipped due to WebGL incompatibility

@@ -22,7 +22,7 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/((?!api/|data/).*)",
+      "source": "/((?!api/|data/|robots\\.txt|sitemap\\.xml|llms\\.txt|manifest\\.webmanifest|sw\\.js|workbox).*)",
       "destination": "/index.html"
     }
   ]

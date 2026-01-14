@@ -46,6 +46,9 @@ The `vercel.json` file has rewrite rules for SPA routing. Static files like robo
 - `/scripts/` - Build scripts (sitemap, prerender)
 - `/api/` - Serverless API functions
 
-## Domain
-- Production: https://nexo.agency
+## Production Domains
+- **Primary:** https://nexoagency.org
+- **Secondary:** https://nexo-agency.co.il (redirects to www)
 - All canonical URLs should use `nexo.agency` (not nexo.co.il)
+
+Note: `nexo.agency` points to a different (Framer) site - the Vercel project uses `nexoagency.org` and `nexo-agency.co.il`.
